@@ -45,9 +45,7 @@
   "xo": {
     "esnext": true,
     "space": 2,
-    "ignores": [
-      "app/**"
-    ],
+    "ignores": [],
     "rules": {
       "space-before-function-paren": [
         "error",
