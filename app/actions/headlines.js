@@ -1,5 +1,3 @@
-'use strict';
-
 export const LOAD_HEADLINES = 'LOAD_HEADLINES';
 export const RECEIVE_HEADLINES = 'RECEIVE_HEADLINES';
 export const SHOW_HEADLINE = 'SHOW_HEADLINE';

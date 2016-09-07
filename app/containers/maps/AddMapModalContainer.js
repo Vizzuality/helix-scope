@@ -1,6 +1,6 @@
-import {connect} from 'react-redux';
-import MapsPage from '../../components/maps/AddModal';
-import {addMap, hideAddMapModal, setScenario, setIndicatorsCategory, setIndicator} from '../../actions/maps';
+import { connect } from 'react-redux';
+import MapsPage from 'components/maps/AddModal';
+import { addMap, hideAddMapModal, setScenario, setIndicatorsCategory, setIndicator } from '../../actions/maps';
 
 const mapStateToProps = state => {
   const selectedIndicators = state.config.indicators.filter(indicator => {

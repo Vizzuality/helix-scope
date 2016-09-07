@@ -1,5 +1,3 @@
-'use strict';
-
 export const LOAD_CONFIG = 'LOAD_CONFIG';
 export const RECEIVE_CONFIG = 'RECEIVE_CONFIG';
 

@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import Button from '../common/Button';
+import React, { Component } from 'react';
+import Button from 'components/common/Button';
 
 class Modal extends Component {
   constructor(props) {

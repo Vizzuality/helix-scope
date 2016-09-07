@@ -1,4 +1,3 @@
-'use strict';
 import $ from 'jquery';
 
 export const SET_COUNTRIES_LIST = 'SET_COUNTRIES_LIST';

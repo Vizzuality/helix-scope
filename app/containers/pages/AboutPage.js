@@ -1,7 +1,7 @@
-import {connect} from 'react-redux';
-import AboutPage from '../../components/pages/AboutPage';
+import { connect } from 'react-redux';
+import AboutPage from 'components/pages/AboutPage';
 
-import {setModal} from '../../actions/modal';
+import { setModal } from 'actions/modal';
 
 const mapStateToProps = state => ({
   modalOpen: state.modal.open

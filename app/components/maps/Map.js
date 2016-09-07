@@ -1,6 +1,6 @@
 import React from 'react';
 import L from 'leaflet';
-import Dashboard from '../../containers/maps/DashboardContainer';
+import Dashboard from 'containers/maps/DashboardContainer';
 
 class Map extends React.Component {
   render() {

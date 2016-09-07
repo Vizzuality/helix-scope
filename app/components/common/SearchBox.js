@@ -1,6 +1,7 @@
 import React from 'react';
 import Fuse from 'fuse.js';
-import Button from './Button';
+
+import Button from 'components/common/Button';
 
 class SearchBox extends React.Component {
 
@@ -16,7 +17,7 @@ class SearchBox extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    newProps.countriesList && this.setState({countriesList: newProps.countriesList});
+    newProps.countriesList && this.setState({ countriesList: newProps.countriesList });
 
     this.options = {
       caseSensitive: false,
@@ -41,9 +42,9 @@ class SearchBox extends React.Component {
       const result = this.fuse.search(token);
       const resultsort = this.sortFunction(result);
 
-      this.setState({resultsList: resultsort});
+      this.setState({ resultsList: resultsort });
     } else {
-      this.setState({resultsList: this.countriesList});
+      this.setState({ resultsList: this.countriesList });
     }
   }
 
@@ -57,7 +58,7 @@ class SearchBox extends React.Component {
 
   clearSearch(e) {
     e.currentTarget.value = '';
-    this.setState({resultsList: ''});
+    this.setState({ resultsList: '' });
   }
 
   render() {
@@ -66,7 +67,7 @@ class SearchBox extends React.Component {
     return (
       <div className="c-search-box">
         <input type="text" placeholder="Type country name" onChange={this.search} onBlur={this.clearSearch.bind(this)}/>
-        <Button link="/countries" style="primary" size="large" icon="search" position="right"/>
+        <Button link="/countries" style="primary" size="large" icon="search" position="right" />
         <div className="resultsList">
           {list && list.map((element, i) =>
             <div key={i} className="result">

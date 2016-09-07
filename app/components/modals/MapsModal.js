@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Select from 'react-select';
-import Button from '../common/Button';
-import Modal from '../common/Modal';
+import Button from 'components/common/Button';
+import Modal from 'components/common/Modal';
 
 class MapsModal extends Component {
   constructor(props) {

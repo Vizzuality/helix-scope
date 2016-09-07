@@ -1,7 +1,7 @@
 import React from 'react';
-import Header from '../common/Header';
-import ShareModal from '../modals/ShareModal';
-import MenuModal from '../modals/MenuModal';
+import Header from 'components/common/Header';
+import ShareModal from 'components/modals/ShareModal';
+import MenuModal from 'components/modals/MenuModal';
 
 class ContainerPage extends React.Component {
 

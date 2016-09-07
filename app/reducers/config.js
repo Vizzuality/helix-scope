@@ -1,8 +1,4 @@
-'use strict';
-
-import {
-  LOAD_CONFIG, RECEIVE_CONFIG
-} from '../actions/config';
+import { LOAD_CONFIG, RECEIVE_CONFIG } from 'actions/config';
 
 const initialState = {
   loading: true,
@@ -10,7 +6,7 @@ const initialState = {
   categories: [],
   indicators: []
 };
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
   switch (action.type) {
     case LOAD_CONFIG: {
       return Object.assign({}, state, {

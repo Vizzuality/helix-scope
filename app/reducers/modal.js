@@ -1,15 +1,11 @@
-'use strict';
-
-import {
-  SET_SHARE_MODAL, SET_MENU_MODAL
-} from '../actions/modal';
+import { SET_SHARE_MODAL, SET_MENU_MODAL } from 'actions/modal';
 
 const initialState = {
   shareModalOpen: false,
   menuModalOpen: false
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
   switch (action.type) {
     case SET_SHARE_MODAL: {
       return Object.assign({}, state, {

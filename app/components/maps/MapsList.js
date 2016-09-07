@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Map from './Map';
 
 class MapsList extends Component {
