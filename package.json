@@ -6,8 +6,11 @@
   "scripts": {
     "build": "webpack --config ./config/webpack.config.js --progress --profile --colors",
     "postinstall": "npm run build",
-    "test": "xo && mocha --compilers js:babel-core/register --recursive --reporter nyan",
-    "test:watch": "npm run test -- --watch"
+    "lint": "./node_modules/.bin/eslint .",
+    "runTest": "./node_modules/mocha/bin/mocha --compilers js:babel-core/register --recursive --reporter nyan",
+    "test": "npm run lint && runTest",
+    "test:watch": "npm run test -- --watch",
+    "prepush": "npm test"
   },
   "repository": {
     "type": "git",
@@ -62,58 +65,16 @@
     "webpack": "^1.13.0"
   },
   "devDependencies": {
-    "browserslist": "^1.3.4",
     "chai": "^3.5.0",
-    "eslint": "^3.0.1",
-    "eslint-config-xo": "^0.15.2",
-    "eslint-config-xo-react": "^0.8.0",
-    "eslint-plugin-react": "^5.2.2",
+    "eslint": "^2.9.0",
+    "eslint-config-airbnb": "^9.0.1",
+    "eslint-plugin-import": "^1.7.0",
+    "eslint-plugin-jsx-a11y": "^1.2.0",
+    "eslint-plugin-react": "^5.0.1",
+    "husky": "^0.11.7",
     "jsdom": "^9.3.0",
-    "lost": "^7.0.3",
     "mocha": "^2.5.3",
-    "normalize.css": "^4.2.0",
-    "postcss-import": "^8.1.2",
-    "postcss-loader": "^0.9.1",
-    "postcss-nested": "^1.0.0",
-    "postcss-simple-vars": "^3.0.0",
     "react-addons-test-utils": "^15.1.0",
-    "redux-devtools": "^3.3.1",
-    "redux-devtools-dock-monitor": "^1.1.1",
-    "redux-devtools-log-monitor": "^1.0.11",
-    "stylelint": "^6.9.0",
-    "stylelint-config-standard": "^10.0.0",
-    "stylelint-loader": "^6.0.0",
-    "stylelint-webpack-plugin": "^0.2.0",
-    "url-loader": "^0.5.7",
-    "webpack-dev-middleware": "^1.6.1",
-    "xo": "^0.16.0"
-  },
-  "xo": {
-    "extends": [
-      "xo/esnext",
-      "xo-react"
-    ],
-    "esnext": true,
-    "envs": [
-      "node",
-      "mocha",
-      "browser"
-    ],
-    "space": true,
-    "rules": {
-      "no-unused-vars": "warn",
-      "space-before-function-paren": [
-        "error",
-        {
-          "anonymous": "never",
-          "named": "never"
-        }
-      ],
-      "xo/filename-case": 0,
-      "no-console": "error"
-    },
-    "ignores": [
-      "config/**/*.*"
-    ]
+    "webpack-dev-middleware": "^1.6.1"
   }
 }

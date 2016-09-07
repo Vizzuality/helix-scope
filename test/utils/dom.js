@@ -1,4 +1,4 @@
-'use strict';
+/* eslint no-restricted-syntax: 0 */
 
 import jsdom from 'jsdom';
 

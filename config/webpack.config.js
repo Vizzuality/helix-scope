@@ -1,17 +1,13 @@
 /* eslint camelcase:0 */
-
-'use strict';
-
-require('dotenv').config({silent: true});
+require('dotenv').config({ silent: true });
 
 process.env.BROWSERSLIST_CONFIG = 'browserslist';
 
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const autoprefixer = require('autoprefixer');
 const cssnext = require('postcss-cssnext');
-const styleLintPlugin = require('stylelint-webpack-plugin');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
 const postcssImporter = require('postcss-import');
 const postcssSimpleVars = require('postcss-simple-vars');
 const postcssNested = require('postcss-nested');
@@ -43,7 +39,7 @@ const webpackConfig = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
     }),
-    new styleLintPlugin({
+    new StyleLintPlugin({
       configFile: path.join(rootPath, 'config', '.stylelintrc'),
       files: 'app/styles/**/*.pcss'
     })
@@ -51,7 +47,7 @@ const webpackConfig = {
 
   module: {
     loaders: [
-      {test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel'},
+      { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel' },
       {
         test: /\.pcss$/,
         exclude: /node_modules/,
@@ -67,8 +63,8 @@ const webpackConfig = {
     extensions: ['', '.js', '.jsx']
   },
 
-  postcss: (webpack) => [
-    postcssImporter({ addDependencyTo: webpack }),
+  postcss: (webpackPCss) => [
+    postcssImporter({ addDependencyTo: webpackPCss }),
     cssnext,
     lost,
     postcssSimpleVars,

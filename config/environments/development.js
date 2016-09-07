@@ -1,17 +1,17 @@
-'use strict';
+/* eslint no-console: 0 */
 
 const path = require('path');
 const logger = require('morgan');
 const PrettyError = require('pretty-error');
 
+// Webpack middleware
+const webpack = require('webpack');
+const webpackMiddleware = require('webpack-dev-middleware');
+const config = require('../webpack.config.js');
+
 const indexPath = path.join(process.cwd(), 'dist/index.html');
 
-module.exports = function(app) {
-  // Webpack middleware
-  const webpack = require('webpack');
-  const webpackMiddleware = require('webpack-dev-middleware');
-  const config = require('../webpack.config.js');
-
+module.exports = function (app) {
   const compiler = webpack(config);
   const middleware = webpackMiddleware(compiler, {
     publicPath: config.output.publicPath,
