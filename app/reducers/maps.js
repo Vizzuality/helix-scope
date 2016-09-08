@@ -1,7 +1,4 @@
-import {
-  MAP_UPDATE_DATA,
-  MAP_UPDATE_PAN
-} from '../actions/maps';
+import { MAP_UPDATE_DATA, MAP_UPDATE_PAN } from 'actions/maps';
 
 const initialState = {
   mapsList: [],
@@ -12,10 +9,10 @@ const initialState = {
   }
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
   switch (action.type) {
     case MAP_UPDATE_DATA: {
-      return Object.assign({}, state, {mapsList: action.payload});
+      return Object.assign({}, state, { mapsList: action.payload });
     }
     case MAP_UPDATE_PAN: {
       return Object.assign({}, state, {

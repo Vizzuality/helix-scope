@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Select from 'react-select';
-import Footer from '../common/Footer';
+import Footer from 'components/common/Footer';
 
 class ComparePage extends Component {
   constructor(props) {

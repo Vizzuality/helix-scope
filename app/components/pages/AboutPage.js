@@ -1,5 +1,5 @@
 import React from 'react';
-import Footer from '../common/Footer';
+import Footer from 'components/common/Footer';
 
 const AboutPage = () => {
   return (

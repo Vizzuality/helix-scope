@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
-import Modal from '../common/Modal';
-import Button from '../common/Button';
-import NavLink from '../common/NavLink';
+import React, { Component } from 'react';
+import Modal from 'components/common/Modal';
+import Button from 'components/common/Button';
+import NavLink from 'components/common/NavLink';
 
 class MenuModal extends Component {
   handleShareOpen() {

@@ -1,8 +1,4 @@
-'use strict';
-
-import {
-  LOAD_HEADLINES, RECEIVE_HEADLINES, SHOW_HEADLINE
-} from '../actions/headlines';
+import { LOAD_HEADLINES, RECEIVE_HEADLINES, SHOW_HEADLINE } from 'actions/headlines';
 
 const initialState = {
   loading: false,
@@ -10,7 +6,7 @@ const initialState = {
   currentHeadlineIndex: 0
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
   switch (action.type) {
     case LOAD_HEADLINES: {
       return Object.assign({}, state, {

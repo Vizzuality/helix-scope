@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
-import HomeSlider from '../home/HomeSlider';
-import FooterHome from '../common/FooterHome';
+import React, { Component } from 'react';
+import HomeSlider from 'components/home/HomeSlider';
+import FooterHome from 'components/common/FooterHome';
 
 class HomePage extends Component {
   render() {

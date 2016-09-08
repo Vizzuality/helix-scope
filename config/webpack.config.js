@@ -60,6 +60,16 @@ const webpackConfig = {
     ]
   },
   resolve: {
+    root: [
+      rootPath
+    ],
+    alias: {
+      actions: 'app/actions',
+      reducers: 'app/reducers',
+      components: 'app/components',
+      containers: 'app/containers',
+      fonts: 'app/fonts'
+    },
     extensions: ['', '.js', '.jsx']
   },
 

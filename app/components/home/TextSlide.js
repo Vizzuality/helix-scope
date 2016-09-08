@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import Button from '../common/Button';
+import React, { Component } from 'react';
+import Button from 'components/common/Button';
 
 class TextSlide extends Component {
   render() {
@@ -14,7 +14,7 @@ class TextSlide extends Component {
             size="large"
             link={btn.link}
             text={btn.text}
-            />
+          />
         );
       });
     }

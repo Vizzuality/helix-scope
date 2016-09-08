@@ -1,5 +1,5 @@
-import {connect} from 'react-redux';
-import Dashboard from '../../components/maps/Dashboard';
+import { connect } from 'react-redux';
+import Dashboard from 'components/maps/Dashboard';
 
 const mapStateToProps = state => ({
   config: state.config

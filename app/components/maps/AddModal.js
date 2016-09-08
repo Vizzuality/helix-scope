@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import Select from 'react-select';
-import Button from '../common/Button';
+import Button from 'components/common/Button';
 
 class AddModal extends Component {
   constructor() {

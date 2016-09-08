@@ -1,7 +1,7 @@
 import React from 'react';
-import MapsListContainer from '../../containers/maps/MapsListContainer';
-import Button from '../common/Button';
-import MapsModal from '../modals/MapsModal';
+import MapsListContainer from 'containers/maps/MapsListContainer';
+import Button from 'components/common/Button';
+import MapsModal from 'components/modals/MapsModal';
 
 class MapsPage extends React.Component {
   constructor(props) {

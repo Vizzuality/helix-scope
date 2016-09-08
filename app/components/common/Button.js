@@ -1,32 +1,30 @@
-import React, {Component} from 'react';
-import {Link} from 'react-router';
+import React from 'react';
+import { Link } from 'react-router';
 
-class Button extends Component {
-  render() {
-    let btnText;
-    if (this.props.text) {
-      btnText = <span className={`btn-text -${this.props.color}`}>{this.props.text}</span>;
-    }
-    if (this.props.link) {
-      return (
-        <Link to={this.props.link} className="c-btn btn-link">
-          <svg className={`btn-icon icon-${this.props.icon} -${this.props.style} -size-${this.props.size}`}>
-            <use xlinkHref={`#icon-${this.props.icon}`}></use>
-          </svg>
-          {btnText}
-        </Link>
-      );
-    }
+const Button = (props) => {
+  let btnText;
+  if (props.text) {
+    btnText = <span className={`btn-text -${props.color}`}>{props.text}</span>;
+  }
+  if (props.link) {
     return (
-      <button className={`c-btn -${this.props.position}`} onClick={this.props.onClick}>
-        <svg className={`btn-icon icon-${this.props.icon} -${this.props.style} -size-${this.props.size}`}>
-          <use xlinkHref={`#icon-${this.props.icon}`}></use>
+      <Link to={props.link} className="c-btn btn-link">
+        <svg className={`btn-icon icon-${props.icon} -${props.style} -size-${props.size}`}>
+          <use xlinkHref={`#icon-${props.icon}`}></use>
         </svg>
         {btnText}
-      </button>
+      </Link>
     );
   }
-}
+  return (
+    <button className={`c-btn -${props.position}`} onClick={props.onClick}>
+      <svg className={`btn-icon icon-${props.icon} -${props.style} -size-${props.size}`}>
+        <use xlinkHref={`#icon-${props.icon}`}></use>
+      </svg>
+      {btnText}
+    </button>
+  );
+};
 
 export default Button;
 
