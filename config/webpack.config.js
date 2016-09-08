@@ -40,7 +40,7 @@ const webpackConfig = {
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
     }),
     new StyleLintPlugin({
-      configFile: path.join(rootPath, 'config', '.stylelintrc'),
+      configFile: path.join(rootPath, '.stylelintrc'),
       files: 'app/styles/**/*.pcss'
     })
   ],
