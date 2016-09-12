@@ -66,6 +66,7 @@ class MapsPage extends React.Component {
           deleteMap={this.props.deleteMap}
         />
         <MapsModal
+          mapSelectedId={this.state.mapSelectedId}
           mapModalOpen={this.state.mapModalOpen}
           onSetMapModal={this.handleSetMapModal}
           scenarios={this.props.scenarios}

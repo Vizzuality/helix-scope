@@ -31,7 +31,11 @@ class MapsModal extends Component {
     });
   }
 
-  setMapState(newObj) {
+  setMapState(map) {
+    const newObj = Object.assign({}, map, {});
+    if (this.props.mapSelectedId) {
+      newObj.id = this.props.mapSelectedId;
+    }
     this.props.setMapState(newObj);
     this.props.onSetMapModal(false);
   }
