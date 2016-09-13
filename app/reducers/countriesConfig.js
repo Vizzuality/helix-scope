@@ -1,3 +1,5 @@
+import { GET_COUNTRIES_LIST } from 'actions/countriesConfig';
+
 const initialState = {
   countriesList: []
 };
@@ -9,7 +11,7 @@ function setCountriesList(state, countriesList) {
 
 export default function (state = initialState, action) {
   switch (action.type) {
-    case 'SET_COUNTRIES_LIST':
+    case GET_COUNTRIES_LIST:
       return setCountriesList(state, action.countriesList);
     default:
       return state;

@@ -9,6 +9,10 @@ class CountriesPage extends Component {
     this.props = props;
   }
 
+  componentDidMount() {
+    this.props.getCountriesList();
+  }
+
   render() {
     return (
       <div>
@@ -16,20 +20,22 @@ class CountriesPage extends Component {
           <div className="l-wrap">
             <div className="c-breadcrumbs">Home / Countries</div>
             <div className="c-txt-title">Countries</div>
-            <div className="c-txt-intro">Whats going to happen in your country? Find out the future of your country under different scenarios.</div>
-            <SearchBox setCountriesList={this.props.setCountriesList} countriesList={this.props.countriesList}/>
+            <div className="c-txt-intro">
+              Whats going to happen in your country? Find out the future of your country under different scenarios.
+            </div>
+            <SearchBox countriesList={this.props.countriesList} />
           </div>
         </div>
         <div className="l-page-content">
         </div>
-        <Footer className="l-footer"/>
+        <Footer className="l-footer" />
       </div>
     );
   }
 }
 
 CountriesPage.propTypes = {
-  setCountriesList: React.PropTypes.func,
+  getCountriesList: React.PropTypes.func,
   countriesList: React.PropTypes.array
 };
 
