@@ -12,9 +12,9 @@ class MapsModal extends Component {
       searchable: false,
       clearable: false,
       /* initial state options for modal */
-      selectedScenario: this.props.initialScenario,
-      selectedCategory: this.props.initialCategory,
-      selectedIndicator: this.props.initialIndicator
+      selectedScenario: this.props.mapConfigData.scenario,
+      selectedCategory: this.props.mapConfigData.category,
+      selectedIndicator: this.props.mapConfigData.indicator
     };
     this.handleScenarioChange = this.handleScenarioChange.bind(this);
     this.handleCategory = this.handleCategory.bind(this);
@@ -23,34 +23,19 @@ class MapsModal extends Component {
     this.setIndicators = this.setIndicators.bind(this);
   }
 
-  handleScenarioChange(newValue) {
-    this.setState({
-      selectedScenario: newValue
-    });
-  }
-
-  handleCategory(newValue) {
-    this.setState({
-      selectedCategory: newValue.slug,
-      selectedIndicator: null
-    });
-  }
-
-  handleIndicator(newValue) {
-    this.setState({
-      selectedIndicator: newValue.slug
-    });
-  }
-
   componentWillReceiveProps(nextProps) {
     this.setState({
-      selectedScenario: nextProps.initialScenario,
-      selectedCategory: nextProps.initialCategory,
-      selectedIndicator: nextProps.initialIndicator
+      selectedScenario: nextProps.mapConfigData.scenario,
+      selectedCategory: nextProps.mapConfigData.category,
+      selectedIndicator: nextProps.mapConfigData.indicato
     });
   }
 
-  setMapState(newObj) {
+  setMapState(map) {
+    const newObj = Object.assign({}, map, {});
+    if (this.props.mapSelectedId) {
+      newObj.id = this.props.mapSelectedId;
+    }
     this.props.setMapState(newObj);
     this.props.onSetMapModal(false);
   }
@@ -74,7 +59,26 @@ class MapsModal extends Component {
       category: this.state.selectedCategory,
       indicator: indicatorValue
     };
-    return {activeIndicators, indicatorValue, mapState};
+    return { activeIndicators, indicatorValue, mapState };
+  }
+
+  handleScenarioChange(newValue) {
+    this.setState({
+      selectedScenario: newValue
+    });
+  }
+
+  handleCategory(newValue) {
+    this.setState({
+      selectedCategory: newValue.slug,
+      selectedIndicator: null
+    });
+  }
+
+  handleIndicator(newValue) {
+    this.setState({
+      selectedIndicator: newValue.slug
+    });
   }
 
   render() {
@@ -87,7 +91,7 @@ class MapsModal extends Component {
           modalOpen={this.props.mapModalOpen}
           onSetModal={this.props.onSetMapModal}
           btnStyle="dark"
-          >
+        >
           <div className="title">
             Add Scenario
           </div>
@@ -101,7 +105,7 @@ class MapsModal extends Component {
                 value={scenario.id}
                 checked={scenario.id === this.state.selectedScenario}
                 onChange={() => this.handleScenarioChange(scenario.id)}
-                />
+              />
               <label htmlFor={`scenario-${index}`}>
                 {scenario.title}
               </label>
@@ -123,7 +127,7 @@ class MapsModal extends Component {
               searchable={this.state.searchable}
               labelKey="title"
               valueKey="slug"
-              />
+            />
             <Select
               options={newIndicators.activeIndicators}
               clearable={this.state.clearable}
@@ -133,9 +137,12 @@ class MapsModal extends Component {
               searchable={this.state.searchable}
               labelKey="title"
               valueKey="slug"
-              />
+            />
           </div>
-          <Button onClick={() => this.setMapState(newIndicators.mapState)} icon="arrow" style="primary" size="large" text="explore" color="dark"/>
+          <Button
+            onClick={() => this.setMapState(newIndicators.mapState)}
+            icon="arrow" style="primary" size="large" text="explore" color="dark"
+          />
         </Modal>
       </div>
     );
@@ -164,17 +171,13 @@ MapsModal.propTypes = {
   **/
   indicators: React.PropTypes.array,
   /**
-  * Initial value passed to modal when opened
+  * Data of the map config
   **/
-  initialScenario: React.PropTypes.string,
-  /**
-  * Initial value passed to modal when opened
-  **/
-  initialCategory: React.PropTypes.string,
-  /**
-  * Initial value passed to modal when opened
-  **/
-  initialIndicator: React.PropTypes.string,
+  mapConfigData: React.PropTypes.shape({
+    scenario: React.PropTypes.string,
+    category: React.PropTypes.string,
+    indicator: React.PropTypes.string
+  }),
   /**
   * Function to supply setMap action to Maps page
   **/

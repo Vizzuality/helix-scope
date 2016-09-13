@@ -4,19 +4,9 @@ import Dashboard from 'containers/maps/DashboardContainer';
 
 class Map extends React.Component {
   render() {
-    const {id} = {...this.props};
+    const { id } = this.props;
     return (
-      <div className="scenario-wrapper">
-        <Dashboard
-          id={this.props.id}
-          scenario={this.props.scenario}
-          category={this.props.category}
-          indicator={this.props.indicator}
-          maps={this.props.maps}
-          deleteMap={this.props.deleteMap}
-          />
-        <div id={`map${id}`} className="c-map"></div>
-      </div>
+      <div id={`map${id}`} className="c-map"></div>
    );
   }
 

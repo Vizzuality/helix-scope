@@ -8,21 +8,18 @@ class MapsPage extends React.Component {
     super(props);
     this.state = {
       mapModalOpen: false,
-      initialScenario: '0',
-      initialCategory: 'climate',
-      initialIndicator: 'avg-precipitation'
+      mapSelectedId: null
     };
     this.handleSetMapModal = this.handleSetMapModal.bind(this);
-  }
-
-  handleSetMapModal(status) {
-    this.setState({
-      mapModalOpen: status
-    });
+    this.defaultMapConfig = {
+      scenario: '0',
+      category: 'climate',
+      indicator: 'avg-precipitation'
+    };
   }
 
   componentDidMount() {
-    const {query} = this.context.location;
+    const { query } = this.context.location;
 
     if (query && query.maps) {
       this.props.setParamsFromURL(query.maps);
@@ -37,12 +34,30 @@ class MapsPage extends React.Component {
     }
   }
 
+  setMapConfigModal(id) {
+    this.setState({
+      mapModalOpen: true,
+      mapSelectedId: id
+    });
+  }
+
+  handleSetMapModal(status) {
+    this.setState({
+      mapModalOpen: status
+    });
+  }
+
   render() {
     let addBtn;
     const mapsList = this.props.maps;
     if (mapsList.length < 4) {
-      addBtn = <Button icon="plus-big" style="primary" size="large" onClick={() => this.handleSetMapModal(true)}/>;
+      addBtn = <Button icon="plus-big" style="primary" size="large" onClick={() => this.setMapConfigModal(null)} />;
     }
+
+    const mapConfigData = this.state.mapSelectedId
+      ? this.props.maps[this.state.mapSelectedId]
+      // default map config
+      : this.defaultMapConfig;
     return (
       <div className="-dark">
         <div className="c-add-map">
@@ -52,19 +67,19 @@ class MapsPage extends React.Component {
           maps={this.props.maps}
           latLng={this.props.latLng}
           zoom={this.props.zoom}
+          handleMapConfig={(id) => this.setMapConfigModal(id)}
           deleteMap={this.props.deleteMap}
-          />
+        />
         <MapsModal
+          mapSelectedId={this.state.mapSelectedId}
           mapModalOpen={this.state.mapModalOpen}
           onSetMapModal={this.handleSetMapModal}
           scenarios={this.props.scenarios}
           categories={this.props.categories}
           indicators={this.props.indicators}
-          initialScenario={this.state.initialScenario}
-          initialCategory={this.state.initialCategory}
-          initialIndicator={this.state.initialIndicator}
+          mapConfigData={mapConfigData}
           setMapState={this.props.setMap}
-          />
+        />
       </div>
     );
   }
