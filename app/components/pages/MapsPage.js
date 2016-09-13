@@ -11,6 +11,11 @@ class MapsPage extends React.Component {
       mapSelectedId: null
     };
     this.handleSetMapModal = this.handleSetMapModal.bind(this);
+    this.defaultMapConfig = {
+      scenario: '0',
+      category: 'climate',
+      indicator: 'avg-precipitation'
+    };
   }
 
   componentDidMount() {
@@ -52,7 +57,7 @@ class MapsPage extends React.Component {
     const mapConfigData = this.state.mapSelectedId
       ? this.props.maps[this.state.mapSelectedId]
       // default map config
-      : { scenario: '0', category: 'climate', indicator: 'avg-precipitation' };
+      : this.defaultMapConfig;
     return (
       <div className="-dark">
         <div className="c-add-map">
