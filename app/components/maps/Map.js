@@ -1,13 +1,36 @@
 import React from 'react';
 import L from 'leaflet';
-import Dashboard from 'containers/maps/DashboardContainer';
 
 class Map extends React.Component {
-  render() {
-    const { id } = this.props;
-    return (
-      <div id={`map${id}`} className="c-map"></div>
-   );
+
+  componentDidMount() {
+    this.map = L.map(`map${this.props.id}`);
+    this.map.setView([this.props.latLng.lat, this.props.latLng.lng], this.props.zoom);
+    this.map.zoomControl.setPosition('topright');
+    this.map.scrollWheelZoom.disable();
+    this.tileLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
+
+    // Set listeners
+    this.setListeners();
+  }
+
+  componentWillReceiveProps(props) {
+    const paramsChanged = props.latLng.lat !== this.props.latLng.lat ||
+      props.latLng.lng !== this.props.latLng.lng ||
+      props.zoom !== this.props.zoom || props.maps !== this.props.maps;
+
+    if (paramsChanged) {
+      this.map.setView([props.latLng.lat, props.latLng.lng], props.zoom);
+
+      if (this.resizeTimer) {
+        clearTimeout(this.resizeTimer);
+        this.resizeTimer = null;
+      }
+
+      this.resizeTimer = setTimeout(() => {
+        this.map.invalidateSize();
+      }, 10);
+    }
   }
 
   shouldComponentUpdate(props) {
@@ -19,26 +42,8 @@ class Map extends React.Component {
     return shouldUpdate;
   }
 
-  componentWillReceiveProps(props) {
-    const paramsChanged = props.latLng.lat !== this.props.latLng.lat ||
-      props.latLng.lng !== this.props.latLng.lng ||
-      props.zoom !== this.props.zoom;
-
-    if (paramsChanged) {
-      this.map.setView([props.latLng.lat, props.latLng.lng], props.zoom);
-      this.map.invalidateSize();
-    }
-  }
-
-  componentDidMount() {
-    this.map = L.map(`map${this.props.id}`);
-    this.map.setView([this.props.latLng.lat, this.props.latLng.lng], this.props.zoom);
-    this.map.zoomControl.setPosition('topright');
-    this.map.scrollWheelZoom.disable();
-    this.tileLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
-
-    // Set listeners
-    this.setListeners();
+  componentWillUnmount() {
+    this.map.remove();
   }
 
   setListeners() {
@@ -72,8 +77,11 @@ class Map extends React.Component {
     };
   }
 
-  componentWillUnmount() {
-    this.map.remove();
+  render() {
+    const { id } = this.props;
+    return (
+      <div id={`map${id}`} className="c-map"></div>
+   );
   }
 }
 
