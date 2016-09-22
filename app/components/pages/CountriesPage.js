@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import SearchBox from 'components/common/SearchBox';
+import SearchBox from 'containers/common/SearchBox';
 import Footer from 'components/common/Footer';
 
 class CountriesPage extends Component {

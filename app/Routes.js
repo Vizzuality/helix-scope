@@ -5,6 +5,7 @@ import ContainerPage from './containers/pages/ContainerPage';
 import HomePage from './containers/pages/HomePage';
 import MapsPage from './containers/pages/MapsPage';
 import CountriesPage from './containers/pages/CountriesPage';
+import CountriesDetailPage from './containers/pages/CountriesDetailPage';
 import ComparePage from './components/pages/ComparePage';
 import PartnersPage from './components/pages/PartnersPage';
 import AboutPage from './containers/pages/AboutPage';
@@ -20,7 +21,10 @@ const Routes = ({ history }) => (
         <Route path="global-scenarios(/:lat)(/:lng)(/:zoom)" component={MapsPage} />
       </Route>
       <Route path="global-scenarios(/:lat)(/:lng)(/:zoom)" component={MapsPage} />
-      <Route path="countries" component={CountriesPage} />
+      <Route path="countries">
+        <IndexRoute component={CountriesPage} />
+        <Route path=":slug" component={CountriesDetailPage} />
+      </Route>
       <Route path="compare" component={ComparePage} />
       <Route path="partners" component={PartnersPage} />
       <Route path="about" component={AboutPage} />
