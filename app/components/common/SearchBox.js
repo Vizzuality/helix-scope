@@ -12,9 +12,9 @@ class SearchBox extends React.Component {
   }
 
   onSelectChange(value) {
-    this.setState({
-      valueSelected: value.iso
-    });
+    if (value && value.name) {
+      this.props.goToCountry(value.name);
+    }
   }
 
   render() {
@@ -22,7 +22,7 @@ class SearchBox extends React.Component {
       <div className="c-search-box">
         <Select
           name="countries-search-list"
-          arrowRenderer={() => <Button link="/countries" style="primary" size="large" icon="search" position="right" />}
+          arrowRenderer={() => <Button style="primary" size="large" icon="search" position="right" />}
           clearable={false}
           value={this.state.valueSelected}
           options={this.props.countriesList}
@@ -38,7 +38,8 @@ class SearchBox extends React.Component {
 }
 
 SearchBox.propTypes = {
-  countriesList: React.PropTypes.array
+  countriesList: React.PropTypes.array,
+  goToCountry: React.PropTypes.func.isRequired
 };
 
 export default SearchBox;
