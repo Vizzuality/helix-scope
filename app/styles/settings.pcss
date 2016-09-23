@@ -2,19 +2,10 @@
 $font-heading: "FjallaOneRegular", sans-serif;
 $font-body: "PTSerif-Regular", serif;
 
-/* SCREENS */
-$screen-xs: 320px;
-$screen-s: 540px;
-$screen-m: 768px;
-$screen-l: 1024px;
-$screen-xl: 1280px;
-$screen-xxl: 2000px;
-
 /* View ports */
-@custom-media --mobile-viewport (min-width: 320px) ;
-@custom-media --medium-viewport (min-width: 768px) ;
-@custom-media --large-viewport (min-width: 1280px) ;
-@custom-media --desktop-viewport (min-width: 2000px) ;
+@custom-media --medium-viewport (min-width: 40em);
+@custom-media --desktop-viewport (min-width: 64em);
+@custom-media --large-viewport (min-width: 85.333rem);
 
 /* GRID  */
 $wrap-padding-desktop: 100px;
@@ -76,3 +67,5 @@ $font-size-medium: 20px;
 $font-size: 15px;
 $font-size-small: 13px;
 $font-size-x-small: 12px;
+
+$header-height: 80px;
