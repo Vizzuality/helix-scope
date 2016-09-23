@@ -1,7 +1,7 @@
 import React from 'react';
 import Footer from 'components/common/Footer';
 
-function AboutPage() {
+export default function () {
   return (
     <div>
       <div className="l-main">
@@ -28,5 +28,3 @@ function AboutPage() {
     </div>
   );
 }
-
-export default AboutPage;
