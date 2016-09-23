@@ -5,7 +5,7 @@ function HomeSlide6() {
   return (
     <TextSlide
       title="Compare countries’ climate trajectories"
-      />
+    />
   );
 }
 
