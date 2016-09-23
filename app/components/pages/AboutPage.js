@@ -1,28 +1,32 @@
 import React from 'react';
 import Footer from 'components/common/Footer';
 
-const AboutPage = () => {
+function AboutPage() {
   return (
     <div>
-      <div className="l-banner -blank">
-        <div className="l-wrap">
-          <div className="c-breadcrumbs"><span>Home</span> / About</div>
-          <div className="c-txt-title">About</div>
-          <div className="c-txt-intro">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent lacinia nisl in nisi tristique, et vestibulum metus semper.</div>
+      <div className="l-main">
+        <div className="row">
+          <div className="column">
+            <div className="c-breadcrumbs"><span>Home</span> / About</div>
+            <div className="c-txt-title">About</div>
+            <div className="c-txt-intro">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent lacinia nisl in nisi tristique, et vestibulum metus semper.</div>
+          </div>
+        </div>
+        <div className="row">
+          <div className="column small-12 large-10 large-offset-2">
+            <div className="c-txt-title -secondary">Mission</div>
+            <div className="c-txt-body -large">
+              Cras sodales, urna quis sagittis convallis, nisi sem aliquet velit, id finibus est lorem pretium nibh. Aliquam eget lacus eget arcu fermentum tempor ut sed tellus. Fusce blandit malesuada diam eget ullamcorper. Donec tempor dignissim lobortis. Morbi ut hendrerit libero. Aliquam erat volutpat. Integer turpis risus, pretium nec rutrum at, auctor a nibh. Ut ac lectus fringilla, venenatis orci condimentum, suscipit
+            </div>
+            <div className="c-txt-body">
+              Cras sodales, urna quis sagittis convallis, nisi sem aliquet velit, id finibus est lorem pretium nibh. Aliquam eget lacus eget arcu fermentum tempor ut sed tellus. Fusce blandit malesuada diam eget ullamcorper. Donec tempor dignissim lobortis. Morbi ut hendrerit libero. Aliquam erat volutpat. Integer turpis risus, pretium nec rutrum at, auctor a nibh. Ut ac lectus fringilla, venenatis orci condimentum, suscipit
+            </div>
+          </div>
         </div>
       </div>
-      <div className="l-page-content">
-        <div className="c-txt-title -secondary">Mission</div>
-        <div className="c-txt-body -large">
-          Cras sodales, urna quis sagittis convallis, nisi sem aliquet velit, id finibus est lorem pretium nibh. Aliquam eget lacus eget arcu fermentum tempor ut sed tellus. Fusce blandit malesuada diam eget ullamcorper. Donec tempor dignissim lobortis. Morbi ut hendrerit libero. Aliquam erat volutpat. Integer turpis risus, pretium nec rutrum at, auctor a nibh. Ut ac lectus fringilla, venenatis orci condimentum, suscipit
-        </div>
-        <div className="c-txt-body">
-          Cras sodales, urna quis sagittis convallis, nisi sem aliquet velit, id finibus est lorem pretium nibh. Aliquam eget lacus eget arcu fermentum tempor ut sed tellus. Fusce blandit malesuada diam eget ullamcorper. Donec tempor dignissim lobortis. Morbi ut hendrerit libero. Aliquam erat volutpat. Integer turpis risus, pretium nec rutrum at, auctor a nibh. Ut ac lectus fringilla, venenatis orci condimentum, suscipit
-        </div>
-      </div>
-      <Footer className="l-footer"/>
+      <Footer className="l-footer" />
     </div>
   );
-};
+}
 
 export default AboutPage;

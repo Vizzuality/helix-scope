@@ -1,3 +1,14 @@
+/* Main */
+.l-main {
+  /* 1rem because of the header top positon */
+  padding-top: calc($header-height + $margin-large + 1rem);
+  padding-bottom: $margin-extra-large;
+
+  @media (--large-viewport) {
+    min-height: calc(100vh - $header-height);
+  }
+}
+
 /* Header */
 .-dark {
   background-color: $color-base-dark;
