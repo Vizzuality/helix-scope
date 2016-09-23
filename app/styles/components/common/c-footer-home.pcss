@@ -1,23 +1,17 @@
 .c-footer-home {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 $wrap-padding-desktop;
-  position: absolute;
-  bottom: 40px;
-  left: 0;
-  right: 0;
-
-  > .icon-logo {
+  .icon-logo {
     max-width: 100px;
     max-height: 100px;
   }
 
-  > .text {
-    color: $font-white;
-    font-size: $font-size-x-small;
-    text-align: center;
-    padding: 0 20px;
+  .text-container {
+    text-align: right;
+
+    .text {
+      color: $font-white;
+      font-size: $font-size-x-small;
+      text-align: center;
+      padding: 0 20px;
+    }
   }
 }
