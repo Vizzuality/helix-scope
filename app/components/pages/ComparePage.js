@@ -10,8 +10,8 @@ class ComparePage extends Component {
       disabled: false,
       searchable: false,
       clearable: false,
-      optionsOne: [{title: 'Brazil', slug: 'brazil'}, {title: 'Singapore', slug: 'singapore'}],
-      optionsTwo: [{title: 'Brazil', slug: 'brazil'}, {title: 'Singapore', slug: 'singapore'}],
+      optionsOne: [{ title: 'Brazil', slug: 'brazil' }, { title: 'Singapore', slug: 'singapore' }],
+      optionsTwo: [{ title: 'Brazil', slug: 'brazil' }, { title: 'Singapore', slug: 'singapore' }],
       valueOne: 'Brazil',
       valueTwo: 'Singapore'
     };
@@ -35,39 +35,45 @@ class ComparePage extends Component {
     return (
       <div>
         <div className="l-banner -compare">
-          <div className="l-wrap">
-            <div className="c-breadcrumbs">Home / Compare</div>
-            <div className="c-txt-title">Compare</div>
-            <div className="c-txt-intro">Climate change will affect different countries in different ways. Choose the countries you are interested in and find out the impact of the 2°C, 4°C and 6°C scenarios.</div>
-            <div className="c-dropdowns -left">
-              <Select
-                options={this.state.optionsOne}
-                clearable={this.state.clearable}
-                disabled={this.state.disabled}
-                value={this.state.valueOne}
-                onChange={this.handleCountryOne}
-                searchable={this.state.searchable}
-                labelKey="title"
-                valueKey="slug"
-                placeholder="Choose country"
+          <div className="row">
+            <div className="column">
+              <div className="c-breadcrumbs">Home / Compare</div>
+              <div className="c-txt-title">Compare</div>
+              <div className="c-txt-intro">Climate change will affect different countries in different ways. Choose the countries you are interested in and find out the impact of the 2°C, 4°C and 6°C scenarios.</div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="column">
+              <div className="c-dropdowns -left">
+                <Select
+                  options={this.state.optionsOne}
+                  clearable={this.state.clearable}
+                  disabled={this.state.disabled}
+                  value={this.state.valueOne}
+                  onChange={this.handleCountryOne}
+                  searchable={this.state.searchable}
+                  labelKey="title"
+                  valueKey="slug"
+                  placeholder="Choose country"
                 />
-              <Select
-                options={this.state.optionsTwo}
-                clearable={this.state.clearable}
-                disabled={this.state.disabled}
-                value={this.state.valueTwo}
-                onChange={this.handleCountryTwo}
-                searchable={this.state.searchable}
-                labelKey="title"
-                valueKey="slug"
-                placeholder="Choose country"
+                <Select
+                  options={this.state.optionsTwo}
+                  clearable={this.state.clearable}
+                  disabled={this.state.disabled}
+                  value={this.state.valueTwo}
+                  onChange={this.handleCountryTwo}
+                  searchable={this.state.searchable}
+                  labelKey="title"
+                  valueKey="slug"
+                  placeholder="Choose country"
                 />
+              </div>
             </div>
           </div>
         </div>
         <div className="l-page-content">
         </div>
-        <Footer className="l-footer"/>
+        <Footer className="l-footer" />
       </div>
     );
   }
