@@ -44,7 +44,7 @@
           "title": "Number of people (%)"
         }
       ],
-      "desviations": [
+      "measures": [
         {
           "slug": "standard-desviation",
           "title": "Standard desviation"

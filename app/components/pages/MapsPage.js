@@ -15,7 +15,7 @@ class MapsPage extends React.Component {
       scenario: '0',
       category: 'climate',
       indicator: 'avg-precipitation',
-      desviation: 'standard-desviation'
+      measure: 'standard-desviation'
     };
   }
 

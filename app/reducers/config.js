@@ -5,7 +5,7 @@ const initialState = {
   scenarios: [],
   categories: [],
   indicators: [],
-  desviations: []
+  measures: []
 };
 export default function (state = initialState, action) {
   switch (action.type) {
