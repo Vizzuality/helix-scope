@@ -13,11 +13,13 @@ class CountriesPage extends Component {
   render() {
     return (
       <div className="l-banner -countries">
-        <div className="l-wrap">
-          <div className="c-breadcrumbs">Home / Countries</div>
-          <div className="c-txt-title">Countries</div>
-          <div className="c-txt-intro">
-            <h2>Hi ! I'm {this.props.slug}</h2>
+        <div className="row">
+          <div className="column">
+            <div className="c-breadcrumbs -inv">Home / Countries / {this.props.slug}</div>
+            <div className="c-txt-title -inv">Countries</div>
+            <div className="c-txt-intro -inv">
+              <h2>Hi ! I'm {this.props.slug}</h2>
+            </div>
           </div>
         </div>
       </div>
