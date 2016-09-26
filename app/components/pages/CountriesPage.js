@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import SearchBox from 'containers/common/SearchBox';
+import ExploreScenarios from 'components/common/ExploreScenarios';
 import Footer from 'components/common/Footer';
 
 class CountriesPage extends Component {
@@ -29,6 +30,7 @@ class CountriesPage extends Component {
           </div>
         </div>
         <div className="l-page-content">
+          <ExploreScenarios />
         </div>
         <Footer className="l-footer" />
       </div>
