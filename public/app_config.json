@@ -47,6 +47,16 @@
           "slug": "number-of-people",
           "title": "Number of people (%)"
         }
+      ],
+      "desviations": [
+        {
+          "slug": "standard-desviation",
+          "title": "Standard desviation"
+        },
+        {
+          "slug": "acumulated-desviation",
+          "title": "Acumulated desviation"
+        }
       ]
     }
   }

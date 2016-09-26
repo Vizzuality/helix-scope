@@ -14,11 +14,13 @@ class MapsModal extends Component {
       /* initial state options for modal */
       selectedScenario: this.props.mapConfigData.scenario,
       selectedCategory: this.props.mapConfigData.category,
-      selectedIndicator: this.props.mapConfigData.indicator
+      selectedIndicator: this.props.mapConfigData.indicator,
+      selectedDesviation: this.props.mapConfigData.desviation
     };
     this.handleScenarioChange = this.handleScenarioChange.bind(this);
     this.handleCategory = this.handleCategory.bind(this);
     this.handleIndicator = this.handleIndicator.bind(this);
+    this.handleDesviation = this.handleDesviation.bind(this);
     this.setMapState = this.setMapState.bind(this);
     this.setIndicators = this.setIndicators.bind(this);
   }
@@ -27,7 +29,8 @@ class MapsModal extends Component {
     this.setState({
       selectedScenario: nextProps.mapConfigData.scenario,
       selectedCategory: nextProps.mapConfigData.category,
-      selectedIndicator: nextProps.mapConfigData.indicato
+      selectedIndicator: nextProps.mapConfigData.indicator,
+      selectedDesviation: nextProps.mapConfigData.desviation
     });
   }
 
@@ -41,7 +44,7 @@ class MapsModal extends Component {
   }
 
   setIndicators() {
-    const indicators = this.props.indicators;
+    const indicators = this.props.config.indicators;
     const activeIndicators = [];
     let indicatorValue = this.state.selectedIndicator;
     for (let i = 0; i < indicators.length; i++) {
@@ -55,6 +58,7 @@ class MapsModal extends Component {
     }
 
     const mapState = {
+      desviation: this.state.selectedDesviation,
       scenario: this.state.selectedScenario,
       category: this.state.selectedCategory,
       indicator: indicatorValue
@@ -81,6 +85,12 @@ class MapsModal extends Component {
     });
   }
 
+  handleDesviation(newValue) {
+    this.setState({
+      selectedDesviation: newValue.slug
+    });
+  }
+
   render() {
     const newIndicators = this.setIndicators();
 
@@ -96,7 +106,7 @@ class MapsModal extends Component {
             Add Scenario
           </div>
           <div className="scenarios">
-          {this.props.scenarios.map((scenario, index) =>
+          {this.props.config.scenarios.map((scenario, index) =>
             <div className={`scenario scenario-${scenario.id}`} key={scenario.id}>
               <input
                 id={`scenario-${scenario.id}`}
@@ -119,7 +129,7 @@ class MapsModal extends Component {
           </div>
           <div className="c-dropdowns">
             <Select
-              options={this.props.categories}
+              options={this.props.config.categories}
               clearable={this.state.clearable}
               disabled={this.state.disabled}
               value={this.state.selectedCategory}
@@ -134,6 +144,16 @@ class MapsModal extends Component {
               disabled={this.state.disabled}
               value={newIndicators.indicatorValue}
               onChange={this.handleIndicator}
+              searchable={this.state.searchable}
+              labelKey="title"
+              valueKey="slug"
+            />
+            <Select
+              options={this.props.config.desviations}
+              clearable={this.state.clearable}
+              disabled={this.state.disabled}
+              value={this.state.selectedDesviation}
+              onChange={this.handleDesviation}
               searchable={this.state.searchable}
               labelKey="title"
               valueKey="slug"
@@ -159,24 +179,22 @@ MapsModal.propTypes = {
   **/
   mapModalOpen: React.PropTypes.bool,
   /**
-  * Scenarios array for populating modal
+  * Default config to populating modals
   **/
-  scenarios: React.PropTypes.array,
-  /**
-  * Categories array for populating modal
-  **/
-  categories: React.PropTypes.array,
-  /**
-  * Indicators array for populating modal
-  **/
-  indicators: React.PropTypes.array,
+  config: React.PropTypes.shape({
+    desviations: React.PropTypes.array,
+    indicators: React.PropTypes.array,
+    categories: React.PropTypes.array,
+    scenarios: React.PropTypes.array
+  }).isRequired,
   /**
   * Data of the map config
   **/
   mapConfigData: React.PropTypes.shape({
+    desviation: React.PropTypes.string,
+    indicator: React.PropTypes.string,
     scenario: React.PropTypes.string,
-    category: React.PropTypes.string,
-    indicator: React.PropTypes.string
+    category: React.PropTypes.string
   }),
   /**
   * Function to supply setMap action to Maps page
