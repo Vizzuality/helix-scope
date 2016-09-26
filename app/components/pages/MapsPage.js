@@ -14,7 +14,8 @@ class MapsPage extends React.Component {
     this.defaultMapConfig = {
       scenario: '0',
       category: 'climate',
-      indicator: 'avg-precipitation'
+      indicator: 'avg-precipitation',
+      layer: ''
     };
   }
 
@@ -64,11 +65,9 @@ class MapsPage extends React.Component {
           {addBtn}
         </div>
         <MapsListContainer
-          maps={this.props.maps}
-          latLng={this.props.latLng}
-          zoom={this.props.zoom}
           handleMapConfig={(id) => this.setMapConfigModal(id)}
           deleteMap={this.props.deleteMap}
+          createLayer={this.props.createLayer}
         />
         <MapsModal
           mapSelectedId={this.state.mapSelectedId}
@@ -93,13 +92,12 @@ MapsPage.propTypes = {
   onSetMapModal: React.PropTypes.func,
   setParamsFromURL: React.PropTypes.func,
   maps: React.PropTypes.array,
-  latLng: React.PropTypes.object,
-  zoom: React.PropTypes.number,
   scenarios: React.PropTypes.array,
   categories: React.PropTypes.array,
   indicators: React.PropTypes.array,
   setMap: React.PropTypes.func,
-  deleteMap: React.PropTypes.func
+  deleteMap: React.PropTypes.func,
+  createLayer: React.PropTypes.func
 };
 
 export default MapsPage;

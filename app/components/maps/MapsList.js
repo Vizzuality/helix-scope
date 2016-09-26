@@ -13,28 +13,20 @@ function MapsList(props) {
 
   return (
     <div className="l-maps-container">
-      {props.maps.map((map, index) =>
-        <div className={`c-maps-list ${mapClasses[length - 1][index]}`} key={`map-${index}`}>
+      {props.maps.map((map) =>
+        <div className={`c-maps-list ${mapClasses[length - 1][map.id]}`} key={`map-${map.id}`}>
           <div className="scenario-wrapper">
             <Dashboard
-              id={`${index}`}
-              scenario={map.scenario}
-              category={map.category}
-              indicator={map.indicator}
-              maps={props.maps}
+              mapData={map}
               deleteMap={props.deleteMap}
               handleMapConfig={props.handleMapConfig}
             />
             <Map
-              id={`${index}`}
-              scenario={map.scenario}
-              category={map.category}
-              indicator={map.indicator}
-              latLng={props.latLng}
-              zoom={props.zoom}
+              mapData={map}
+              mapConfig={props.mapConfig}
               onMapDrag={props.onMapDrag}
-              maps={props.maps}
               deleteMap={props.deleteMap}
+              createLayer={props.createLayer}
             />
           </div>
         </div>
@@ -43,17 +35,16 @@ function MapsList(props) {
   );
 }
 
-MapsList.contextTypes = {
-  location: React.PropTypes.object
-};
-
 MapsList.propTypes = {
   maps: React.PropTypes.array,
-  latLng: React.PropTypes.object,
-  zoom: React.PropTypes.number,
+  mapConfig: React.PropTypes.shape({
+    latLng: React.PropTypes.object,
+    zoom: React.PropTypes.number
+  }).isRequired,
   onMapDrag: React.PropTypes.func,
   deleteMap: React.PropTypes.func,
-  handleMapConfig: React.PropTypes.func
+  handleMapConfig: React.PropTypes.func,
+  createLayer: React.PropTypes.func
 };
 
 export default MapsList;

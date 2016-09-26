@@ -27,7 +27,7 @@ class MapsModal extends Component {
     this.setState({
       selectedScenario: nextProps.mapConfigData.scenario,
       selectedCategory: nextProps.mapConfigData.category,
-      selectedIndicator: nextProps.mapConfigData.indicato
+      selectedIndicator: nextProps.mapConfigData.indicator
     });
   }
 

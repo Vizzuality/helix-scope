@@ -4,8 +4,10 @@ import L from 'leaflet';
 class Map extends React.Component {
 
   componentDidMount() {
-    this.map = L.map(`map${this.props.id}`);
-    this.map.setView([this.props.latLng.lat, this.props.latLng.lng], this.props.zoom);
+    this.map = L.map(`map${this.props.mapData.id}`);
+    this.map.setView(
+      [this.props.mapConfig.latLng.lat, this.props.mapConfig.latLng.lng],
+      this.props.mapConfig.zoom);
     this.map.zoomControl.setPosition('topright');
     this.map.scrollWheelZoom.disable();
     this.tileLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
@@ -15,12 +17,14 @@ class Map extends React.Component {
   }
 
   componentWillReceiveProps(props) {
-    const paramsChanged = props.latLng.lat !== this.props.latLng.lat ||
-      props.latLng.lng !== this.props.latLng.lng ||
-      props.zoom !== this.props.zoom || props.maps !== this.props.maps;
+    const paramsChanged = props.mapConfig.latLng.lat !== this.props.mapConfig.latLng.lat ||
+      props.mapConfig.latLng.lng !== this.props.mapConfig.latLng.lng ||
+      props.mapConfig.zoom !== this.props.mapConfig.zoom;
 
     if (paramsChanged) {
-      this.map.setView([props.latLng.lat, props.latLng.lng], props.zoom);
+      this.map.setView(
+        [props.mapConfig.latLng.lat, props.mapConfig.latLng.lng],
+        props.mapConfig.zoom);
 
       if (this.resizeTimer) {
         clearTimeout(this.resizeTimer);
@@ -31,13 +35,18 @@ class Map extends React.Component {
         this.map.invalidateSize();
       }, 10);
     }
+
+    if ((!this.layer && props.mapData.layer) ||
+      (props.mapData.layer && props.mapData.layer !== this.props.mapData.layer)) {
+      this.updateLayer(props.mapData.layer);
+    }
   }
 
   shouldComponentUpdate(props) {
-    const shouldUpdate = props.scenario !== this.props.scenario ||
-      props.scenario !== this.props.scenario ||
-      props.category !== this.props.category ||
-      props.indicator !== this.props.indicator;
+    const shouldUpdate = props.mapData.scenario !== this.props.mapData.scenario ||
+      props.mapData.scenario !== this.props.mapData.scenario ||
+      props.mapData.category !== this.props.mapData.category ||
+      props.mapData.indicator !== this.props.mapData.indicator;
 
     return shouldUpdate;
   }
@@ -56,6 +65,16 @@ class Map extends React.Component {
 
     this.map.on('zoomend', zoomend.bind(this));
     this.map.on('dragend', dragend.bind(this));
+
+    this.props.createLayer({
+      layer: {
+        map: this.props.mapData.id,
+        layer: {
+          sql: 'SELECT * FROM country_geoms',
+          cartocss: '#null{polygon-fill: #FF6600;polygon-opacity: 0.5;}'
+        }
+      }
+    });
   }
 
   getLatLng() {
@@ -77,8 +96,16 @@ class Map extends React.Component {
     };
   }
 
+  updateLayer(layer) {
+    if (this.layer) {
+      this.map.removeLayer(this.layer);
+    }
+    this.layer = L.tileLayer(layer, { noWrap: true });
+    this.layer.addTo(this.map);
+  }
+
   render() {
-    const { id } = this.props;
+    const { id } = this.props.mapData;
     return (
       <div id={`map${id}`} className="c-map"></div>
    );
@@ -86,15 +113,21 @@ class Map extends React.Component {
 }
 
 Map.propTypes = {
-  id: React.PropTypes.string,
-  scenario: React.PropTypes.string,
-  category: React.PropTypes.string,
-  indicator: React.PropTypes.string,
-  latLng: React.PropTypes.object,
-  zoom: React.PropTypes.number,
+  mapData: React.PropTypes.shape({
+    id: React.PropTypes.string,
+    layer: React.PropTypes.string,
+    scenario: React.PropTypes.string,
+    category: React.PropTypes.string,
+    indicator: React.PropTypes.string
+  }).isRequired,
+  mapConfig: React.PropTypes.shape({
+    latLng: React.PropTypes.object,
+    zoom: React.PropTypes.number
+  }).isRequired,
   onMapDrag: React.PropTypes.func,
-  maps: React.PropTypes.array,
-  deleteMap: React.PropTypes.func
+  deleteMap: React.PropTypes.func,
+  createLayer: React.PropTypes.func,
+  indicators: React.PropTypes.array
 };
 
 export default Map;

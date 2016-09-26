@@ -10,21 +10,21 @@ class Dashboard extends Component {
   setTitles() {
     let categoryTitle;
     this.props.config.categories.forEach(prop => {
-      if (prop.slug === this.props.category) {
+      if (prop.slug === this.props.mapData.category) {
         categoryTitle = prop.title;
       }
     });
 
     let indicatorTitle;
     this.props.config.indicators.forEach(prop => {
-      if (prop.slug === this.props.indicator) {
+      if (prop.slug === this.props.mapData.indicator) {
         indicatorTitle = prop.title;
       }
     });
 
     let scenarioTitle;
     if (this.props.config.scenarios.length > 0) {
-      scenarioTitle = this.props.config.scenarios[this.props.scenario].title;
+      scenarioTitle = this.props.config.scenarios[this.props.mapData.scenario].title;
     }
     return { scenarioTitle, categoryTitle, indicatorTitle };
   }
@@ -35,7 +35,7 @@ class Dashboard extends Component {
     let deleteBtn;
 
     if (this.props.maps.length > 1) {
-      deleteBtn = <Button onClick={() => this.props.deleteMap(this.props.id)} icon="close" style="light" size="small" />;
+      deleteBtn = <Button onClick={() => this.props.deleteMap(this.props.mapData.id)} icon="close" style="light" size="small" />;
     }
 
     const legendConfig = {
@@ -60,7 +60,7 @@ class Dashboard extends Component {
             {titles.scenarioTitle}
             <Button
               icon="settings" style="none" size="small"
-              onClick={() => this.props.handleMapConfig(this.props.id)}
+              onClick={() => this.props.handleMapConfig(this.props.mapData.id)}
             />
           </div>
           {deleteBtn}
@@ -70,7 +70,7 @@ class Dashboard extends Component {
           <span>{titles.indicatorTitle}</span>
           <div className="scale">
             <ul className="labels">
-              {legendConfig[this.props.category].map((element, index) =>
+              {legendConfig[this.props.mapData.category].map((element, index) =>
                 <li key={`legend-item-${index}`}>
                   <span style={{ backgroundColor: element.color }}></span>
                   {element.value}
@@ -79,32 +79,21 @@ class Dashboard extends Component {
             </ul>
           </div>
         </div>
-        <div className="dashboard-model">
-          <label className="control control--checkbox">Climate
-            <input type="checkbox" name="model" value="Model 1" />
-            <div className="control--indicator"></div>
-          </label>
-          <label className="control control--checkbox">Biodiversity
-            <input type="checkbox" name="model" value="Model 2" />
-            <div className="control--indicator"></div>
-          </label>
-          <label className="control control--checkbox">Precipitation
-            <input type="checkbox" name="model" value="Model 2" />
-            <div className="control--indicator"></div>
-          </label>
-        </div>
       </div>
    );
   }
 }
 
 Dashboard.propTypes = {
+  mapData: React.PropTypes.shape({
+    id: React.PropTypes.string,
+    layer: React.PropTypes.string,
+    scenario: React.PropTypes.string,
+    category: React.PropTypes.string,
+    indicator: React.PropTypes.string
+  }).isRequired,
   place: React.PropTypes.array,
-  id: React.PropTypes.string,
   index: React.PropTypes.number,
-  scenario: React.PropTypes.string,
-  category: React.PropTypes.string,
-  indicator: React.PropTypes.string,
   showDeleteBtn: React.PropTypes.bool,
   deleteMap: React.PropTypes.func,
   onMapDrag: React.PropTypes.func,
