@@ -8,16 +8,28 @@ class ContainerPage extends React.Component {
   getChildContext() {
     const location = this.props.location;
     location.params = this.props.params;
-    return {location};
+    return { location };
   }
 
   render() {
     return (
       <div>
-        <Header setShareModal={this.props.setShareModal} setMenuModal={this.props.setMenuModal}/>
-        {this.props.children}
-        <ShareModal shareModalOpen={this.props.shareModalOpen} setShareModal={() => this.props.setShareModal(false)} shareUrl={this.props.location.pathname} title="Share"/>
-        <MenuModal menuModalOpen={this.props.menuModalOpen} setShareModal={this.props.setShareModal} setMenuModal={() => this.props.setMenuModal(false)}/>
+        <Header
+          setShareModal={this.props.setShareModal}
+          setMenuModal={this.props.setMenuModal}
+        />
+          {this.props.children}
+        <ShareModal
+          title="Share"
+          shareModalOpen={this.props.shareModalOpen}
+          setShareModal={() => this.props.setShareModal(false)}
+          shareUrl={this.props.location.pathname}
+        />
+        <MenuModal
+          menuModalOpen={this.props.menuModalOpen}
+          setShareModal={this.props.setShareModal}
+          setMenuModal={() => this.props.setMenuModal(false)}
+        />
       </div>
     );
   }
@@ -59,7 +71,11 @@ ContainerPage.propTypes = {
   /**
   * Finds route pathname string for current location
   **/
-  pathname: React.PropTypes.string
+  pathname: React.PropTypes.string,
+  /**
+  * Finds route params
+  **/
+  params: React.PropTypes.object
 };
 
 export default ContainerPage;

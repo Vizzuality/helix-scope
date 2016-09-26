@@ -11,6 +11,7 @@ import { fetchConfig } from 'actions/config';
 import * as reducers from 'reducers';
 import Routes from './Routes';
 
+import './styles/lib/custom-foundation.css';
 import './styles/main.pcss';
 
 /**

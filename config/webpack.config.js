@@ -56,7 +56,8 @@ const webpackConfig = {
       {
         test: /\.(eot|ttf|woff2|woff)$/,
         loader: 'url-loader?prefix=fonts/&context=./app/fonts'
-      }
+      },
+      { test: /\.css$/, loader: 'style-loader!css-loader' }
     ]
   },
   resolve: {

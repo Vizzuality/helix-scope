@@ -1,16 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
 import HomeSlider from 'components/home/HomeSlider';
 import FooterHome from 'components/common/FooterHome';
 
-class HomePage extends Component {
-  render() {
-    return (
-      <div>
-        <HomeSlider {...this.props}/>
-        <FooterHome/>
-      </div>
-    );
-  }
+function HomePage(props) {
+  return (
+    <div>
+      <HomeSlider {...props} />
+      <FooterHome />
+    </div>
+  );
 }
 
 export default HomePage;

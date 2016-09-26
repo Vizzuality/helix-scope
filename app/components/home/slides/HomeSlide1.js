@@ -12,7 +12,7 @@ function HomeSlide1() {
           link: '/about'
         }
       ]}
-      />
+    />
   );
 }
 
