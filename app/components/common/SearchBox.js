@@ -29,6 +29,7 @@ class SearchBox extends React.Component {
           onChange={this.onSelectChange}
           placeholder="Type country name"
           searchPromptText="Type country name"
+          noResultsText="No countries found"
           labelKey="name"
           valueKey="iso"
         />
