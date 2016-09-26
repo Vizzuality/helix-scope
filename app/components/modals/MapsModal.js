@@ -102,12 +102,19 @@ class MapsModal extends Component {
           onSetModal={this.props.onSetMapModal}
           btnStyle="dark"
         >
-          <div className="title">
-            Add Scenario
+          <div className="row">
+            <div className="column">
+              <div className="title">
+                Add Scenario
+              </div>
+            </div>
           </div>
-          <div className="scenarios">
+          <div className="row align-center scenarios">
           {this.props.config.scenarios.map((scenario, index) =>
-            <div className={`scenario scenario-${scenario.id}`} key={scenario.id}>
+            <div
+              key={scenario.id}
+              className={`column scenario small-4 medium-3 scenario-${scenario.id}}`}
+            >
               <input
                 id={`scenario-${scenario.id}`}
                 name="scenario"
@@ -122,47 +129,62 @@ class MapsModal extends Component {
             </div>
           )}
           </div>
-          <div className="text">
-            Select the variables and type of impacts you would like to explore
+          <div className="row">
+            <div className="column">
+              <div className="text">
+                Select the variables and type of impacts you would like to explore
+              </div>
+            </div>
           </div>
-          <div className="actions">
+          <div className="row">
+            <div className="column small-12 medium-4">
+              <Select
+                className="c-react-select"
+                options={this.props.config.categories}
+                clearable={this.state.clearable}
+                disabled={this.state.disabled}
+                value={this.state.selectedCategory}
+                onChange={this.handleCategory}
+                searchable={this.state.searchable}
+                labelKey="title"
+                valueKey="slug"
+              />
+            </div>
+            <div className="column small-12 medium-4">
+              <Select
+                className="c-react-select"
+                options={newIndicators.activeIndicators}
+                clearable={this.state.clearable}
+                disabled={this.state.disabled}
+                value={newIndicators.indicatorValue}
+                onChange={this.handleIndicator}
+                searchable={this.state.searchable}
+                labelKey="title"
+                valueKey="slug"
+              />
+            </div>
+            <div className="column small-12 medium-4">
+              <Select
+                className="c-react-select"
+                options={this.props.config.desviations}
+                clearable={this.state.clearable}
+                disabled={this.state.disabled}
+                value={this.state.selectedDesviation}
+                onChange={this.handleDesviation}
+                searchable={this.state.searchable}
+                labelKey="title"
+                valueKey="slug"
+              />
+            </div>
           </div>
-          <div className="c-dropdowns">
-            <Select
-              options={this.props.config.categories}
-              clearable={this.state.clearable}
-              disabled={this.state.disabled}
-              value={this.state.selectedCategory}
-              onChange={this.handleCategory}
-              searchable={this.state.searchable}
-              labelKey="title"
-              valueKey="slug"
-            />
-            <Select
-              options={newIndicators.activeIndicators}
-              clearable={this.state.clearable}
-              disabled={this.state.disabled}
-              value={newIndicators.indicatorValue}
-              onChange={this.handleIndicator}
-              searchable={this.state.searchable}
-              labelKey="title"
-              valueKey="slug"
-            />
-            <Select
-              options={this.props.config.desviations}
-              clearable={this.state.clearable}
-              disabled={this.state.disabled}
-              value={this.state.selectedDesviation}
-              onChange={this.handleDesviation}
-              searchable={this.state.searchable}
-              labelKey="title"
-              valueKey="slug"
-            />
+          <div className="row">
+            <div className="column">
+              <Button
+                onClick={() => this.setMapState(newIndicators.mapState)}
+                icon="arrow" style="primary" size="large" text="explore" color="dark"
+              />
+            </div>
           </div>
-          <Button
-            onClick={() => this.setMapState(newIndicators.mapState)}
-            icon="arrow" style="primary" size="large" text="explore" color="dark"
-          />
         </Modal>
       </div>
     );

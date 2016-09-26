@@ -1,22 +1,6 @@
 .c-search-box {
-  height: 124px;
-  width: 100%;
-  background-color: #f5f5f5;
-  box-shadow: 0 0 4px 0 rgba(76, 0, 0, 0.2);
-  margin-top: 30px;
-  position: relative;
-  z-index: 1004;
-
-  .Select,
-  .Select-control {
-    height: 100%;
-    border: none;
-  }
-
-  .Select-value,
-  .Select-placeholder {
-    display: flex;
-    align-items: center;
+  .c-react-select {
+    height: 124px;
   }
 
   .Select-value-label,
@@ -24,7 +8,7 @@
   .Select-input > input {
     font-family: $font-body;
     font-style: italic;
-    font-size: 34px;
+    font-size: $font-size-medium-large;
     line-height: 1;
     color: $font-main;
     padding-left: 45px;
@@ -34,6 +18,10 @@
   .Select-placeholder {
     padding-left: 50px;
     color: $font-box-grey;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
   }
 
   .Select-input {
@@ -46,37 +34,5 @@
 
   .Select-arrow-zone {
     padding-right: $margin-extra-large;
-  }
-
-  > .c-btn {
-    position: absolute;
-    right: 45px;
-    top: 35px;
-  }
-
-  > .resultsList {
-    background-color: #f5f5f5;
-    box-shadow: 0 0 4px 0 rgba(76, 0, 0, 0.2);
-    margin-top: 10px;
-    max-height: 275px;
-    overflow: hidden;
-
-    > .result {
-      padding: 20px 45px;
-      cursor: pointer;
-      border-bottom: solid 1px #e8e6e6;
-    }
-
-    > .result:hover {
-      background-color: $white;
-    }
-
-    > .result a {
-      font-family: $font-body;
-      font-size: 15px;
-      line-height: 1.9;
-      color: #515253;
-      text-decoration: none;
-    }
   }
 }

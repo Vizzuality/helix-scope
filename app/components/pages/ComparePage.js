@@ -43,31 +43,33 @@ class ComparePage extends Component {
             </div>
           </div>
           <div className="row">
-            <div className="column">
-              <div className="c-dropdowns -left">
-                <Select
-                  options={this.state.optionsOne}
-                  clearable={this.state.clearable}
-                  disabled={this.state.disabled}
-                  value={this.state.valueOne}
-                  onChange={this.handleCountryOne}
-                  searchable={this.state.searchable}
-                  labelKey="title"
-                  valueKey="slug"
-                  placeholder="Choose country"
-                />
-                <Select
-                  options={this.state.optionsTwo}
-                  clearable={this.state.clearable}
-                  disabled={this.state.disabled}
-                  value={this.state.valueTwo}
-                  onChange={this.handleCountryTwo}
-                  searchable={this.state.searchable}
-                  labelKey="title"
-                  valueKey="slug"
-                  placeholder="Choose country"
-                />
-              </div>
+            <div className="column small-12 medium-4">
+              <Select
+                className="c-react-select"
+                options={this.state.optionsOne}
+                clearable={this.state.clearable}
+                disabled={this.state.disabled}
+                value={this.state.valueOne}
+                onChange={this.handleCountryOne}
+                searchable={this.state.searchable}
+                labelKey="title"
+                valueKey="slug"
+                placeholder="Choose country"
+              />
+            </div>
+            <div className="column small-12 medium-4">
+              <Select
+                className="c-react-select"
+                options={this.state.optionsTwo}
+                clearable={this.state.clearable}
+                disabled={this.state.disabled}
+                value={this.state.valueTwo}
+                onChange={this.handleCountryTwo}
+                searchable={this.state.searchable}
+                labelKey="title"
+                valueKey="slug"
+                placeholder="Choose country"
+              />
             </div>
           </div>
         </div>
