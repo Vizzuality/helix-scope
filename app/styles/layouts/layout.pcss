@@ -5,7 +5,7 @@
 
 .l-maps-container {
   position: relative;
-  padding-top: 110px;
+  padding-top: calc($header-height + $margin-medium + 1rem);
 }
 
 .l-banner {
@@ -40,19 +40,6 @@
 
   @media (--large-viewport) {
     min-height: calc(100vh - $header-height);
-  }
-}
-
-.l-wrap {
-  padding: 0 10px;
-  max-width: 1188px;
-
-  @media (--large-viewport) {
-    padding: 0 30px;
-  }
-
-  @media (--medium-viewport) {
-    padding: 0 60px;
   }
 }
 
