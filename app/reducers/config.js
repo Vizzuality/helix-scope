@@ -4,7 +4,8 @@ const initialState = {
   loading: true,
   scenarios: [],
   categories: [],
-  indicators: []
+  indicators: [],
+  measures: []
 };
 export default function (state = initialState, action) {
   switch (action.type) {

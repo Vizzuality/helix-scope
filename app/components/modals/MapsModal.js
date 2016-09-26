@@ -14,11 +14,13 @@ class MapsModal extends Component {
       /* initial state options for modal */
       selectedScenario: this.props.mapConfigData.scenario,
       selectedCategory: this.props.mapConfigData.category,
-      selectedIndicator: this.props.mapConfigData.indicator
+      selectedIndicator: this.props.mapConfigData.indicator,
+      selectedMeasure: this.props.mapConfigData.measure
     };
     this.handleScenarioChange = this.handleScenarioChange.bind(this);
     this.handleCategory = this.handleCategory.bind(this);
     this.handleIndicator = this.handleIndicator.bind(this);
+    this.handleMeasure = this.handleMeasure.bind(this);
     this.setMapState = this.setMapState.bind(this);
     this.setIndicators = this.setIndicators.bind(this);
   }
@@ -27,7 +29,8 @@ class MapsModal extends Component {
     this.setState({
       selectedScenario: nextProps.mapConfigData.scenario,
       selectedCategory: nextProps.mapConfigData.category,
-      selectedIndicator: nextProps.mapConfigData.indicato
+      selectedIndicator: nextProps.mapConfigData.indicator,
+      selectedMeasure: nextProps.mapConfigData.measure
     });
   }
 
@@ -41,7 +44,7 @@ class MapsModal extends Component {
   }
 
   setIndicators() {
-    const indicators = this.props.indicators;
+    const indicators = this.props.config.indicators;
     const activeIndicators = [];
     let indicatorValue = this.state.selectedIndicator;
     for (let i = 0; i < indicators.length; i++) {
@@ -55,6 +58,7 @@ class MapsModal extends Component {
     }
 
     const mapState = {
+      measure: this.state.selectedMeasure,
       scenario: this.state.selectedScenario,
       category: this.state.selectedCategory,
       indicator: indicatorValue
@@ -81,6 +85,12 @@ class MapsModal extends Component {
     });
   }
 
+  handleMeasure(newValue) {
+    this.setState({
+      selectedMeasure: newValue.slug
+    });
+  }
+
   render() {
     const newIndicators = this.setIndicators();
 
@@ -92,12 +102,19 @@ class MapsModal extends Component {
           onSetModal={this.props.onSetMapModal}
           btnStyle="dark"
         >
-          <div className="title">
-            Add Scenario
+          <div className="row">
+            <div className="column">
+              <div className="title">
+                Add Scenario
+              </div>
+            </div>
           </div>
-          <div className="scenarios">
-          {this.props.scenarios.map((scenario, index) =>
-            <div className={`scenario scenario-${scenario.id}`} key={scenario.id}>
+          <div className="row align-center scenarios">
+          {this.props.config.scenarios.map((scenario, index) =>
+            <div
+              key={scenario.id}
+              className={`column scenario small-4 medium-3 scenario-${scenario.id}`}
+            >
               <input
                 id={`scenario-${scenario.id}`}
                 name="scenario"
@@ -112,37 +129,62 @@ class MapsModal extends Component {
             </div>
           )}
           </div>
-          <div className="text">
-            Select the variables and type of impacts you would like to explore
+          <div className="row">
+            <div className="column">
+              <div className="text">
+                Select the variables and type of impacts you would like to explore
+              </div>
+            </div>
           </div>
-          <div className="actions">
+          <div className="row">
+            <div className="column small-12 medium-4">
+              <Select
+                className="c-react-select"
+                options={this.props.config.categories}
+                clearable={this.state.clearable}
+                disabled={this.state.disabled}
+                value={this.state.selectedCategory}
+                onChange={this.handleCategory}
+                searchable={this.state.searchable}
+                labelKey="title"
+                valueKey="slug"
+              />
+            </div>
+            <div className="column small-12 medium-4">
+              <Select
+                className="c-react-select"
+                options={newIndicators.activeIndicators}
+                clearable={this.state.clearable}
+                disabled={this.state.disabled}
+                value={newIndicators.indicatorValue}
+                onChange={this.handleIndicator}
+                searchable={this.state.searchable}
+                labelKey="title"
+                valueKey="slug"
+              />
+            </div>
+            <div className="column small-12 medium-4">
+              <Select
+                className="c-react-select"
+                options={this.props.config.measures}
+                clearable={this.state.clearable}
+                disabled={this.state.disabled}
+                value={this.state.selectedMeasure}
+                onChange={this.handleMeasure}
+                searchable={this.state.searchable}
+                labelKey="title"
+                valueKey="slug"
+              />
+            </div>
           </div>
-          <div className="c-dropdowns">
-            <Select
-              options={this.props.categories}
-              clearable={this.state.clearable}
-              disabled={this.state.disabled}
-              value={this.state.selectedCategory}
-              onChange={this.handleCategory}
-              searchable={this.state.searchable}
-              labelKey="title"
-              valueKey="slug"
-            />
-            <Select
-              options={newIndicators.activeIndicators}
-              clearable={this.state.clearable}
-              disabled={this.state.disabled}
-              value={newIndicators.indicatorValue}
-              onChange={this.handleIndicator}
-              searchable={this.state.searchable}
-              labelKey="title"
-              valueKey="slug"
-            />
+          <div className="row">
+            <div className="column">
+              <Button
+                onClick={() => this.setMapState(newIndicators.mapState)}
+                icon="arrow" style="primary" size="large" text="explore" color="dark"
+              />
+            </div>
           </div>
-          <Button
-            onClick={() => this.setMapState(newIndicators.mapState)}
-            icon="arrow" style="primary" size="large" text="explore" color="dark"
-          />
         </Modal>
       </div>
     );
@@ -159,29 +201,31 @@ MapsModal.propTypes = {
   **/
   mapModalOpen: React.PropTypes.bool,
   /**
-  * Scenarios array for populating modal
+  * Default config to populating modals
   **/
-  scenarios: React.PropTypes.array,
-  /**
-  * Categories array for populating modal
-  **/
-  categories: React.PropTypes.array,
-  /**
-  * Indicators array for populating modal
-  **/
-  indicators: React.PropTypes.array,
+  config: React.PropTypes.shape({
+    measures: React.PropTypes.array,
+    indicators: React.PropTypes.array,
+    categories: React.PropTypes.array,
+    scenarios: React.PropTypes.array
+  }).isRequired,
   /**
   * Data of the map config
   **/
   mapConfigData: React.PropTypes.shape({
+    measure: React.PropTypes.string,
+    indicator: React.PropTypes.string,
     scenario: React.PropTypes.string,
-    category: React.PropTypes.string,
-    indicator: React.PropTypes.string
+    category: React.PropTypes.string
   }),
   /**
   * Function to supply setMap action to Maps page
   **/
-  setMapState: React.PropTypes.func
+  setMapState: React.PropTypes.func,
+  /**
+  * Define selected map id
+  **/
+  mapSelectedId: React.PropTypes.string
 };
 
 export default MapsModal;

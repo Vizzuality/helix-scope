@@ -14,7 +14,8 @@ class MapsPage extends React.Component {
     this.defaultMapConfig = {
       scenario: '0',
       category: 'climate',
-      indicator: 'avg-precipitation'
+      indicator: 'avg-precipitation',
+      measure: 'standard-desviation'
     };
   }
 
@@ -71,13 +72,11 @@ class MapsPage extends React.Component {
           deleteMap={this.props.deleteMap}
         />
         <MapsModal
+          config={this.props.config}
+          mapConfigData={mapConfigData}
           mapSelectedId={this.state.mapSelectedId}
           mapModalOpen={this.state.mapModalOpen}
           onSetMapModal={this.handleSetMapModal}
-          scenarios={this.props.scenarios}
-          categories={this.props.categories}
-          indicators={this.props.indicators}
-          mapConfigData={mapConfigData}
           setMapState={this.props.setMap}
         />
       </div>
@@ -95,9 +94,7 @@ MapsPage.propTypes = {
   maps: React.PropTypes.array,
   latLng: React.PropTypes.object,
   zoom: React.PropTypes.number,
-  scenarios: React.PropTypes.array,
-  categories: React.PropTypes.array,
-  indicators: React.PropTypes.array,
+  config: React.PropTypes.object.isRequired,
   setMap: React.PropTypes.func,
   deleteMap: React.PropTypes.func
 };

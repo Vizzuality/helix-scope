@@ -17,7 +17,8 @@ export function setParamsFromURL(data) {
           id: index,
           scenario: params[0],
           category: params[1],
-          indicator: params[2]
+          indicator: params[2],
+          measure: params[3]
         });
       });
     }
@@ -38,7 +39,7 @@ export function updateURL() {
       query = '?maps=';
 
       maps.mapsList.forEach((map, index) => {
-        query += `${map.scenario},${map.category},${map.indicator}`;
+        query += `${map.scenario},${map.category},${map.indicator},${map.measure}`;
 
         if (index < maps.mapsList.length - 1) {
           query += '/';

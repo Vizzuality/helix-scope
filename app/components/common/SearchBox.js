@@ -21,6 +21,7 @@ class SearchBox extends React.Component {
     return (
       <div className="c-search-box">
         <Select
+          className="c-react-select"
           name="countries-search-list"
           arrowRenderer={() => <Button style="primary" size="large" icon="search" position="right" />}
           clearable={false}
@@ -29,6 +30,7 @@ class SearchBox extends React.Component {
           onChange={this.onSelectChange}
           placeholder="Type country name"
           searchPromptText="Type country name"
+          noResultsText="No countries found"
           labelKey="name"
           valueKey="iso"
         />
