@@ -6,14 +6,18 @@
       "scenarios": [
         {
           "id": "0",
-          "title": "2°C"
+          "title": "1.5°C"
         },
         {
           "id": "1",
-          "title": "4°C"
+          "title": "2°C"
         },
         {
           "id": "2",
+          "title": "4°C"
+        },
+        {
+          "id": "3",
           "title": "6°C"
         }
       ],

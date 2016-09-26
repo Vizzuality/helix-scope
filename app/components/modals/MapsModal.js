@@ -181,7 +181,11 @@ MapsModal.propTypes = {
   /**
   * Function to supply setMap action to Maps page
   **/
-  setMapState: React.PropTypes.func
+  setMapState: React.PropTypes.func,
+  /**
+  * Define selected map id
+  **/
+  mapSelectedId: React.PropTypes.string
 };
 
 export default MapsModal;
