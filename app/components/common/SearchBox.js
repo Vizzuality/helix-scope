@@ -12,8 +12,8 @@ class SearchBox extends React.Component {
   }
 
   onSelectChange(value) {
-    if (value && value.name) {
-      this.props.goToCountry(value.name);
+    if (value && value.iso) {
+      this.props.goToCountry(value.iso);
     }
   }
 
