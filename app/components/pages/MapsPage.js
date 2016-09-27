@@ -15,7 +15,8 @@ class MapsPage extends React.Component {
       scenario: '0',
       category: 'climate',
       indicator: 'avg-precipitation',
-      measure: 'standard-desviation'
+      measure: 'standard-desviation',
+      layer: ''
     };
   }
 
@@ -64,6 +65,7 @@ class MapsPage extends React.Component {
         </div>
         <MapsListContainer
           handleMapConfig={(id) => this.setMapConfigModal(id)}
+          createLayer={this.props.createLayer}
         />
         <MapsModal
           mapConfigData={mapConfigData}
@@ -82,7 +84,8 @@ MapsPage.contextTypes = {
 
 MapsPage.propTypes = {
   setParamsFromURL: React.PropTypes.func,
-  maps: React.PropTypes.array
+  maps: React.PropTypes.array,
+  createLayer: React.PropTypes.func
 };
 
 export default MapsPage;

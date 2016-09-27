@@ -1,11 +1,14 @@
 import React from 'react';
 import L from 'leaflet';
+import { CARTODB_USER, MAP_VECTOR_CSS, MAP_RASTER_CSS } from 'constants/map';
 
 class Map extends React.Component {
 
   componentDidMount() {
-    this.map = L.map(`map${this.props.id}`);
-    this.map.setView([this.props.latLng.lat, this.props.latLng.lng], this.props.zoom);
+    this.map = L.map(`map${this.props.mapData.id}`);
+    this.map.setView(
+      [this.props.mapConfig.latLng.lat, this.props.mapConfig.latLng.lng],
+      this.props.mapConfig.zoom);
     this.map.zoomControl.setPosition('topright');
     this.map.scrollWheelZoom.disable();
     this.tileLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
@@ -15,12 +18,14 @@ class Map extends React.Component {
   }
 
   componentWillReceiveProps(props) {
-    const paramsChanged = props.latLng.lat !== this.props.latLng.lat ||
-      props.latLng.lng !== this.props.latLng.lng ||
-      props.zoom !== this.props.zoom || props.maps !== this.props.maps;
+    const paramsChanged = props.mapConfig.latLng.lat !== this.props.mapConfig.latLng.lat ||
+      props.mapConfig.latLng.lng !== this.props.mapConfig.latLng.lng ||
+      props.mapConfig.zoom !== this.props.mapConfig.zoom;
 
     if (paramsChanged) {
-      this.map.setView([props.latLng.lat, props.latLng.lng], props.zoom);
+      this.map.setView(
+        [props.mapConfig.latLng.lat, props.mapConfig.latLng.lng],
+        props.mapConfig.zoom);
 
       if (this.resizeTimer) {
         clearTimeout(this.resizeTimer);
@@ -31,13 +36,24 @@ class Map extends React.Component {
         this.map.invalidateSize();
       }, 10);
     }
+
+    if ((!this.layer && props.mapData.layer) ||
+      (props.mapData.layer && props.mapData.layer !== this.props.mapData.layer)) {
+      this.updateLayer(props.mapData.layer);
+    }
+
+    if ((!this.bucket && props.mapData.bucket) ||
+      (props.mapData.bucket && props.mapData.bucket !== this.props.mapData.bucket)) {
+      this.bucket = props.mapData.bucket;
+      this.getLayer();
+    }
   }
 
   shouldComponentUpdate(props) {
-    const shouldUpdate = props.scenario !== this.props.scenario ||
-      props.scenario !== this.props.scenario ||
-      props.category !== this.props.category ||
-      props.indicator !== this.props.indicator;
+    const shouldUpdate = props.mapData.scenario !== this.props.mapData.scenario ||
+      props.mapData.scenario !== this.props.mapData.scenario ||
+      props.mapData.category !== this.props.mapData.category ||
+      props.mapData.indicator !== this.props.mapData.indicator;
 
     return shouldUpdate;
   }
@@ -56,6 +72,8 @@ class Map extends React.Component {
 
     this.map.on('zoomend', zoomend.bind(this));
     this.map.on('dragend', dragend.bind(this));
+
+    this.props.getMapBuckets(this.props.mapData);
   }
 
   getLatLng() {
@@ -77,23 +95,129 @@ class Map extends React.Component {
     };
   }
 
+  updateLayer(layer) {
+    if (this.layer) {
+      this.map.removeLayer(this.layer);
+    }
+    this.layer = L.tileLayer(layer, { noWrap: true });
+    this.layer.addTo(this.map);
+  }
+
+  getLayerTypeSpec(type) {
+    const spec = {
+      layers: [{
+        user_name: CARTODB_USER,
+        type: 'cartodb',
+        options: {
+          sql: '',
+          cartocss: '',
+          cartocss_version: '2.3.0'
+        }
+      }]
+    };
+
+    if (type === 'raster') {
+      const layerSpecOptions = spec.layers[0].options;
+      layerSpecOptions.raster = true;
+      layerSpecOptions.raster_band = 1;
+      layerSpecOptions.geom_column = 'the_raster_webmercator';
+      layerSpecOptions.geom_type = 'raster';
+    }
+    return spec;
+  }
+
+  getLayerData(data) {
+    const spec = Object.assign({}, this.getLayerTypeSpec(data.type));
+    const layerOptions = spec.layers[0].options;
+
+    layerOptions.sql = data.sql;
+    layerOptions.cartocss = data.cartocss;
+
+    return JSON.stringify(spec);
+  }
+
+  getLayer() {
+    const layerType = 'raster';
+
+    this.generateCartoCSS(layerType);
+
+    const layer = this.getLayerData({
+      sql: this.getQuery(layerType),
+      cartocss: this.cartoCSS,
+      type: layerType
+    });
+
+    this.props.createLayer(this.props.mapData, layer);
+  }
+
+  getQuery(layerType) {
+    let query = 'SELECT * FROM avg_temperature_sepoctnov_max';
+
+    if (layerType === 'raster') {
+      query = 'SELECT * FROM o_1_avg_temperature_sepoctnov_max';
+    }
+
+    return query;
+  }
+
+  generateCartoCSS(layerType) {
+    const colorsBucket = ['#D6ECFC', '#BCECDC', '#70A9D2',
+      '#5381D2', '#525FBD', '#3E39A1'];
+
+    if (layerType === 'raster') {
+      let stops = '';
+
+      this.bucket.forEach((bucket, index) => {
+        stops += `stop(${bucket.value}, ${colorsBucket[index]})`;
+      });
+
+      this.cartoCSS = Object.assign({}, MAP_RASTER_CSS);
+      this.cartoCSS['raster-colorizer-stops'] = stops;
+      this.cartoCSS = `#null ${JSON.stringify(this.cartoCSS)} `;
+      this.cartoCSS = this.formatCartoCSS(this.cartoCSS);
+    } else {
+      const filter = 'area';
+
+      this.cartoCSS = Object.assign({}, MAP_VECTOR_CSS);
+      this.cartoCSS = this.formatCartoCSS(this.cartoCSS);
+      this.bucket.forEach((bucket, index) => {
+        this.cartoCSS += `#null [${filter} <= ${bucket.value}] { polygon-fill: ${colorsBucket[index]};}`;
+      });
+    }
+  }
+
+  formatCartoCSS(carto) {
+    let cartoCSS = carto;
+    cartoCSS = cartoCSS.replace(/",/g, ';');
+    cartoCSS = cartoCSS.replace(/"/g, '');
+    cartoCSS = cartoCSS.replace(/\}/g, ';}');
+    return cartoCSS;
+  }
+
   render() {
-    const { id } = this.props;
+    const { id } = this.props.mapData;
     return (
       <div id={`map${id}`} className="c-map"></div>
-   );
+    );
   }
 }
 
 Map.propTypes = {
-  id: React.PropTypes.string,
-  scenario: React.PropTypes.string,
-  category: React.PropTypes.string,
-  indicator: React.PropTypes.string,
-  latLng: React.PropTypes.object,
-  zoom: React.PropTypes.number,
+  mapData: React.PropTypes.shape({
+    id: React.PropTypes.string,
+    layer: React.PropTypes.string,
+    scenario: React.PropTypes.string,
+    category: React.PropTypes.string,
+    indicator: React.PropTypes.string,
+    bucket: React.PropTypes.array
+  }).isRequired,
+  mapConfig: React.PropTypes.shape({
+    latLng: React.PropTypes.object,
+    zoom: React.PropTypes.number
+  }).isRequired,
   onMapDrag: React.PropTypes.func,
-  maps: React.PropTypes.array
+  createLayer: React.PropTypes.func,
+  getMapBuckets: React.PropTypes.func
 };
 
 export default Map;

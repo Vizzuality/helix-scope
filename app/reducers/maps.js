@@ -1,8 +1,9 @@
-import { MAP_UPDATE_DATA, MAP_UPDATE_PAN } from 'actions/maps';
+import { MAP_UPDATE_DATA, MAP_UPDATE_PAN, LOADING_MAP } from 'actions/maps';
 
 const initialState = {
   mapsList: [],
   zoom: 3,
+  layer: '',
   latLng: {
     lat: 25.657,
     lng: -102.299
@@ -22,6 +23,9 @@ export default function (state = initialState, action) {
           lng: action.payload.latLng.lng
         }
       });
+    }
+    case LOADING_MAP: {
+      return Object.assign({}, state, { loading: action.payload.loading });
     }
     default:
       return state;

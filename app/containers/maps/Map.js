@@ -4,8 +4,10 @@ import { panMaps, updateURL } from 'actions/maps';
 
 const mapStateToProps = state => ({
   maps: state.maps.mapsList,
-  latLng: state.maps.latLng,
-  zoom: state.maps.zoom
+  mapConfig: {
+    latLng: state.maps.latLng,
+    zoom: state.maps.zoom
+  }
 });
 
 
