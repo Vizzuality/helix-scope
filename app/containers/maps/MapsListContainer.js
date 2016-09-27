@@ -1,26 +1,10 @@
 import { connect } from 'react-redux';
 import MapsList from 'components/maps/MapsList';
-import { panMaps, updateURL, createLayer, getMapBuckets } from 'actions/maps';
+import { panMaps, updateURL } from 'actions/maps';
 
 const mapStateToProps = state => ({
-  maps: state.maps.mapsList,
-  mapConfig: {
-    latLng: state.maps.latLng,
-    zoom: state.maps.zoom
-  }
+  maps: state.maps.mapsList
 });
 
-const mapDispatchToProps = dispatch => ({
-  onMapDrag: params => {
-    dispatch(panMaps(params));
-    dispatch(updateURL());
-  },
-  createLayer: (mapData, layer) => {
-    dispatch(createLayer(mapData, layer));
-  },
-  getMapBuckets: params => {
-    dispatch(getMapBuckets(params));
-  }
-});
 
-export default connect(mapStateToProps, mapDispatchToProps)(MapsList);
+export default connect(mapStateToProps, null)(MapsList);
