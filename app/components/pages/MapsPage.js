@@ -1,7 +1,7 @@
 import React from 'react';
 import MapsListContainer from 'containers/maps/MapsListContainer';
 import Button from 'components/common/Button';
-import MapsModal from 'components/modals/MapsModal';
+import MapsModal from 'containers/modals/MapsModal';
 
 class MapsPage extends React.Component {
   constructor(props) {
@@ -10,7 +10,7 @@ class MapsPage extends React.Component {
       mapModalOpen: false,
       mapSelectedId: null
     };
-    this.handleSetMapModal = this.handleSetMapModal.bind(this);
+    this.setMapModal = this.setMapModal.bind(this);
     this.defaultMapConfig = {
       scenario: '0',
       category: 'climate',
@@ -29,9 +29,7 @@ class MapsPage extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.maps.length === 0) {
-      this.setState({
-        mapModalOpen: true
-      });
+      this.setMapModal(true);
     }
   }
 
@@ -42,7 +40,7 @@ class MapsPage extends React.Component {
     });
   }
 
-  handleSetMapModal(status) {
+  setMapModal(status) {
     this.setState({
       mapModalOpen: status
     });
@@ -65,19 +63,13 @@ class MapsPage extends React.Component {
           {addBtn}
         </div>
         <MapsListContainer
-          maps={this.props.maps}
-          latLng={this.props.latLng}
-          zoom={this.props.zoom}
           handleMapConfig={(id) => this.setMapConfigModal(id)}
-          deleteMap={this.props.deleteMap}
         />
         <MapsModal
-          config={this.props.config}
           mapConfigData={mapConfigData}
           mapSelectedId={this.state.mapSelectedId}
           mapModalOpen={this.state.mapModalOpen}
-          onSetMapModal={this.handleSetMapModal}
-          setMapState={this.props.setMap}
+          onSetMapModal={this.setMapModal}
         />
       </div>
     );
@@ -89,14 +81,8 @@ MapsPage.contextTypes = {
 };
 
 MapsPage.propTypes = {
-  onSetMapModal: React.PropTypes.func,
   setParamsFromURL: React.PropTypes.func,
-  maps: React.PropTypes.array,
-  latLng: React.PropTypes.object,
-  zoom: React.PropTypes.number,
-  config: React.PropTypes.object.isRequired,
-  setMap: React.PropTypes.func,
-  deleteMap: React.PropTypes.func
+  maps: React.PropTypes.array
 };
 
 export default MapsPage;

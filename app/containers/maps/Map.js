@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import MapsList from 'components/maps/MapsList';
+import Map from 'components/maps/Map';
 import { panMaps, updateURL } from 'actions/maps';
 
 const mapStateToProps = state => ({
@@ -16,4 +16,4 @@ const mapDispatchToProps = dispatch => ({
   }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(MapsList);
+export default connect(mapStateToProps, mapDispatchToProps)(Map);

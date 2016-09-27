@@ -1,23 +1,14 @@
 import { connect } from 'react-redux';
 import MapsPage from 'components/pages/MapsPage';
-import { setParamsFromURL, setMap, deleteMap } from 'actions/maps';
+import { setParamsFromURL } from 'actions/maps';
 
 const mapStateToProps = state => ({
-  maps: state.maps.mapsList,
-  latLng: state.maps.latLng,
-  zoom: state.maps.zoom,
-  config: state.config
+  maps: state.maps.mapsList
 });
 
 const mapDispatchToProps = dispatch => ({
   setParamsFromURL: params => {
     dispatch(setParamsFromURL(params));
-  },
-  setMap: params => {
-    dispatch(setMap(params));
-  },
-  deleteMap: params => {
-    dispatch(deleteMap(params));
   }
 });
 

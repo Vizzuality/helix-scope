@@ -99,15 +99,12 @@ class Dashboard extends Component {
 }
 
 Dashboard.propTypes = {
-  place: React.PropTypes.array,
   id: React.PropTypes.string,
   index: React.PropTypes.number,
   scenario: React.PropTypes.string,
   category: React.PropTypes.string,
   indicator: React.PropTypes.string,
-  showDeleteBtn: React.PropTypes.bool,
   deleteMap: React.PropTypes.func,
-  onMapDrag: React.PropTypes.func,
   handleMapConfig: React.PropTypes.func,
   config: React.PropTypes.object,
   maps: React.PropTypes.array

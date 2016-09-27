@@ -1,5 +1,5 @@
 import React from 'react';
-import Map from './Map';
+import Map from 'containers/maps/Map';
 import Dashboard from 'containers/maps/DashboardContainer';
 
 function MapsList(props) {
@@ -21,8 +21,6 @@ function MapsList(props) {
               scenario={map.scenario}
               category={map.category}
               indicator={map.indicator}
-              maps={props.maps}
-              deleteMap={props.deleteMap}
               handleMapConfig={props.handleMapConfig}
             />
             <Map
@@ -30,11 +28,6 @@ function MapsList(props) {
               scenario={map.scenario}
               category={map.category}
               indicator={map.indicator}
-              latLng={props.latLng}
-              zoom={props.zoom}
-              onMapDrag={props.onMapDrag}
-              maps={props.maps}
-              deleteMap={props.deleteMap}
             />
           </div>
         </div>
@@ -49,10 +42,6 @@ MapsList.contextTypes = {
 
 MapsList.propTypes = {
   maps: React.PropTypes.array,
-  latLng: React.PropTypes.object,
-  zoom: React.PropTypes.number,
-  onMapDrag: React.PropTypes.func,
-  deleteMap: React.PropTypes.func,
   handleMapConfig: React.PropTypes.func
 };
 

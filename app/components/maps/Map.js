@@ -93,8 +93,7 @@ Map.propTypes = {
   latLng: React.PropTypes.object,
   zoom: React.PropTypes.number,
   onMapDrag: React.PropTypes.func,
-  maps: React.PropTypes.array,
-  deleteMap: React.PropTypes.func
+  maps: React.PropTypes.array
 };
 
 export default Map;
