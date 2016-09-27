@@ -27,6 +27,7 @@ function MapsList(props) {
               onMapDrag={props.onMapDrag}
               deleteMap={props.deleteMap}
               createLayer={props.createLayer}
+              getMapBuckets={props.getMapBuckets}
             />
           </div>
         </div>
@@ -44,7 +45,8 @@ MapsList.propTypes = {
   onMapDrag: React.PropTypes.func,
   deleteMap: React.PropTypes.func,
   handleMapConfig: React.PropTypes.func,
-  createLayer: React.PropTypes.func
+  createLayer: React.PropTypes.func,
+  getMapBuckets: React.PropTypes.func
 };
 
 export default MapsList;

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import MapsList from 'components/maps/MapsList';
-import { panMaps, updateURL, createLayer } from 'actions/maps';
+import { panMaps, updateURL, createLayer, getMapBuckets } from 'actions/maps';
 
 const mapStateToProps = state => ({
   maps: state.maps.mapsList,
@@ -16,8 +16,11 @@ const mapDispatchToProps = dispatch => ({
     dispatch(panMaps(params));
     dispatch(updateURL());
   },
-  createLayer: params => {
-    dispatch(createLayer(params));
+  createLayer: (mapData, layer) => {
+    dispatch(createLayer(mapData, layer));
+  },
+  getMapBuckets: params => {
+    dispatch(getMapBuckets(params));
   }
 });
 

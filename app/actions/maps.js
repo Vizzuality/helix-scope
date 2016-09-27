@@ -1,13 +1,10 @@
 import $ from 'jquery';
 import { push } from 'react-router-redux';
+import { ENDPOINT_TILES, ENDPOINT_SQL, MAX_MAPS, MAP_NUMBER_BUCKETS } from 'constants/map';
 
 export const MAP_UPDATE_DATA = 'MAP_UPDATE_DATA';
 export const MAP_UPDATE_PAN = 'MAP_UPDATE_PAN';
 export const LOADING_MAP = 'LOADING_MAP';
-
-const CARTODB_USER = 'helixscope';
-const ENDPOINT_TILES = `https://${CARTODB_USER}.carto.com/api/v1/map/`;
-const MAX_MAPS = 4;
 
 export function setParamsFromURL(data) {
   return dispatch => {
@@ -103,47 +100,14 @@ export function panMaps(panParams) {
   };
 }
 
-function getLayerTypeSpec(type) {
-  const spec = {
-    layers: [{
-      user_name: CARTODB_USER,
-      type: 'cartodb',
-      options: {
-        sql: '',
-        cartocss: '',
-        cartocss_version: '2.3.0'
-      }
-    }]
-  };
-
-  if (type === 'raster') {
-    const layerSpecOptions = spec.layers[0].options;
-    layerSpecOptions.raster = true;
-    layerSpecOptions.raster_band = 1;
-    layerSpecOptions.geom_column = 'the_raster_webmercator';
-    layerSpecOptions.geom_type = 'raster';
-  }
-  return spec;
-}
-
-function getLayerData(data) {
-  const spec = Object.assign({}, getLayerTypeSpec(data.layer.type));
-  const layerOptions = spec.layers[0].options;
-
-  layerOptions.sql = data.layer.sql;
-  layerOptions.cartocss = data.layer.cartocss;
-
-  return JSON.stringify(spec);
-}
-
-function setMapLayer(data, tileUrl) {
+function setMapData(mapData, newData) {
   return (dispatch, state) => {
     const maps = state().maps.mapsList;
     const mapsList = [];
     maps.forEach(map => {
-      const currentMap = map;
-      if (currentMap.id === data.map) {
-        currentMap.layer = tileUrl;
+      let currentMap = map;
+      if (currentMap.id === mapData.id) {
+        currentMap = Object.assign(currentMap, newData);
       }
       mapsList.push(currentMap);
     });
@@ -155,16 +119,52 @@ function setMapLayer(data, tileUrl) {
   };
 }
 
-export function createLayer(data) {
+export function createLayer(mapData, layerData) {
   return (dispatch) => {
     $.post({
       url: ENDPOINT_TILES,
       dataType: 'json',
       contentType: 'application/json; charset=UTF-8',
-      data: getLayerData(data.layer)
+      data: layerData
     }).then((res) => {
-      const tileUrl = `${ENDPOINT_TILES}${res.layergroupid}/{z}/{x}/{y}.png32`;
-      dispatch(setMapLayer(data.layer, tileUrl));
+      dispatch(setMapData(mapData, {
+        layer: `${ENDPOINT_TILES}${res.layergroupid}/{z}/{x}/{y}.png32`
+      }));
+    });
+  };
+}
+
+export function getMapBuckets(mapData) {
+  return (dispatch) => {
+    const table = 'o_1_avg_temperature_sepoctnov_max';
+    const vector = `SELECT unnest(CDB_JenksBins(array_agg(distinct((area::numeric))), ${MAP_NUMBER_BUCKETS})) as value from ${table} order by value DESC`;
+
+    // // BUCKETS
+    //
+    // with r as (select value, iso from avg_temperature where measure like 'sd' and scenario = 2 and season=1 )
+    //
+    // SELECT unnest(CDB_JenksBins(array_agg(distinct((value::numeric))), 6)) as value from r order by value DESC
+    //
+    // // GEOM
+    //
+    // with r as (select value, iso from {{table_name}} where measure like 'sd' and scenario = 2 and season=1 )
+    //
+    // select r.iso, value, the_geom_webmercator from r inner join country_geoms s on r.iso=s.iso
+
+    // RASTER
+
+    const raster = `with r as ( SELECT ST_ValueCount(the_raster_webmercator) As val, ST_BandNoDataValue(the_raster_webmercator, 1) as noDataValue FROM ${table} ) SELECT unnest(CDB_JenksBins(array_agg((val).value::numeric), ${MAP_NUMBER_BUCKETS})) as value, min((val).value::numeric), noDataValue  FROM r group by noDataValue ORDER BY value ASC`;
+
+
+    $.get({
+      url: ENDPOINT_SQL,
+      data: {
+        q: raster
+      }
+    }).then((res) => {
+      dispatch(setMapData(mapData, {
+        bucket: res.rows
+      }));
     });
   };
 }

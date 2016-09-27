@@ -1,5 +1,6 @@
 import React from 'react';
 import L from 'leaflet';
+import { CARTODB_USER, MAP_VECTOR_CSS, MAP_RASTER_CSS } from 'constants/map';
 
 class Map extends React.Component {
 
@@ -40,6 +41,12 @@ class Map extends React.Component {
       (props.mapData.layer && props.mapData.layer !== this.props.mapData.layer)) {
       this.updateLayer(props.mapData.layer);
     }
+
+    if ((!this.bucket && props.mapData.bucket) ||
+      (props.mapData.bucket && props.mapData.bucket !== this.props.mapData.bucket)) {
+      this.bucket = props.mapData.bucket;
+      this.getLayer();
+    }
   }
 
   shouldComponentUpdate(props) {
@@ -66,15 +73,7 @@ class Map extends React.Component {
     this.map.on('zoomend', zoomend.bind(this));
     this.map.on('dragend', dragend.bind(this));
 
-    this.props.createLayer({
-      layer: {
-        map: this.props.mapData.id,
-        layer: {
-          sql: 'SELECT * FROM country_geoms',
-          cartocss: '#null{polygon-fill: #FF6600;polygon-opacity: 0.5;}'
-        }
-      }
-    });
+    this.props.getMapBuckets(this.props.mapData);
   }
 
   getLatLng() {
@@ -104,11 +103,102 @@ class Map extends React.Component {
     this.layer.addTo(this.map);
   }
 
+  getLayerTypeSpec(type) {
+    const spec = {
+      layers: [{
+        user_name: CARTODB_USER,
+        type: 'cartodb',
+        options: {
+          sql: '',
+          cartocss: '',
+          cartocss_version: '2.3.0'
+        }
+      }]
+    };
+
+    if (type === 'raster') {
+      const layerSpecOptions = spec.layers[0].options;
+      layerSpecOptions.raster = true;
+      layerSpecOptions.raster_band = 1;
+      layerSpecOptions.geom_column = 'the_raster_webmercator';
+      layerSpecOptions.geom_type = 'raster';
+    }
+    return spec;
+  }
+
+  getLayerData(data) {
+    const spec = Object.assign({}, this.getLayerTypeSpec(data.type));
+    const layerOptions = spec.layers[0].options;
+
+    layerOptions.sql = data.sql;
+    layerOptions.cartocss = data.cartocss;
+
+    return JSON.stringify(spec);
+  }
+
+  getLayer() {
+    const layerType = 'raster';
+
+    this.generateCartoCSS(layerType);
+
+    const layer = this.getLayerData({
+      sql: this.getQuery(layerType),
+      cartocss: this.cartoCSS,
+      type: layerType
+    });
+
+    this.props.createLayer(this.props.mapData, layer);
+  }
+
+  getQuery(layerType) {
+    let query = 'SELECT * FROM avg_temperature_sepoctnov_max';
+
+    if (layerType === 'raster') {
+      query = 'SELECT * FROM o_1_avg_temperature_sepoctnov_max';
+    }
+
+    return query;
+  }
+
+  generateCartoCSS(layerType) {
+    const colorsBucket = ['#D6ECFC', '#BCECDC', '#70A9D2',
+      '#5381D2', '#525FBD', '#3E39A1'];
+
+    if (layerType === 'raster') {
+      let stops = '';
+
+      this.bucket.forEach((bucket, index) => {
+        stops += `stop(${bucket.value}, ${colorsBucket[index]})`;
+      });
+
+      this.cartoCSS = Object.assign({}, MAP_RASTER_CSS);
+      this.cartoCSS['raster-colorizer-stops'] = stops;
+      this.cartoCSS = `#null ${JSON.stringify(this.cartoCSS)} `;
+      this.cartoCSS = this.formatCartoCSS(this.cartoCSS);
+    } else {
+      const filter = 'area';
+
+      this.cartoCSS = Object.assign({}, MAP_VECTOR_CSS);
+      this.cartoCSS = this.formatCartoCSS(this.cartoCSS);
+      this.bucket.forEach((bucket, index) => {
+        this.cartoCSS += `#null [${filter} <= ${bucket.value}] { polygon-fill: ${colorsBucket[index]};}`;
+      });
+    }
+  }
+
+  formatCartoCSS(carto) {
+    let cartoCSS = carto;
+    cartoCSS = cartoCSS.replace(/",/g, ';');
+    cartoCSS = cartoCSS.replace(/"/g, '');
+    cartoCSS = cartoCSS.replace(/\}/g, ';}');
+    return cartoCSS;
+  }
+
   render() {
     const { id } = this.props.mapData;
     return (
       <div id={`map${id}`} className="c-map"></div>
-   );
+    );
   }
 }
 
@@ -118,7 +208,8 @@ Map.propTypes = {
     layer: React.PropTypes.string,
     scenario: React.PropTypes.string,
     category: React.PropTypes.string,
-    indicator: React.PropTypes.string
+    indicator: React.PropTypes.string,
+    bucket: React.PropTypes.array
   }).isRequired,
   mapConfig: React.PropTypes.shape({
     latLng: React.PropTypes.object,
@@ -127,6 +218,7 @@ Map.propTypes = {
   onMapDrag: React.PropTypes.func,
   deleteMap: React.PropTypes.func,
   createLayer: React.PropTypes.func,
+  getMapBuckets: React.PropTypes.func,
   indicators: React.PropTypes.array
 };
 
