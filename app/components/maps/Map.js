@@ -1,6 +1,6 @@
 import React from 'react';
 import L from 'leaflet';
-import { CARTODB_USER, MAP_VECTOR_CSS, MAP_RASTER_CSS } from 'constants/map';
+import { MAP_LAYER_SPEC, MAP_LAYER_SPEC_RASTER, MAP_VECTOR_CSS, MAP_RASTER_CSS } from 'constants/map';
 
 class Map extends React.Component {
 
@@ -95,33 +95,12 @@ class Map extends React.Component {
     };
   }
 
-  updateLayer(layer) {
-    if (this.layer) {
-      this.map.removeLayer(this.layer);
-    }
-    this.layer = L.tileLayer(layer, { noWrap: true });
-    this.layer.addTo(this.map);
-  }
-
   getLayerTypeSpec(type) {
-    const spec = {
-      layers: [{
-        user_name: CARTODB_USER,
-        type: 'cartodb',
-        options: {
-          sql: '',
-          cartocss: '',
-          cartocss_version: '2.3.0'
-        }
-      }]
-    };
+    const spec = Object.assign({}, MAP_LAYER_SPEC);
 
     if (type === 'raster') {
-      const layerSpecOptions = spec.layers[0].options;
-      layerSpecOptions.raster = true;
-      layerSpecOptions.raster_band = 1;
-      layerSpecOptions.geom_column = 'the_raster_webmercator';
-      layerSpecOptions.geom_type = 'raster';
+      let layerSpecOptions = spec.layers[0].options;
+      layerSpecOptions = Object.assign(layerSpecOptions, MAP_LAYER_SPEC_RASTER);
     }
     return spec;
   }
@@ -158,6 +137,14 @@ class Map extends React.Component {
     }
 
     return query;
+  }
+
+  updateLayer(layer) {
+    if (this.layer) {
+      this.map.removeLayer(this.layer);
+    }
+    this.layer = L.tileLayer(layer, { noWrap: true });
+    this.layer.addTo(this.map);
   }
 
   generateCartoCSS(layerType) {
