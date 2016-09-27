@@ -40,7 +40,7 @@ class GetUpdates extends React.Component {
   render() {
     return (
       <div className={`l-module ${this.state.subscribed ? '-success' : ''}`}>
-        <div className={`row align-justify align-middle c-get-updates ${this.state.subscribed ? '-success' : ''}`}>
+        <div className={`row small-up-1 medium-up-3 align-middle c-get-updates ${this.state.subscribed ? '-success' : ''}`}>
           <div className="column">
             <span>Get Updates</span>
           </div>

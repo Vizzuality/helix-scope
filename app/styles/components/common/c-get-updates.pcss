@@ -1,5 +1,9 @@
 .c-get-updates {
-  padding: $margin-large 0;
+  padding: $margin-medium 0;
+
+  @media (--medium-viewport) {
+    padding: $margin-large 0;
+  }
 
   &.-success {
     > .column {
@@ -11,6 +15,16 @@
   }
 
   > .column {
+    text-align: center;
+
+    @media (--medium-viewport) {
+      text-align: left;
+
+      &:last-of-type {
+        text-align: right;
+      }
+    }
+
     > span {
       font-family: $font-heading;
       font-size: $font-size;
@@ -21,10 +35,10 @@
 
     > input {
       margin: 0;
-      padding: 0;
-      width: auto;
+      padding: $margin-small 0;
+      width: 100%;
       font-family: $font-body;
-      font-size: 34px;
+      font-size: $font-size-medium;
       font-style: italic;
       line-height: 1;
       text-align: center;
@@ -32,13 +46,19 @@
       background: none;
       box-shadow: none;
 
+      @media (--medium-viewport) {
+        padding: 0;
+        width: auto;
+        font-size: 34px;
+        float: right;
+        position: relative;
+        top: 0;
+        right: 0;
+      }
+
       &.-error {
         border-bottom: 1px solid $color-red-bold;
       }
-    }
-
-    &:last-of-type {
-      text-align: right;
     }
   }
 }
