@@ -45,7 +45,8 @@ class Map extends React.Component {
     if ((!this.bucket && props.mapData.bucket) ||
       (props.mapData.bucket && props.mapData.bucket !== this.props.mapData.bucket)) {
       this.bucket = props.mapData.bucket;
-      this.getLayer();
+      props.mapData.raster = true;
+      this.getLayer(props.mapData);
     }
   }
 
@@ -95,10 +96,10 @@ class Map extends React.Component {
     };
   }
 
-  getLayerTypeSpec(type) {
+  getLayerTypeSpec(isRaster) {
     const spec = Object.assign({}, MAP_LAYER_SPEC);
 
-    if (type === 'raster') {
+    if (isRaster) {
       let layerSpecOptions = spec.layers[0].options;
       layerSpecOptions = Object.assign(layerSpecOptions, MAP_LAYER_SPEC_RASTER);
     }
@@ -106,7 +107,7 @@ class Map extends React.Component {
   }
 
   getLayerData(data) {
-    const spec = Object.assign({}, this.getLayerTypeSpec(data.type));
+    const spec = Object.assign({}, this.getLayerTypeSpec(data.raster));
     const layerOptions = spec.layers[0].options;
 
     layerOptions.sql = data.sql;
@@ -115,24 +116,27 @@ class Map extends React.Component {
     return JSON.stringify(spec);
   }
 
-  getLayer() {
-    const layerType = 'raster';
-
-    this.generateCartoCSS(layerType);
+  getLayer(mapData) {
+    this.generateCartoCSS(mapData);
 
     const layer = this.getLayerData({
-      sql: this.getQuery(layerType),
+      sql: this.getQuery(mapData),
       cartocss: this.cartoCSS,
-      type: layerType
+      raster: mapData.raster
     });
 
     this.props.createLayer(this.props.mapData, layer);
   }
 
-  getQuery(layerType) {
-    let query = 'SELECT * FROM avg_temperature_sepoctnov_max';
+  getQuery(mapData) {
+    // let query = 'SELECT * FROM avg_temperature_sepoctnov_max';
+    const scenario = 2;
+    const season = 2;
+    const measure = 'max';
+    const tableName = 'avg_temperature';
+    let query = `with r as (select value, iso from ${tableName} where measure like '${measure}' and scenario = ${scenario} and season = ${season} ) select r.iso, value, the_geom_webmercator from r inner join country_geoms s on r.iso=s.iso`;
 
-    if (layerType === 'raster') {
+    if (mapData.raster) {
       query = 'SELECT * FROM o_1_avg_temperature_sepoctnov_max';
     }
 
@@ -147,15 +151,19 @@ class Map extends React.Component {
     this.layer.addTo(this.map);
   }
 
-  generateCartoCSS(layerType) {
+  generateCartoCSS(mapData) {
+    // TO-DO move colors bucket to API
     const colorsBucket = ['#D6ECFC', '#BCECDC', '#70A9D2',
       '#5381D2', '#525FBD', '#3E39A1'];
 
-    if (layerType === 'raster') {
+    if (mapData.raster) {
       let stops = '';
 
       this.bucket.forEach((bucket, index) => {
-        stops += `stop(${bucket.value}, ${colorsBucket[index]})`;
+        if (index === 0) { // No data value
+          stops += `stop(${bucket.nodatavalue}, 'transparent')`;
+        }
+        stops += `stop(${bucket.raster_value}, ${colorsBucket[index]})`;
       });
 
       this.cartoCSS = Object.assign({}, MAP_RASTER_CSS);
@@ -163,13 +171,17 @@ class Map extends React.Component {
       this.cartoCSS = `#null ${JSON.stringify(this.cartoCSS)} `;
       this.cartoCSS = this.formatCartoCSS(this.cartoCSS);
     } else {
-      const filter = 'area';
+      const bucketList = Object.assign([], this.bucket);
+      bucketList.reverse();
 
       this.cartoCSS = Object.assign({}, MAP_VECTOR_CSS);
-      this.cartoCSS = this.formatCartoCSS(this.cartoCSS);
-      this.bucket.forEach((bucket, index) => {
-        this.cartoCSS += `#null [${filter} <= ${bucket.value}] { polygon-fill: ${colorsBucket[index]};}`;
+      this.cartoCSS = `#null ${JSON.stringify(this.cartoCSS)} `;
+
+      bucketList.forEach((bucket, index) => {
+        this.cartoCSS += `#null [value <= ${bucket.value}] { polygon-fill: ${colorsBucket[index]}}`;
       });
+
+      this.cartoCSS = this.formatCartoCSS(this.cartoCSS);
     }
   }
 

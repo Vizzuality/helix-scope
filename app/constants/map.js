@@ -1,5 +1,4 @@
-// const CARTODB_USER = 'helixscope';
-export const CARTODB_USER = 'geriux';
+export const CARTODB_USER = 'helixscope';
 export const ENDPOINT_TILES = `https://${CARTODB_USER}.carto.com/api/v1/map/`;
 export const ENDPOINT_SQL = `https://${CARTODB_USER}.carto.com/api/v2/sql`;
 export const MAX_MAPS = 4;

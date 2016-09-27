@@ -137,25 +137,10 @@ export function createLayer(mapData, layerData) {
 
 export function getMapBuckets(mapData) {
   return (dispatch) => {
-    const table = 'o_1_avg_temperature_sepoctnov_max';
-    const vector = `SELECT unnest(CDB_JenksBins(array_agg(distinct((area::numeric))), ${MAP_NUMBER_BUCKETS})) as value from ${table} order by value DESC`;
 
-    // // BUCKETS
-    // //
-    // with r as (select value, iso from avg_temperature where measure like 'sd' and scenario = 2 and season=1 )
-    //
-    // SELECT unnest(CDB_JenksBins(array_agg(distinct((value::numeric))), 6)) as value from r order by value DESC
-    //
-    // // GEOM
-    //
-    // with r as (select value, iso from {{table_name}} where measure like 'sd' and scenario = 2 and season=1 )
-    //
-    // select r.iso, value, the_geom_webmercator from r inner join country_geoms s on r.iso=s.iso
-    //
-    // // RASTER
-    //
-    const raster = `with r as ( SELECT ST_ValueCount(the_raster_webmercator) As val, ST_BandNoDataValue(the_raster_webmercator, 1) as noDataValue FROM ${table} ) SELECT unnest(CDB_JenksBins(array_agg((val).value::numeric), ${MAP_NUMBER_BUCKETS})) as value, min((val).value::numeric), noDataValue  FROM r group by noDataValue ORDER BY value ASC`;
+    const vector = 'SELECT * FROM get_buckets(\'avg_temperature\', false, \'max\', 2, 2)';
 
+    const raster = 'SELECT * FROM get_buckets(\'avg_temperature_sepoctnov_min\', true)';
 
     $.get({
       url: ENDPOINT_SQL,
