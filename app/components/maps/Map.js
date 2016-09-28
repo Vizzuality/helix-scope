@@ -1,6 +1,6 @@
 import React from 'react';
 import L from 'leaflet';
-import { CARTODB_USER, MAP_VECTOR_CSS, MAP_RASTER_CSS } from 'constants/map';
+import { MAP_LAYER_SPEC, MAP_LAYER_SPEC_RASTER, MAP_VECTOR_CSS, MAP_RASTER_CSS } from 'constants/map';
 
 class Map extends React.Component {
 
@@ -45,7 +45,7 @@ class Map extends React.Component {
     if ((!this.bucket && props.mapData.bucket) ||
       (props.mapData.bucket && props.mapData.bucket !== this.props.mapData.bucket)) {
       this.bucket = props.mapData.bucket;
-      this.getLayer();
+      this.getLayer(props.mapData);
     }
   }
 
@@ -95,39 +95,18 @@ class Map extends React.Component {
     };
   }
 
-  updateLayer(layer) {
-    if (this.layer) {
-      this.map.removeLayer(this.layer);
-    }
-    this.layer = L.tileLayer(layer, { noWrap: true });
-    this.layer.addTo(this.map);
-  }
+  getLayerTypeSpec(isRaster) {
+    const spec = Object.assign({}, MAP_LAYER_SPEC);
 
-  getLayerTypeSpec(type) {
-    const spec = {
-      layers: [{
-        user_name: CARTODB_USER,
-        type: 'cartodb',
-        options: {
-          sql: '',
-          cartocss: '',
-          cartocss_version: '2.3.0'
-        }
-      }]
-    };
-
-    if (type === 'raster') {
-      const layerSpecOptions = spec.layers[0].options;
-      layerSpecOptions.raster = true;
-      layerSpecOptions.raster_band = 1;
-      layerSpecOptions.geom_column = 'the_raster_webmercator';
-      layerSpecOptions.geom_type = 'raster';
+    if (isRaster) {
+      let layerSpecOptions = spec.layers[0].options;
+      layerSpecOptions = Object.assign(layerSpecOptions, MAP_LAYER_SPEC_RASTER);
     }
     return spec;
   }
 
   getLayerData(data) {
-    const spec = Object.assign({}, this.getLayerTypeSpec(data.type));
+    const spec = Object.assign({}, this.getLayerTypeSpec(data.raster));
     const layerOptions = spec.layers[0].options;
 
     layerOptions.sql = data.sql;
@@ -136,54 +115,86 @@ class Map extends React.Component {
     return JSON.stringify(spec);
   }
 
-  getLayer() {
-    const layerType = 'raster';
-
-    this.generateCartoCSS(layerType);
+  getLayer(mapData) {
+    this.generateCartoCSS(mapData);
 
     const layer = this.getLayerData({
-      sql: this.getQuery(layerType),
+      sql: this.getQuery(mapData),
       cartocss: this.cartoCSS,
-      type: layerType
+      raster: mapData.raster
     });
 
     this.props.createLayer(this.props.mapData, layer);
   }
 
-  getQuery(layerType) {
-    let query = 'SELECT * FROM avg_temperature_sepoctnov_max';
+  getQuery(mapData) {
+    const scenario = 2;
+    const season = 2;
+    const measure = 'max';
+    const tableName = 'avg_temperature';
+    let query = `with r as (select value, iso from ${tableName} where measure like '${measure}' and scenario = ${scenario} and season = ${season} ) select r.iso, value, the_geom_webmercator from r inner join country_geoms s on r.iso=s.iso`;
 
-    if (layerType === 'raster') {
+    if (mapData.raster) {
       query = 'SELECT * FROM o_1_avg_temperature_sepoctnov_max';
     }
 
     return query;
   }
 
-  generateCartoCSS(layerType) {
+  updateLayer(layer) {
+    if (this.layer) {
+      this.map.removeLayer(this.layer);
+    }
+    this.layer = L.tileLayer(layer, { noWrap: true });
+    this.layer.addTo(this.map);
+  }
+
+  generateCartoCSS(mapData) {
+    if (mapData.raster) {
+      this.gernerateCartoRaster();
+    } else {
+      this.generateCartoVector();
+    }
+  }
+
+  generateCartoRaster() {
+    // TO-DO move colors bucket to API
+    const colorsBucket = ['#D6ECFC', '#BCECDC', '#70A9D2',
+      '#5381D2', '#525FBD', '#3E39A1'];
+    let stops = '';
+
+    this.bucket.forEach((bucket, index) => {
+      // No data and min value
+      if (index === 0) {
+        stops += `stop(${bucket.nodatavalue}, 'transparent', 'exact')`;
+        stops += `stop(${bucket.raster_min}, ${colorsBucket[index]}, 'discrete')`;
+      }
+      stops += `stop(${bucket.raster_value}, ${colorsBucket[index]})`;
+    });
+
+    this.cartoCSS = Object.assign({}, MAP_RASTER_CSS);
+    this.cartoCSS['raster-colorizer-stops'] = stops;
+    this.cartoCSS = `#null ${JSON.stringify(this.cartoCSS)} `;
+    this.cartoCSS = this.formatCartoCSS(this.cartoCSS);
+  }
+
+
+  generateCartoVector() {
+    // TO-DO move colors bucket to API
     const colorsBucket = ['#D6ECFC', '#BCECDC', '#70A9D2',
       '#5381D2', '#525FBD', '#3E39A1'];
 
-    if (layerType === 'raster') {
-      let stops = '';
+    const bucketList = Object.assign([], this.bucket);
+    bucketList.reverse();
 
-      this.bucket.forEach((bucket, index) => {
-        stops += `stop(${bucket.value}, ${colorsBucket[index]})`;
-      });
+    this.cartoCSS = Object.assign({}, MAP_VECTOR_CSS);
+    this.cartoCSS = `#null ${JSON.stringify(this.cartoCSS)} `;
 
-      this.cartoCSS = Object.assign({}, MAP_RASTER_CSS);
-      this.cartoCSS['raster-colorizer-stops'] = stops;
-      this.cartoCSS = `#null ${JSON.stringify(this.cartoCSS)} `;
-      this.cartoCSS = this.formatCartoCSS(this.cartoCSS);
-    } else {
-      const filter = 'area';
+    bucketList.forEach((bucket, index) => {
+      this.cartoCSS += `#null [value <= ${bucket.value}] { polygon-fill: ${colorsBucket[index]}}`;
+    });
 
-      this.cartoCSS = Object.assign({}, MAP_VECTOR_CSS);
-      this.cartoCSS = this.formatCartoCSS(this.cartoCSS);
-      this.bucket.forEach((bucket, index) => {
-        this.cartoCSS += `#null [${filter} <= ${bucket.value}] { polygon-fill: ${colorsBucket[index]};}`;
-      });
-    }
+    this.cartoCSS = this.formatCartoCSS(this.cartoCSS);
   }
 
   formatCartoCSS(carto) {
@@ -191,6 +202,7 @@ class Map extends React.Component {
     cartoCSS = cartoCSS.replace(/",/g, ';');
     cartoCSS = cartoCSS.replace(/"/g, '');
     cartoCSS = cartoCSS.replace(/\}/g, ';}');
+    cartoCSS = cartoCSS.replace(/\b,/gi, ';');
     return cartoCSS;
   }
 

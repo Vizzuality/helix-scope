@@ -1,11 +1,31 @@
-// const CARTODB_USER = 'helixscope';
-export const CARTODB_USER = 'geriux';
+export const CARTODB_USER = 'helixscope';
 export const ENDPOINT_TILES = `https://${CARTODB_USER}.carto.com/api/v1/map/`;
 export const ENDPOINT_SQL = `https://${CARTODB_USER}.carto.com/api/v2/sql`;
 export const MAX_MAPS = 4;
 export const MAP_NUMBER_BUCKETS = 6;
 
-// CARTO CSS
+// Layer spec
+
+export const MAP_LAYER_SPEC = {
+  layers: [{
+    user_name: CARTODB_USER,
+    type: 'cartodb',
+    options: {
+      sql: '',
+      cartocss: '',
+      cartocss_version: '2.3.0'
+    }
+  }]
+};
+
+export const MAP_LAYER_SPEC_RASTER = {
+  raster: true,
+  raster_band: 1,
+  geom_column: 'the_raster_webmercator',
+  geom_type: 'raster'
+};
+
+// Carto CSS
 
 export const MAP_VECTOR_CSS = {
   'polygon-opacity': 1,
