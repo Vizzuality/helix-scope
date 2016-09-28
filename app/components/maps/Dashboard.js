@@ -12,20 +12,33 @@ class Dashboard extends Component {
     let categoryTitle;
     this.props.config.categories.forEach(prop => {
       if (prop.slug === this.props.mapData.category) {
-        categoryTitle = prop.title;
+        categoryTitle = prop.name;
       }
     });
 
+    const filteredIndicators = this.props.config.categories.find((elem) => (
+      elem.name === this.props.mapData.category
+    ));
+    let activeIndicators = [];
+    if (filteredIndicators && filteredIndicators.indicator) {
+      activeIndicators = filteredIndicators.indicator;
+    }
+
     let indicatorTitle;
-    this.props.config.indicators.forEach(prop => {
+    activeIndicators.forEach(prop => {
       if (prop.slug === this.props.mapData.indicator) {
-        indicatorTitle = prop.title;
+        indicatorTitle = prop.name;
       }
     });
 
     let scenarioTitle;
     if (this.props.config.scenarios.length > 0) {
-      scenarioTitle = this.props.config.scenarios[this.props.mapData.scenario].title;
+      const scenary = this.props.config.scenarios.find((elem) => (
+        elem.slug === this.props.mapData.scenario
+      ));
+      if (scenary) {
+        scenarioTitle = scenary.name;
+      }
     }
     return { scenarioTitle, categoryTitle, indicatorTitle };
   }

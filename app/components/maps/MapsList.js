@@ -14,7 +14,7 @@ function MapsList(props) {
   return (
     <div className="l-maps-container">
       {props.maps.map((map, index) =>
-        <div className={`c-maps-list ${mapClasses[numMaps - 1][index]}`} key={`map-${map.id}`}>
+        <div className={`c-maps-list ${mapClasses[numMaps - 1][index]}`} key={`map-${index}`}>
           <div className="scenario-wrapper">
             <Dashboard
               mapData={map}
@@ -32,8 +32,7 @@ function MapsList(props) {
 
 MapsList.propTypes = {
   maps: React.PropTypes.array,
-  handleMapConfig: React.PropTypes.func,
-  deleteMap: React.PropTypes.func
+  handleMapConfig: React.PropTypes.func
 };
 
 export default MapsList;

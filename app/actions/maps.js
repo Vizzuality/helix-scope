@@ -6,16 +6,20 @@ export const MAP_UPDATE_DATA = 'MAP_UPDATE_DATA';
 export const MAP_UPDATE_PAN = 'MAP_UPDATE_PAN';
 export const LOADING_MAP = 'LOADING_MAP';
 
+function getRandomId() {
+  return Math.floor(Math.random() * 100).toString();
+}
+
 export function setParamsFromURL(data) {
   return dispatch => {
     const urlParams = data.split('/');
     const mapsList = [];
 
     if (urlParams.length && urlParams.length <= MAX_MAPS) {
-      urlParams.forEach((map, index) => {
+      urlParams.forEach((map) => {
         const params = map.split(',');
         mapsList.push({
-          id: index.toString(),
+          id: getRandomId(),
           scenario: params[0],
           category: params[1],
           indicator: params[2],
@@ -60,11 +64,14 @@ export function setMap(map) {
         mapsList.push(mapItem);
       });
 
-      if (mapsList[map.id]) {
-        mapsList[map.id] = map;
+      let selectedMap = mapsList.find((elem) => (
+        elem.id === map.id
+      ));
+      if (selectedMap) {
+        selectedMap = Object.assign(selectedMap, map);
       } else {
         const newMap = map;
-        newMap.id = mapsList.length.toString();
+        newMap.id = getRandomId();
         mapsList.push(newMap);
       }
 
@@ -80,11 +87,9 @@ export function setMap(map) {
 export function deleteMap(mapId) {
   return (dispatch, state) => {
     const maps = state().maps.mapsList;
-    maps.splice(mapId, 1);
-    const mapsList = [];
-    maps.forEach(map => {
-      mapsList.push(map);
-    });
+    const mapsList = maps.filter((elem) => (
+      elem.id !== mapId
+    ));
 
     dispatch({
       type: MAP_UPDATE_DATA,

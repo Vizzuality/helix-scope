@@ -12,10 +12,10 @@ class MapsPage extends React.Component {
     };
     this.setMapModal = this.setMapModal.bind(this);
     this.defaultMapConfig = {
-      scenario: '0',
+      scenario: '15',
       category: 'climate',
-      indicator: 'avg-precipitation',
-      measure: 'standard-desviation',
+      indicator: 'avg_temperature_change',
+      measure: 'max',
       layer: ''
     };
   }
@@ -54,10 +54,11 @@ class MapsPage extends React.Component {
       addBtn = <Button icon="plus-big" style="primary" size="large" onClick={() => this.setMapConfigModal(null)} />;
     }
 
-    const mapConfigData = this.state.mapSelectedId
-      ? this.props.maps[this.state.mapSelectedId]
-      // default map config
-      : this.defaultMapConfig;
+    const selectedMap = this.props.maps.find((elem) => (
+      elem.id === this.state.mapSelectedId
+    ));
+    const mapConfigData = selectedMap || this.defaultMapConfig;
+
     return (
       <div className="-dark">
         <div className="c-add-map">

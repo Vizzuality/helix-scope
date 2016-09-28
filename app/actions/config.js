@@ -1,5 +1,6 @@
 export const LOAD_CONFIG = 'LOAD_CONFIG';
 export const RECEIVE_CONFIG = 'RECEIVE_CONFIG';
+import { ENDPOINT_SQL } from 'constants/map';
 
 export function loadConfig() {
   return {
@@ -7,21 +8,21 @@ export function loadConfig() {
   };
 }
 
-export function receiveConfig({...config}) {
+export function receiveConfig(config) {
   return {
     type: RECEIVE_CONFIG,
-    ...config
+    payload: config
   };
 }
 
 export function fetchConfig() {
   return dispatch => {
     dispatch(loadConfig());
-    return fetch('/app_config.json')
+    return fetch(`${ENDPOINT_SQL}?q=select%20*%20from%20get_config()`)
       .then(response => response.json())
       .then(json => {
-        const config = json.data.attributes;
-        dispatch(receiveConfig({...config}));
+        const config = json.rows[0].get_config;
+        dispatch(receiveConfig(config));
       });
   };
 }
