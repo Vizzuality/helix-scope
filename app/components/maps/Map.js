@@ -150,39 +150,51 @@ class Map extends React.Component {
   }
 
   generateCartoCSS(mapData) {
+    if (mapData.raster) {
+      this.gernerateCartoRaster();
+    } else {
+      this.generateCartoVector();
+    }
+  }
+
+  generateCartoRaster() {
+    // TO-DO move colors bucket to API
+    const colorsBucket = ['#D6ECFC', '#BCECDC', '#70A9D2',
+      '#5381D2', '#525FBD', '#3E39A1'];
+    let stops = '';
+
+    this.bucket.forEach((bucket, index) => {
+      // No data and min value
+      if (index === 0) {
+        stops += `stop(${bucket.nodatavalue}, 'transparent', 'exact')`;
+        stops += `stop(${bucket.raster_min}, ${colorsBucket[index]}, 'discrete')`;
+      }
+      stops += `stop(${bucket.raster_value}, ${colorsBucket[index]})`;
+    });
+
+    this.cartoCSS = Object.assign({}, MAP_RASTER_CSS);
+    this.cartoCSS['raster-colorizer-stops'] = stops;
+    this.cartoCSS = `#null ${JSON.stringify(this.cartoCSS)} `;
+    this.cartoCSS = this.formatCartoCSS(this.cartoCSS);
+  }
+
+
+  generateCartoVector() {
     // TO-DO move colors bucket to API
     const colorsBucket = ['#D6ECFC', '#BCECDC', '#70A9D2',
       '#5381D2', '#525FBD', '#3E39A1'];
 
-    if (mapData.raster) {
-      let stops = '';
+    const bucketList = Object.assign([], this.bucket);
+    bucketList.reverse();
 
-      this.bucket.forEach((bucket, index) => {
-        // No data and min value
-        if (index === 0) {
-          stops += `stop(${bucket.nodatavalue}, 'transparent', 'exact')`;
-          stops += `stop(${bucket.raster_min}, ${colorsBucket[index]}, 'discrete')`;
-        }
-        stops += `stop(${bucket.raster_value}, ${colorsBucket[index]})`;
-      });
+    this.cartoCSS = Object.assign({}, MAP_VECTOR_CSS);
+    this.cartoCSS = `#null ${JSON.stringify(this.cartoCSS)} `;
 
-      this.cartoCSS = Object.assign({}, MAP_RASTER_CSS);
-      this.cartoCSS['raster-colorizer-stops'] = stops;
-      this.cartoCSS = `#null ${JSON.stringify(this.cartoCSS)} `;
-      this.cartoCSS = this.formatCartoCSS(this.cartoCSS);
-    } else {
-      const bucketList = Object.assign([], this.bucket);
-      bucketList.reverse();
+    bucketList.forEach((bucket, index) => {
+      this.cartoCSS += `#null [value <= ${bucket.value}] { polygon-fill: ${colorsBucket[index]}}`;
+    });
 
-      this.cartoCSS = Object.assign({}, MAP_VECTOR_CSS);
-      this.cartoCSS = `#null ${JSON.stringify(this.cartoCSS)} `;
-
-      bucketList.forEach((bucket, index) => {
-        this.cartoCSS += `#null [value <= ${bucket.value}] { polygon-fill: ${colorsBucket[index]}}`;
-      });
-
-      this.cartoCSS = this.formatCartoCSS(this.cartoCSS);
-    }
+    this.cartoCSS = this.formatCartoCSS(this.cartoCSS);
   }
 
   formatCartoCSS(carto) {
