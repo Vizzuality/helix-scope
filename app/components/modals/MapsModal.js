@@ -76,31 +76,25 @@ class MapsModal extends Component {
 
   handleCategory(newValue) {
     this.setState({
-      selectedCategory: newValue.name,
+      selectedCategory: newValue.slug,
       selectedIndicator: null
     });
   }
 
   handleIndicator(newValue) {
     this.setState({
-      selectedIndicator: newValue.indicator
+      selectedIndicator: newValue.slug
     });
   }
 
   handleMeasure(newValue) {
     this.setState({
-      selectedMeasure: newValue.name
+      selectedMeasure: newValue.slug
     });
   }
 
   render() {
     const activeIndicators = this.getIndicators();
-
-    // TODO Normalize response in API
-    const measures = [];
-    this.props.config.measurements.forEach((item) => {
-      measures.push({ name: item });
-    });
 
     return (
       <div>
@@ -127,12 +121,12 @@ class MapsModal extends Component {
                 id={`scenario-${index}`}
                 name="scenario"
                 type="radio"
-                value={index}
-                checked={index === this.state.selectedScenario}
-                onChange={() => this.handleScenarioChange(index)}
+                value={scenario.slug}
+                checked={scenario.slug === this.state.selectedScenario}
+                onChange={() => this.handleScenarioChange(scenario.slug)}
               />
               <label htmlFor={`scenario-${index}`}>
-                {scenario}
+                {scenario.name}
               </label>
             </div>
           )}
@@ -167,21 +161,21 @@ class MapsModal extends Component {
                 value={this.state.selectedIndicator}
                 onChange={this.handleIndicator}
                 searchable={this.state.searchable}
-                labelKey="indicator"
-                valueKey="indicator"
+                labelKey="name"
+                valueKey="slug"
               />
             </div>
             <div className="column small-12 medium-4">
               <Select
                 className="c-react-select"
-                options={measures}
+                options={this.props.config.measurements}
                 clearable={this.state.clearable}
                 disabled={this.state.disabled}
                 value={this.state.selectedMeasure}
                 onChange={this.handleMeasure}
                 searchable={this.state.searchable}
                 labelKey="name"
-                valueKey="name"
+                valueKey="slug"
               />
             </div>
           </div>

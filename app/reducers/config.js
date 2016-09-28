@@ -4,7 +4,6 @@ const initialState = {
   loading: true,
   scenarios: [],
   categories: [],
-  indicators: [],
   measurements: []
 };
 export default function (state = initialState, action) {
