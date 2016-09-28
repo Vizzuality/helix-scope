@@ -1,5 +1,6 @@
 export const LOAD_CONFIG = 'LOAD_CONFIG';
 export const RECEIVE_CONFIG = 'RECEIVE_CONFIG';
+import { initializeMaps } from 'actions/maps';
 import { ENDPOINT_SQL } from 'constants/map';
 
 export function loadConfig() {
@@ -23,6 +24,7 @@ export function fetchConfig() {
       .then(json => {
         const config = json.rows[0].get_config;
         dispatch(receiveConfig(config));
+        dispatch(initializeMaps());
       });
   };
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Legend = (props) => {
-  const colors = ['#D6ECFC', '#BCECDC', '#70A9D2', '#5381D2', '#525FBD', '#3E39A1'];
+  const colors = props.mapData.indicator.colorScheme;
 
   if (props.mapData && !props.mapData.bucket) {
     return <div></div>;
@@ -23,6 +23,7 @@ const Legend = (props) => {
 
 Legend.propTypes = {
   mapData: React.PropTypes.shape({
+    indicator: React.PropTypes.object,
     bucket: React.PropTypes.array
   }).isRequired
 };
