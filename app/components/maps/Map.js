@@ -45,7 +45,6 @@ class Map extends React.Component {
     if ((!this.bucket && props.mapData.bucket) ||
       (props.mapData.bucket && props.mapData.bucket !== this.props.mapData.bucket)) {
       this.bucket = props.mapData.bucket;
-      props.mapData.raster = true;
       this.getLayer(props.mapData);
     }
   }
@@ -129,7 +128,6 @@ class Map extends React.Component {
   }
 
   getQuery(mapData) {
-    // let query = 'SELECT * FROM avg_temperature_sepoctnov_max';
     const scenario = 2;
     const season = 2;
     const measure = 'max';
@@ -160,8 +158,10 @@ class Map extends React.Component {
       let stops = '';
 
       this.bucket.forEach((bucket, index) => {
-        if (index === 0) { // No data value
-          stops += `stop(${bucket.nodatavalue}, 'transparent')`;
+        // No data and min value
+        if (index === 0) {
+          stops += `stop(${bucket.nodatavalue}, 'transparent', 'exact')`;
+          stops += `stop(${bucket.raster_min}, ${colorsBucket[index]}, 'discrete')`;
         }
         stops += `stop(${bucket.raster_value}, ${colorsBucket[index]})`;
       });
@@ -190,6 +190,7 @@ class Map extends React.Component {
     cartoCSS = cartoCSS.replace(/",/g, ';');
     cartoCSS = cartoCSS.replace(/"/g, '');
     cartoCSS = cartoCSS.replace(/\}/g, ';}');
+    cartoCSS = cartoCSS.replace(/\b,/gi, ';');
     return cartoCSS;
   }
 

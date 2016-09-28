@@ -137,15 +137,16 @@ export function createLayer(mapData, layerData) {
 
 export function getMapBuckets(mapData) {
   return (dispatch) => {
+    let query = 'SELECT * FROM get_buckets(\'avg_temperature\', false, \'max\', 2, 2)';
 
-    const vector = 'SELECT * FROM get_buckets(\'avg_temperature\', false, \'max\', 2, 2)';
-
-    const raster = 'SELECT * FROM get_buckets(\'avg_temperature_sepoctnov_min\', true)';
+    if (mapData.raster) {
+      query = 'SELECT * FROM get_buckets(\'avg_temperature_sepoctnov_min\', true)';
+    }
 
     $.get({
       url: ENDPOINT_SQL,
       data: {
-        q: raster
+        q: query
       }
     }).then((res) => {
       dispatch(setMapData(mapData, {
