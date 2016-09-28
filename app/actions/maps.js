@@ -1,32 +1,55 @@
 import $ from 'jquery';
 import { push } from 'react-router-redux';
-import { ENDPOINT_TILES, ENDPOINT_SQL, MAX_MAPS, MAP_NUMBER_BUCKETS } from 'constants/map';
+import { ENDPOINT_TILES, ENDPOINT_SQL, MAX_MAPS } from 'constants/map';
 
 export const MAP_UPDATE_DATA = 'MAP_UPDATE_DATA';
 export const MAP_UPDATE_PAN = 'MAP_UPDATE_PAN';
+export const MAP_SAVE_PARAMS = 'MAP_SAVE_PARAMS';
 export const LOADING_MAP = 'LOADING_MAP';
 
 function getRandomId() {
   return Math.floor(Math.random() * 100).toString();
 }
 
-export function setParamsFromURL(data) {
-  return dispatch => {
-    const urlParams = data.split('/');
+export function saveParamsFromURL(queryParam) {
+  let initialParams = [];
+  if (queryParam) {
+    initialParams = queryParam.split('/');
+  }
+  return {
+    type: MAP_SAVE_PARAMS,
+    payload: initialParams
+  };
+}
+
+export function initializeMaps() {
+  return (dispatch, state) => {
+    const urlParams = state().maps.initialParams;
+    const config = state().config;
     const mapsList = [];
 
     if (urlParams.length && urlParams.length <= MAX_MAPS) {
-      urlParams.forEach((map) => {
-        const params = map.split(',');
+      for (let i = 0, paramsLength = urlParams.length; i < paramsLength; i++) {
+        const params = urlParams[i].split(',');
+        const category = config.categories.find((elem) => (
+          elem.slug === params[1]
+        ));
         mapsList.push({
           id: getRandomId(),
-          scenario: params[0],
-          category: params[1],
-          indicator: params[2],
-          measure: params[3]
+          scenario: config.scenarios.find((elem) => (
+            elem.slug === params[0]
+          )),
+          category,
+          indicator: category.indicator.find((elem) => (
+            elem.slug === params[2]
+          )),
+          measure: config.measurements.find((elem) => (
+            elem.slug === params[3]
+          ))
         });
-      });
+      }
     }
+
     dispatch({
       type: MAP_UPDATE_DATA,
       payload: mapsList

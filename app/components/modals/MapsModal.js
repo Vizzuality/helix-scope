@@ -37,10 +37,7 @@ class MapsModal extends Component {
     const mapState = {
       measure: this.state.selectedMeasure,
       scenario: this.state.selectedScenario,
-      category: {
-        name: this.state.selectedCategory.name,
-        slug: this.state.selectedCategory.slug
-      },
+      category: this.state.selectedCategory,
       indicator: this.state.selectedIndicator
     };
 

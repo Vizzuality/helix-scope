@@ -1,7 +1,8 @@
-import { MAP_UPDATE_DATA, MAP_UPDATE_PAN, LOADING_MAP } from 'actions/maps';
+import { MAP_SAVE_PARAMS, MAP_UPDATE_DATA, MAP_UPDATE_PAN, LOADING_MAP } from 'actions/maps';
 
 const initialState = {
   mapsList: [],
+  initialParams: [],
   zoom: 3,
   layer: '',
   latLng: {
@@ -12,6 +13,9 @@ const initialState = {
 
 export default function (state = initialState, action) {
   switch (action.type) {
+    case MAP_SAVE_PARAMS: {
+      return Object.assign({}, state, { initialParams: action.payload });
+    }
     case MAP_UPDATE_DATA: {
       return Object.assign({}, state, { mapsList: action.payload });
     }

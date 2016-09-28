@@ -7,7 +7,7 @@ class MapsPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mapModalOpen: false,
+      mapModalOpen: true,
       mapSelectedId: null
     };
     this.setMapModal = this.setMapModal.bind(this);
@@ -24,13 +24,15 @@ class MapsPage extends React.Component {
     const { query } = this.context.location;
 
     if (query && query.maps) {
-      this.props.setParamsFromURL(query.maps);
+      this.props.saveParamsFromURL(query.maps);
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.maps.length === 0) {
       this.setMapModal(true);
+    } else {
+      this.setMapModal(false);
     }
     if (!nextProps.config.loading && nextProps.config !== this.props.config) {
       this.defaultMapConfig = {
@@ -68,7 +70,6 @@ class MapsPage extends React.Component {
       elem.id === this.state.mapSelectedId
     ));
     const mapConfigData = selectedMap || this.defaultMapConfig;
-    console.log(mapConfigData);
 
     return (
       <div className="-dark">
@@ -95,7 +96,7 @@ MapsPage.contextTypes = {
 };
 
 MapsPage.propTypes = {
-  setParamsFromURL: React.PropTypes.func,
+  saveParamsFromURL: React.PropTypes.func,
   maps: React.PropTypes.array,
   config: React.PropTypes.object,
   createLayer: React.PropTypes.func
