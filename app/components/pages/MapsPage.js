@@ -12,11 +12,11 @@ class MapsPage extends React.Component {
     };
     this.setMapModal = this.setMapModal.bind(this);
     this.defaultMapConfig = {
-      scenario: '15',
-      category: 'climate',
-      indicator: 'avg_temperature_change',
-      measure: 'max',
-      layer: ''
+      scenario: {},
+      category: {},
+      indicator: {},
+      measure: {},
+      layer: null
     };
   }
 
@@ -31,6 +31,14 @@ class MapsPage extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.maps.length === 0) {
       this.setMapModal(true);
+    }
+    if (!nextProps.config.loading && nextProps.config !== this.props.config) {
+      this.defaultMapConfig = {
+        scenario: nextProps.config.scenarios[0],
+        category: nextProps.config.categories[0],
+        indicator: nextProps.config.categories[0].indicator[0],
+        measure: nextProps.config.measurements[0]
+      };
     }
   }
 
@@ -48,6 +56,8 @@ class MapsPage extends React.Component {
   }
 
   render() {
+    if (this.props.config.loading) return null;
+
     let addBtn;
     const mapsList = this.props.maps;
     if (mapsList.length < 4) {
@@ -58,6 +68,7 @@ class MapsPage extends React.Component {
       elem.id === this.state.mapSelectedId
     ));
     const mapConfigData = selectedMap || this.defaultMapConfig;
+    console.log(mapConfigData);
 
     return (
       <div className="-dark">
@@ -86,6 +97,7 @@ MapsPage.contextTypes = {
 MapsPage.propTypes = {
   setParamsFromURL: React.PropTypes.func,
   maps: React.PropTypes.array,
+  config: React.PropTypes.object,
   createLayer: React.PropTypes.func
 };
 

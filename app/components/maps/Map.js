@@ -117,7 +117,6 @@ class Map extends React.Component {
 
   getLayer(mapData) {
     this.generateCartoCSS(mapData);
-
     const layer = this.getLayerData({
       sql: this.getQuery(mapData),
       cartocss: this.cartoCSS,
@@ -128,10 +127,11 @@ class Map extends React.Component {
   }
 
   getQuery(mapData) {
-    const scenario = 2;
+    const scenario = mapData.scenario.slug;
     const season = 2;
-    const measure = 'max';
-    const tableName = 'avg_temperature';
+    const measure = mapData.measure.slug;
+    const tableName = mapData.indicator.tableName;
+
     let query = `with r as (select value, iso from ${tableName} where measure like '${measure}' and scenario = ${scenario} and season = ${season} ) select r.iso, value, the_geom_webmercator from r inner join country_geoms s on r.iso=s.iso`;
 
     if (mapData.raster) {
@@ -151,16 +151,14 @@ class Map extends React.Component {
 
   generateCartoCSS(mapData) {
     if (mapData.raster) {
-      this.gernerateCartoRaster();
+      this.gernerateCartoRaster(mapData);
     } else {
-      this.generateCartoVector();
+      this.generateCartoVector(mapData);
     }
   }
 
-  generateCartoRaster() {
-    // TO-DO move colors bucket to API
-    const colorsBucket = ['#D6ECFC', '#BCECDC', '#70A9D2',
-      '#5381D2', '#525FBD', '#3E39A1'];
+  gernerateCartoRaster(mapData) {
+    const colorsBucket = mapData.indicator.colorScheme;
     let stops = '';
 
     this.bucket.forEach((bucket, index) => {
@@ -179,10 +177,8 @@ class Map extends React.Component {
   }
 
 
-  generateCartoVector() {
-    // TO-DO move colors bucket to API
-    const colorsBucket = ['#D6ECFC', '#BCECDC', '#70A9D2',
-      '#5381D2', '#525FBD', '#3E39A1'];
+  generateCartoVector(mapData) {
+    const colorsBucket = mapData.indicator.colorScheme;
 
     const bucketList = Object.assign([], this.bucket);
     bucketList.reverse();
@@ -218,9 +214,9 @@ Map.propTypes = {
   mapData: React.PropTypes.shape({
     id: React.PropTypes.string,
     layer: React.PropTypes.string,
-    scenario: React.PropTypes.string,
-    category: React.PropTypes.string,
-    indicator: React.PropTypes.string,
+    scenario: React.PropTypes.object,
+    category: React.PropTypes.object,
+    indicator: React.PropTypes.object,
     bucket: React.PropTypes.array
   }).isRequired,
   mapConfig: React.PropTypes.shape({

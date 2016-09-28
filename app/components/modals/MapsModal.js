@@ -37,7 +37,10 @@ class MapsModal extends Component {
     const mapState = {
       measure: this.state.selectedMeasure,
       scenario: this.state.selectedScenario,
-      category: this.state.selectedCategory,
+      category: {
+        name: this.state.selectedCategory.name,
+        slug: this.state.selectedCategory.slug
+      },
       indicator: this.state.selectedIndicator
     };
 
@@ -49,25 +52,6 @@ class MapsModal extends Component {
     this.props.onSetMapModal(false);
   }
 
-  getIndicators() {
-    const categories = this.props.config.categories;
-    const selectedCategory = this.state.selectedCategory;
-
-    if (!categories.length) return null;
-
-    function findCategoryIndicators(indicator) {
-      return indicator.name === selectedCategory;
-    }
-
-    const filteredIndicators = categories.find(findCategoryIndicators);
-    let activeIndicators = [];
-    if (filteredIndicators && filteredIndicators.indicator && filteredIndicators.indicator.length) {
-      activeIndicators = filteredIndicators.indicator;
-    }
-
-    return activeIndicators;
-  }
-
   handleScenarioChange(newValue) {
     this.setState({
       selectedScenario: newValue
@@ -76,26 +60,24 @@ class MapsModal extends Component {
 
   handleCategory(newValue) {
     this.setState({
-      selectedCategory: newValue.slug,
-      selectedIndicator: null
+      selectedCategory: newValue,
+      selectedIndicator: newValue.indicator[0]
     });
   }
 
   handleIndicator(newValue) {
     this.setState({
-      selectedIndicator: newValue.slug
+      selectedIndicator: newValue
     });
   }
 
   handleMeasure(newValue) {
     this.setState({
-      selectedMeasure: newValue.slug
+      selectedMeasure: newValue
     });
   }
 
   render() {
-    const activeIndicators = this.getIndicators();
-
     return (
       <div>
         <Modal
@@ -122,8 +104,8 @@ class MapsModal extends Component {
                 name="scenario"
                 type="radio"
                 value={scenario.slug}
-                checked={scenario.slug === this.state.selectedScenario}
-                onChange={() => this.handleScenarioChange(scenario.slug)}
+                checked={scenario.slug === this.state.selectedScenario.slug}
+                onChange={() => this.handleScenarioChange(scenario)}
               />
               <label htmlFor={`scenario-${index}`}>
                 {scenario.name}
@@ -145,7 +127,7 @@ class MapsModal extends Component {
                 options={this.props.config.categories}
                 clearable={this.state.clearable}
                 disabled={this.state.disabled}
-                value={this.state.selectedCategory}
+                value={this.state.selectedCategory.slug}
                 onChange={this.handleCategory}
                 searchable={this.state.searchable}
                 labelKey="name"
@@ -155,10 +137,10 @@ class MapsModal extends Component {
             <div className="column small-12 medium-4">
               <Select
                 className="c-react-select"
-                options={activeIndicators}
+                options={this.state.selectedCategory.indicator}
                 clearable={this.state.clearable}
                 disabled={this.state.disabled}
-                value={this.state.selectedIndicator}
+                value={this.state.selectedIndicator.slug}
                 onChange={this.handleIndicator}
                 searchable={this.state.searchable}
                 labelKey="name"
@@ -171,7 +153,7 @@ class MapsModal extends Component {
                 options={this.props.config.measurements}
                 clearable={this.state.clearable}
                 disabled={this.state.disabled}
-                value={this.state.selectedMeasure}
+                value={this.state.selectedMeasure.slug}
                 onChange={this.handleMeasure}
                 searchable={this.state.searchable}
                 labelKey="name"
@@ -215,10 +197,10 @@ MapsModal.propTypes = {
   * Data of the map config
   **/
   mapConfigData: React.PropTypes.shape({
-    measure: React.PropTypes.string,
-    indicator: React.PropTypes.string,
-    scenario: React.PropTypes.string,
-    category: React.PropTypes.string
+    measure: React.PropTypes.object,
+    indicator: React.PropTypes.object,
+    scenario: React.PropTypes.object,
+    category: React.PropTypes.object
   }),
   /**
   * Function to supply setMap action to Maps page

@@ -44,7 +44,7 @@ export function updateURL() {
       query = '?maps=';
 
       maps.mapsList.forEach((map, index) => {
-        query += `${map.scenario},${map.category},${map.indicator},${map.measure}`;
+        query += `${map.scenario.slug},${map.category.slug},${map.indicator.slug},${map.measure.slug}`;
 
         if (index < maps.mapsList.length - 1) {
           query += '/';
