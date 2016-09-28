@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Button from 'components/common/Button';
+import Legend from './Legend';
 
 class Dashboard extends Component {
   constructor(props) {
@@ -38,21 +39,6 @@ class Dashboard extends Component {
       deleteBtn = <Button onClick={() => this.props.deleteMap(this.props.mapData.id)} icon="close" style="light" size="small" />;
     }
 
-    const legendConfig = {
-      climate: [{ color: '#d6faec', value: 0 },
-                { color: '#cff1e1', value: 0.2 },
-                { color: '#dde133', value: 0.4 },
-                { color: '#e5cf19', value: 0.6 },
-                { color: '#a4c504', value: 0.8 },
-                { color: '#268434', value: 1 }],
-      biodiversity: [{ color: '#d2ecfb', value: 0 },
-                { color: '#b3ecdd', value: 0.2 },
-                { color: '#5faacf', value: 0.4 },
-                { color: '#4084cd', value: 0.6 },
-                { color: '#4963b8', value: 0.8 },
-                { color: '#383e9c', value: 1 }]
-    };
-
     return (
       <div className="c-dashboard">
         <div className="dashboard-control">
@@ -68,16 +54,9 @@ class Dashboard extends Component {
         <div className="dashboard-legend">
           <h4>{titles.categoryTitle}</h4>
           <span>{titles.indicatorTitle}</span>
-          <div className="scale">
-            <ul className="labels">
-              {legendConfig[this.props.mapData.category].map((element, index) =>
-                <li key={`legend-item-${index}`}>
-                  <span style={{ backgroundColor: element.color }}></span>
-                  {element.value}
-                </li>
-              )}
-            </ul>
-          </div>
+          <Legend
+            mapData={this.props.mapData}
+          />
         </div>
       </div>
    );
