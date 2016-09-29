@@ -69,6 +69,7 @@ const webpackConfig = {
       reducers: 'app/reducers',
       components: 'app/components',
       containers: 'app/containers',
+      constants: 'app/constants',
       fonts: 'app/fonts'
     },
     extensions: ['', '.js', '.jsx']

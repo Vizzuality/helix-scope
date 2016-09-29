@@ -1,27 +1,55 @@
+import $ from 'jquery';
 import { push } from 'react-router-redux';
+import { ENDPOINT_TILES, ENDPOINT_SQL, MAX_MAPS } from 'constants/map';
 
 export const MAP_UPDATE_DATA = 'MAP_UPDATE_DATA';
 export const MAP_UPDATE_PAN = 'MAP_UPDATE_PAN';
+export const MAP_SAVE_PARAMS = 'MAP_SAVE_PARAMS';
+export const LOADING_MAP = 'LOADING_MAP';
 
-const MAX_MAPS = 4;
+function getRandomId() {
+  return Math.floor(Math.random() * 100).toString();
+}
 
-export function setParamsFromURL(data) {
-  return dispatch => {
-    const urlParams = data.split('/');
+export function saveParamsFromURL(queryParam) {
+  let initialParams = [];
+  if (queryParam) {
+    initialParams = queryParam.split('/');
+  }
+  return {
+    type: MAP_SAVE_PARAMS,
+    payload: initialParams
+  };
+}
+
+export function initializeMaps() {
+  return (dispatch, state) => {
+    const urlParams = state().maps.initialParams;
+    const config = state().config;
     const mapsList = [];
 
     if (urlParams.length && urlParams.length <= MAX_MAPS) {
-      urlParams.forEach((map, index) => {
-        const params = map.split(',');
+      for (let i = 0, paramsLength = urlParams.length; i < paramsLength; i++) {
+        const params = urlParams[i].split(',');
+        const category = config.categories.find((elem) => (
+          elem.slug === params[1]
+        ));
         mapsList.push({
-          id: index,
-          scenario: params[0],
-          category: params[1],
-          indicator: params[2],
-          measure: params[3]
+          id: getRandomId(),
+          scenario: config.scenarios.find((elem) => (
+            elem.slug === params[0]
+          )),
+          category,
+          indicator: category.indicator.find((elem) => (
+            elem.slug === params[2]
+          )),
+          measure: config.measurements.find((elem) => (
+            elem.slug === params[3]
+          ))
         });
-      });
+      }
     }
+
     dispatch({
       type: MAP_UPDATE_DATA,
       payload: mapsList
@@ -39,7 +67,7 @@ export function updateURL() {
       query = '?maps=';
 
       maps.mapsList.forEach((map, index) => {
-        query += `${map.scenario},${map.category},${map.indicator},${map.measure}`;
+        query += `${map.scenario.slug},${map.category.slug},${map.indicator.slug},${map.measure.slug}`;
 
         if (index < maps.mapsList.length - 1) {
           query += '/';
@@ -59,10 +87,15 @@ export function setMap(map) {
         mapsList.push(mapItem);
       });
 
-      if (mapsList[map.id]) {
-        mapsList[map.id] = map;
+      let selectedMap = mapsList.find((elem) => (
+        elem.id === map.id
+      ));
+      if (selectedMap) {
+        selectedMap = Object.assign(selectedMap, map);
       } else {
-        mapsList.push(map);
+        const newMap = map;
+        newMap.id = getRandomId();
+        mapsList.push(newMap);
       }
 
       dispatch({
@@ -77,11 +110,9 @@ export function setMap(map) {
 export function deleteMap(mapId) {
   return (dispatch, state) => {
     const maps = state().maps.mapsList;
-    maps.splice(mapId, 1);
-    const mapsList = [];
-    maps.forEach(map => {
-      mapsList.push(map);
-    });
+    const mapsList = maps.filter((elem) => (
+      elem.id !== mapId
+    ));
 
     dispatch({
       type: MAP_UPDATE_DATA,
@@ -95,5 +126,60 @@ export function panMaps(panParams) {
   return {
     type: MAP_UPDATE_PAN,
     payload: panParams
+  };
+}
+
+function setMapData(mapData, newData) {
+  return (dispatch, state) => {
+    const maps = state().maps.mapsList;
+    const mapsList = [];
+    maps.forEach(map => {
+      let currentMap = map;
+      if (currentMap.id === mapData.id) {
+        currentMap = Object.assign(currentMap, newData);
+      }
+      mapsList.push(currentMap);
+    });
+
+    dispatch({
+      type: MAP_UPDATE_DATA,
+      payload: mapsList
+    });
+  };
+}
+
+export function createLayer(mapData, layerData) {
+  return (dispatch) => {
+    $.post({
+      url: ENDPOINT_TILES,
+      dataType: 'json',
+      contentType: 'application/json; charset=UTF-8',
+      data: layerData
+    }).then((res) => {
+      dispatch(setMapData(mapData, {
+        layer: `${ENDPOINT_TILES}${res.layergroupid}/{z}/{x}/{y}.png32`
+      }));
+    });
+  };
+}
+
+export function getMapBuckets(mapData) {
+  return (dispatch) => {
+    let query = 'SELECT * FROM get_buckets(\'avg_temperature\', false, \'max\', 2, 2)';
+
+    if (mapData.raster) {
+      query = 'SELECT * FROM get_buckets(\'avg_temperature_sepoctnov_min\', true)';
+    }
+
+    $.get({
+      url: ENDPOINT_SQL,
+      data: {
+        q: query
+      }
+    }).then((res) => {
+      dispatch(setMapData(mapData, {
+        bucket: res.rows
+      }));
+    });
   };
 }

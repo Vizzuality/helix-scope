@@ -4,8 +4,7 @@ const initialState = {
   loading: true,
   scenarios: [],
   categories: [],
-  indicators: [],
-  measures: []
+  measurements: []
 };
 export default function (state = initialState, action) {
   switch (action.type) {
@@ -15,10 +14,9 @@ export default function (state = initialState, action) {
       });
     }
     case RECEIVE_CONFIG: {
-      return Object.assign({}, state, {
-        loading: false,
-        ...action
-      });
+      const config = action.payload;
+      config.loading = false;
+      return Object.assign({}, state, config);
     }
     default:
       return state;
