@@ -1,0 +1,64 @@
+.c-get-updates {
+  padding: $margin-medium 0;
+
+  @media (--medium-viewport) {
+    padding: $margin-large 0;
+  }
+
+  &.-success {
+    > .column {
+      > span,
+      > input {
+        color: $font-white;
+      }
+    }
+  }
+
+  > .column {
+    text-align: center;
+
+    @media (--medium-viewport) {
+      text-align: left;
+
+      &:last-of-type {
+        text-align: right;
+      }
+    }
+
+    > span {
+      font-family: $font-heading;
+      font-size: $font-size;
+      line-height: 1.3;
+      letter-spacing: 0.5px;
+      color: $font-main;
+    }
+
+    > input {
+      margin: 0;
+      padding: $margin-small 0;
+      width: 100%;
+      font-family: $font-body;
+      font-size: $font-size-medium;
+      font-style: italic;
+      line-height: 1;
+      text-align: center;
+      color: $font-box-grey;
+      background: none;
+      box-shadow: none;
+
+      @media (--medium-viewport) {
+        padding: 0;
+        width: auto;
+        font-size: 34px;
+        float: right;
+        position: relative;
+        top: 0;
+        right: 0;
+      }
+
+      &.-error {
+        border-bottom: 1px solid $color-red-bold;
+      }
+    }
+  }
+}
