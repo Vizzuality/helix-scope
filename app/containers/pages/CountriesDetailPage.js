@@ -2,13 +2,13 @@ import { connect } from 'react-redux';
 import CountriesDetailPage from 'components/pages/CountriesDetailPage';
 import { getCountryData } from 'actions/countries';
 
-const mapStateToProps = (state, { location, params }) => ({
-  slug: params.slug,
-  countryData: {}
+const mapStateToProps = (state, { params }) => ({
+  iso: params.iso,
+  countryData: state.countries.countriesData[params.iso] || false
 });
 
 const mapDispatchToProps = dispatch => ({
-  getCountryData: (slug) => dispatch(getCountryData(slug))
+  getCountryData: (iso) => dispatch(getCountryData(iso))
 }
 );
 

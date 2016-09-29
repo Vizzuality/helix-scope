@@ -18,10 +18,49 @@ export function getCountriesList() {
   };
 }
 
-export function getCountryData(slug) {
+export function getCountryData(iso) {
   return {
     type: GET_COUNTRY_DATA,
-    payload: { slug }
+    payload: {
+      iso,
+      name: 'Brazil',
+      regions: [
+        {
+          name: 'North',
+          slug: 'north'
+        },
+        {
+          name: 'Northeast',
+          slug: 'northeast'
+        },
+        {
+          name: 'West Central',
+          slug: 'westcentral'
+        },
+        {
+          name: 'Southeast',
+          slug: 'southeast'
+        },
+        {
+          name: 'South',
+          slug: 'south'
+        }
+      ],
+      indicators: [
+        {
+          name: 'Plant Species Richness Remaining',
+          category: 'Biodiversity'
+        },
+        {
+          name: 'Avg change temperature',
+          category: 'Climate'
+        },
+        {
+          name: 'Avg precipitation',
+          category: 'Water'
+        }
+      ]
+    }
   };
 }
 
