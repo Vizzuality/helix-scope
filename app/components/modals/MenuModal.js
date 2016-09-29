@@ -16,7 +16,7 @@ class MenuModal extends Component {
           modalOpen={this.props.menuModalOpen}
           onSetModal={this.props.setMenuModal}
           btnStyle="primary"
-          >
+        >
           <ul className="mobile-menu">
             <li>
               <NavLink to="/global-scenarios" className="-green" onClick={() => this.props.setMenuModal(false)}>Global Scenarios</NavLink>
@@ -28,7 +28,7 @@ class MenuModal extends Component {
               <NavLink to="/compare" className="-red" onClick={() => this.props.setMenuModal(false)}>Compare</NavLink>
             </li>
             <li>
-              <Button icon="share" style="none" size="small" onClick={this.handleShareOpen.bind(this)}/>
+              <Button icon="share" style="none" size="small" onClick={() => this.handleShareOpen} />
             </li>
           </ul>
         </Modal>

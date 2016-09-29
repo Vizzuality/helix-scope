@@ -14,7 +14,7 @@ class ShareModal extends Component {
 
   handleCopyClick() {
     try {
-      this.url.select();
+      this.url.urlInput.select();
       const isEnabled = document.queryCommandEnabled('copy');
       const successful = document.execCommand('copy');
 
@@ -27,8 +27,8 @@ class ShareModal extends Component {
           copyFailed: true
         });
       }
-    } catch(err) {
-      console.log(err);
+    } catch (err) {
+      console.warn(err);
     }
   }
 
@@ -50,7 +50,7 @@ class ShareModal extends Component {
           modalOpen={this.props.shareModalOpen}
           onSetModal={this.props.setShareModal}
           btnStyle="dark"
-          >
+        >
           <div className="title">
             Share
           </div>
@@ -58,21 +58,21 @@ class ShareModal extends Component {
             Copy this URL to Share
           </div>
           <div className="actions">
-            <input ref={ref => this.url = ref} defaultValue={`http://helixscope.org${this.props.shareUrl}`} className="url"/>
-            <Button onClick={this.handleCopyClick} icon="arrow" style="primary" size="large" text={btnText} color="dark" position="copy-link"/>
+            <input ref={ref => (this.url = ref)} defaultValue={`http://helixscope.org${this.props.shareUrl}`} className="url" />
+            <Button onClick={this.handleCopyClick} icon="arrow" style="primary" size="large" text={btnText} color="dark" position="copy-link" />
           </div>
           <div className="copy-text">
             {copyText}
           </div>
           <div className="share-links">
             <a href={`http://www.facebook.com/sharer/sharer.php?u=http://helixscope.org${this.props.shareUrl}`} className="c-btn btn-link" target="_blank" rel="noopener noreferrer">
-              <svg className={`btn-icon icon-facebook -none -size-small`}>
-                <use xlinkHref={`#icon-facebook`}></use>
+              <svg className={'btn-icon icon-facebook -none -size-small'}>
+                <use xlinkHref={'#icon-facebook'}></use>
               </svg>
             </a>
             <a href={`https://twitter.com/share?url=http://helixscope.org${this.props.shareUrl}`} className="c-btn btn-link" target="_blank" rel="noopener noreferrer">
-              <svg className={`btn-icon icon-twitter -none -size-small`}>
-                <use xlinkHref={`#icon-twitter`}></use>
+              <svg className={'btn-icon icon-twitter -none -size-small'}>
+                <use xlinkHref={'#icon-twitter'}></use>
               </svg>
             </a>
           </div>
