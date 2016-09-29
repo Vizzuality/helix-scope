@@ -14,13 +14,18 @@
   background-size: cover;
   padding-top: calc($header-height + $margin-large + 1rem);
   padding-bottom: $margin-extra-large;
+  min-height: 350px;
+
+  &.-country {
+    background-image: url('/images/covers/countries_detail.jpg');
+  }
 
   &.-countries {
-    background-image: url('/images/covers_countries.jpg');
+    background-image: url('/images/covers/countries.jpg');
   }
 
   &.-compare {
-    background-image: url('/images/covers_compare.jpg');
+    background-image: url('/images/covers/compare.jpg');
   }
 
   &.-blank {
@@ -44,7 +49,21 @@
 }
 
 .l-page-content {
-  min-height: 300px;
+  padding: $margin-large 0;
+
+  h2 {
+    margin: $margin-small;
+    font-family: $font-body;
+    font-size: $font-size-medium-large;
+    font-weight: normal;
+    line-height: 1.3;
+    color: $font-main;
+  }
+
+  > .row {
+    margin-top: $margin-large;
+    margin-bottom: $margin-large;
+  }
 }
 
 .l-page-modules {
