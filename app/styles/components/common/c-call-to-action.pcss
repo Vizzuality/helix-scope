@@ -5,7 +5,11 @@
   background-color: $color-bg-main;
 
   > .row {
-    min-height: 500px;
+    min-height: 400px;
+
+    @media (--medium-viewport) {
+      min-height: 500px;
+    }
   }
 
   &.-about {

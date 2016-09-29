@@ -10,7 +10,7 @@ function CallToAction(props) {
   return (
     <div className={`c-call-to-action -${props.type}`}>
       <div className="row align-middle">
-        <div className="column small-12 medium-8 medium-offset-2">
+        <div className="column small-12 large-8 large-offset-2">
           <div className="c-txt-title -inv -huge">{props.title}</div>
           <div className="c-txt-intro -inv">{props.content}
           </div>
