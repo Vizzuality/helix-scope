@@ -1,7 +1,6 @@
 .c-chart {
   margin: $margin-medium 0;
   padding: $margin-large;
-  height: 390px;
   background-color: $color-base;
   box-shadow: 0 0 4px 0 rgba(81, 81, 83, 0.2);
 
@@ -20,5 +19,27 @@
     line-height: 1.9;
     color: $font-main;
     margin: $margin-small 0;
+  }
+
+  > .chart {
+    height: 350px;
+
+    .unit,
+    .axis text {
+      font-family: $font-heading;
+      font-size: $font-size-x-small;
+      line-height: 1;
+      fill: $font-grey;
+    }
+
+    .axis .domain {
+      stroke-width: 1px;
+      fill: $font-white-light;
+    }
+
+    .multiline {
+      fill: none;
+      stroke-width: 2px;
+    }
   }
 }
