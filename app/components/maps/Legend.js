@@ -13,7 +13,7 @@ const Legend = (props) => {
         {props.mapData.bucket.map((bucket, index) =>
           <li key={`legend-item-${index}`}>
             <span style={{ backgroundColor: colors[index] }}></span>
-            {bucket.value}
+            {bucket.value.toFixed(2)}
           </li>
         )}
       </ul>

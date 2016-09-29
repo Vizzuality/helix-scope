@@ -91,6 +91,7 @@ export function setMap(map) {
         elem.id === map.id
       ));
       if (selectedMap) {
+        selectedMap.bucket = [];
         selectedMap = Object.assign(selectedMap, map);
       } else {
         const newMap = map;
@@ -157,7 +158,10 @@ export function createLayer(mapData, layerData) {
       data: layerData
     }).then((res) => {
       dispatch(setMapData(mapData, {
-        layer: `${ENDPOINT_TILES}${res.layergroupid}/{z}/{x}/{y}.png32`
+        layer: {
+          tileUrl: `${ENDPOINT_TILES}${res.layergroupid}/{z}/{x}/{y}.png32`,
+          slug: `layer_${mapData.indicator.slug}_${mapData.scenario.slug}_${mapData.measure.slug}`
+        }
       }));
     });
   };
@@ -165,10 +169,10 @@ export function createLayer(mapData, layerData) {
 
 export function getMapBuckets(mapData) {
   return (dispatch) => {
-    let query = 'SELECT * FROM get_buckets(\'avg_temperature\', false, \'max\', 2, 2)';
+    let query = `SELECT * FROM get_buckets(${mapData.indicator.tableName}, false, '${mapData.measure.slug}', ${mapData.scenario.slug}, 2)`;
 
-    if (mapData.raster) {
-      query = 'SELECT * FROM get_buckets(\'avg_temperature_sepoctnov_min\', true)';
+    if (!mapData.raster) {
+      query = `SELECT * FROM get_buckets('${mapData.indicator.tableName}_${mapData.measure.slug}_${mapData.scenario.slug}_1', true)`;
     }
 
     $.get({
