@@ -12,7 +12,9 @@ class CountriesPage extends Component {
   }
 
   componentDidMount() {
-    this.props.getCountriesList();
+    if (this.props.countriesList && this.props.countriesList.length === 0) {
+      this.props.getCountriesList();
+    }
   }
 
   render() {

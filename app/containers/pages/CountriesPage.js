@@ -1,9 +1,9 @@
 import { connect } from 'react-redux';
 import CountriesPage from 'components/pages/CountriesPage';
-import { getCountriesList } from 'actions/countriesConfig';
+import { getCountriesList } from 'actions/countries';
 
 const mapStateToProps = state => ({
-  countriesList: state.countriesConfig.countriesList
+  countriesList: state.countries.countriesList
 });
 
 const mapDispatchToProps = dispatch => ({
