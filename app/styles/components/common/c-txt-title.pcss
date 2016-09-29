@@ -4,6 +4,18 @@
   line-height: 1.6;
   color: $font-main;
 
+  &.-huge {
+    font-size: $font-size-large;
+
+    @media (--medium-viewport) {
+      font-size: $font-size-extra-large;
+    }
+
+    @media (--desktop-viewport) {
+      font-size: $font-size-huge;
+    }
+  }
+
   &.-inv {
     color: $font-white;
   }

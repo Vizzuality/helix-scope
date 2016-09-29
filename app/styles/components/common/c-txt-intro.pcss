@@ -1,10 +1,14 @@
 .c-txt-intro {
   font-family: $font-body;
-  font-size: $font-size-medium;
+  font-size: $font-size;
   line-height: 1.9;
   color: $font-main;
   margin-top: $margin-medium;
   margin-bottom: $margin-extra-large;
+
+  @media (--medium-viewport) {
+    font-size: $font-size-medium;
+  }
 
   &.-inv {
     color: $font-white;
