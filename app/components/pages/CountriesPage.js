@@ -3,6 +3,7 @@ import SearchBox from 'containers/common/SearchBox';
 import ExploreScenarios from 'components/common/ExploreScenarios';
 import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
+import NewsCover from 'components/news/NewsCover';
 
 class CountriesPage extends Component {
   constructor(props) {
@@ -32,6 +33,23 @@ class CountriesPage extends Component {
             </div>
           </div>
         </div>
+
+        <div className="l-page-content">
+          <div className="row">
+            <div className="column">
+              <h2>News and insights</h2>
+            </div>
+          </div>
+          <div className="row">
+            <div className="column">
+              <NewsCover
+                title=""
+                content=""
+              />
+            </div>
+          </div>
+        </div>
+
         <div className="l-page-modules">
           <GetUpdates />
           <ExploreScenarios />
