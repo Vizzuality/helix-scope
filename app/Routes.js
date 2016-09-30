@@ -6,7 +6,8 @@ import HomePage from './containers/pages/HomePage';
 import MapsPage from './containers/pages/MapsPage';
 import CountriesPage from './containers/pages/CountriesPage';
 import CountriesDetailPage from './containers/pages/CountriesDetailPage';
-import ComparePage from './components/pages/ComparePage';
+import ComparePage from './containers/pages/ComparePage';
+import CompareResultsPage from './containers/pages/CompareResultsPage';
 import PartnersPage from './components/pages/PartnersPage';
 import AboutPage from './containers/pages/AboutPage';
 import NewsPage from './components/pages/NewsPage';
@@ -25,7 +26,10 @@ const Routes = ({ history }) => (
         <IndexRoute component={CountriesPage} />
         <Route path=":iso" component={CountriesDetailPage} />
       </Route>
-      <Route path="compare" component={ComparePage} />
+      <Route path="compare">
+        <IndexRoute component={ComparePage} />
+        <Route path=":iso1/:iso2" component={CompareResultsPage} />
+      </Route>
       <Route path="partners" component={PartnersPage} />
       <Route path="about" component={AboutPage} />
       <Route path="news" component={NewsPage} />

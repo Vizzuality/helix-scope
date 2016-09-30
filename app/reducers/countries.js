@@ -10,8 +10,9 @@ export default function (state = initialState, action) {
     case GET_COUNTRIES_LIST:
       return Object.assign({}, state, { countriesList: action.payload });
     case GET_COUNTRY_DATA: {
-      const countryData = { [action.payload.iso]: action.payload };
-      return Object.assign({}, state, { countriesData: countryData });
+      const countriesData = Object.assign({}, state.countriesData, {});
+      countriesData[action.payload.iso] = action.payload;
+      return Object.assign({}, state, { countriesData });
     }
     default:
       return state;
