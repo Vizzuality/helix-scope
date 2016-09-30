@@ -23,7 +23,7 @@ const Routes = ({ history }) => (
       <Route path="global-scenarios(/:lat)(/:lng)(/:zoom)" component={MapsPage} />
       <Route path="countries">
         <IndexRoute component={CountriesPage} />
-        <Route path=":slug" component={CountriesDetailPage} />
+        <Route path=":iso" component={CountriesDetailPage} />
       </Route>
       <Route path="compare" component={ComparePage} />
       <Route path="partners" component={PartnersPage} />
