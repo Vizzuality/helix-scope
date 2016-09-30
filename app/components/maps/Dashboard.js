@@ -10,7 +10,7 @@ function Dashboard(props) {
 
   return (
     <div className="c-dashboard">
-      <div className="dashboard-control">
+      <div className="control">
         <div className="scenario">
           {props.mapData.scenario.name}
           <Button
@@ -20,7 +20,7 @@ function Dashboard(props) {
         </div>
         {deleteBtn}
       </div>
-      <div className="dashboard-legend">
+      <div className="legend">
         <h4>{props.mapData.category.name}</h4>
         <span>{props.mapData.indicator.name}</span>
         <Legend
