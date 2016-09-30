@@ -15,6 +15,9 @@ class Map extends React.Component {
 
     // Set listeners
     this.setListeners();
+
+    // Get buckets for the legend and layer
+    this.props.getMapBuckets(this.props.mapData);
   }
 
   componentWillReceiveProps(props) {
@@ -34,17 +37,21 @@ class Map extends React.Component {
 
       this.resizeTimer = setTimeout(() => {
         this.map.invalidateSize();
-      }, 10);
+      }, 100);
     }
 
-    if ((!this.layer && props.mapData.layer) ||
-      (props.mapData.layer && props.mapData.layer !== this.props.mapData.layer)) {
+    if (props.mapData.bucket && !props.mapData.bucket.length) {
+      this.bucket = props.mapData.bucket;
+      props.getMapBuckets(this.props.mapData);
+    }
+
+    if (this.bucket && props.mapData.layer &&
+      (this.currentLayer !== props.mapData.layer.slug)) {
       this.updateLayer(props.mapData.layer);
     }
 
     if ((!this.bucket && props.mapData.bucket) ||
-      (props.mapData.bucket && props.mapData.bucket !== this.props.mapData.bucket)) {
-      this.bucket = props.mapData.bucket;
+      (this.bucket !== props.mapData.bucket)) {
       this.getLayer(props.mapData);
     }
   }
@@ -72,8 +79,6 @@ class Map extends React.Component {
 
     this.map.on('zoomend', zoomend.bind(this));
     this.map.on('dragend', dragend.bind(this));
-
-    this.props.getMapBuckets(this.props.mapData);
   }
 
   getLatLng() {
@@ -98,7 +103,7 @@ class Map extends React.Component {
   getLayerTypeSpec(isRaster) {
     const spec = Object.assign({}, MAP_LAYER_SPEC);
 
-    if (isRaster) {
+    if (!isRaster) {
       let layerSpecOptions = spec.layers[0].options;
       layerSpecOptions = Object.assign(layerSpecOptions, MAP_LAYER_SPEC_RASTER);
     }
@@ -116,6 +121,7 @@ class Map extends React.Component {
   }
 
   getLayer(mapData) {
+    this.bucket = mapData.bucket;
     this.generateCartoCSS(mapData);
     const layer = this.getLayerData({
       sql: this.getQuery(mapData),
@@ -123,7 +129,7 @@ class Map extends React.Component {
       raster: mapData.raster
     });
 
-    this.props.createLayer(this.props.mapData, layer);
+    this.props.createLayer(mapData, layer);
   }
 
   getQuery(mapData) {
@@ -134,8 +140,8 @@ class Map extends React.Component {
 
     let query = `with r as (select value, iso from ${tableName} where measure like '${measure}' and scenario = ${scenario} and season = ${season} ) select r.iso, value, the_geom_webmercator from r inner join country_geoms s on r.iso=s.iso`;
 
-    if (mapData.raster) {
-      query = 'SELECT * FROM o_1_avg_temperature_sepoctnov_max';
+    if (!mapData.raster) {
+      query = `SELECT * FROM o_1_${mapData.indicator.tableName}_${mapData.measure.slug}_${mapData.scenario.slug}_1`;
     }
 
     return query;
@@ -145,12 +151,13 @@ class Map extends React.Component {
     if (this.layer) {
       this.map.removeLayer(this.layer);
     }
-    this.layer = L.tileLayer(layer, { noWrap: true });
+    this.layer = L.tileLayer(layer.tileUrl, { noWrap: true });
     this.layer.addTo(this.map);
+    this.currentLayer = layer.slug;
   }
 
   generateCartoCSS(mapData) {
-    if (mapData.raster) {
+    if (!mapData.raster) {
       this.gernerateCartoRaster(mapData);
     } else {
       this.generateCartoVector(mapData);
@@ -198,7 +205,6 @@ class Map extends React.Component {
     cartoCSS = cartoCSS.replace(/",/g, ';');
     cartoCSS = cartoCSS.replace(/"/g, '');
     cartoCSS = cartoCSS.replace(/\}/g, ';}');
-    cartoCSS = cartoCSS.replace(/\b,/gi, ';');
     return cartoCSS;
   }
 
@@ -213,7 +219,7 @@ class Map extends React.Component {
 Map.propTypes = {
   mapData: React.PropTypes.shape({
     id: React.PropTypes.string,
-    layer: React.PropTypes.string,
+    layer: React.PropTypes.object,
     scenario: React.PropTypes.object,
     category: React.PropTypes.object,
     indicator: React.PropTypes.object,

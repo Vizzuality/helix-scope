@@ -40,7 +40,7 @@ class Dashboard extends Component {
 Dashboard.propTypes = {
   mapData: React.PropTypes.shape({
     id: React.PropTypes.string,
-    layer: React.PropTypes.string,
+    layer: React.PropTypes.object,
     scenario: React.PropTypes.object,
     category: React.PropTypes.object,
     indicator: React.PropTypes.object
