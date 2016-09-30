@@ -1,5 +1,6 @@
 import React from 'react';
 import d3 from 'd3';
+import { getSeasonTextById } from 'constants/season';
 
 class Chart extends React.Component {
   constructor(props) {
@@ -64,21 +65,6 @@ class Chart extends React.Component {
       return d3.select(this[0][last]);
     };
 
-    const parseSeason = (season) => {
-      switch (season) {
-        case 1:
-          return 'Mar/Apr/May';
-        case 2:
-          return 'Jun/Jul/Aug';
-        case 3:
-          return 'Sep/Oct/Nov';
-        case 4:
-          return 'Dec/Jan/Feb';
-        default:
-          return '';
-      }
-    };
-
     width = width - margin.left - margin.right;
     height = height - margin.top - margin.bottom;
 
@@ -90,7 +76,7 @@ class Chart extends React.Component {
         .orient('bottom')
         .ticks(4)
         .outerTickSize(1)
-        .tickFormat((d) => parseSeason(d));
+        .tickFormat((d) => getSeasonTextById(d));
 
     const yAxis = d3.svg.axis()
         .scale(y)
