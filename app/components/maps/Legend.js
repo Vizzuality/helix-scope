@@ -7,12 +7,14 @@ const Legend = (props) => {
     return <div></div>;
   }
 
+  const gradient = `linear-gradient(to right, ${colors[0]}, ${colors[1]} 20%, ${colors[2]} 39%, ${colors[3]} 59%, ${colors[4]} 79%, ${colors[5]})`;
+
   return (
-    <div className="scale">
+    <div className="c-legend">
       <ul className="labels">
+        <div className="range" style={{ background: gradient }}></div>
         {props.mapData.bucket.map((bucket, index) =>
           <li key={`legend-item-${index}`}>
-            <span style={{ backgroundColor: colors[index] }}></span>
             {bucket.value.toFixed(2)}
           </li>
         )}
