@@ -120,7 +120,7 @@ export function getCountryData(iso) {
         {
           name: 'Avg precipitation',
           category: 'water',
-          unit: 'mm/month',
+          unit: 'mm',
           data: [
             {
               indicator1: 2,

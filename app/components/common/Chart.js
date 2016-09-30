@@ -45,6 +45,7 @@ class Chart extends React.Component {
     let width = this.chart.offsetWidth;
     let height = this.chart.offsetHeight;
     const interpolate = 'linear';
+    const numTicksY = 5;
     const unit = this.props.data.unit;
     const bucket = this.getBucketsColor(this.props.data.category);
     const margin = {
@@ -52,6 +53,15 @@ class Chart extends React.Component {
       right: 30,
       bottom: 30,
       left: 30
+    };
+
+    d3.selection.prototype.first = function () {
+      return d3.select(this[0][0]);
+    };
+
+    d3.selection.prototype.last = function () {
+      const last = this.size() - 1;
+      return d3.select(this[0][last]);
     };
 
     const parseSeason = (season) => {
@@ -73,7 +83,7 @@ class Chart extends React.Component {
     height = height - margin.top - margin.bottom;
 
     const x = d3.scale.linear().range([0, width]);
-    const y = d3.scale.linear().range([height, 0]);
+    const y = d3.scale.linear().range([height, 0]).nice();
 
     const xAxis = d3.svg.axis()
         .scale(x)
@@ -85,7 +95,7 @@ class Chart extends React.Component {
     const yAxis = d3.svg.axis()
         .scale(y)
         .orient('left')
-        .ticks(5)
+        .ticks(numTicksY)
         .innerTickSize(-width)
         .outerTickSize(1)
         .tickPadding(4);
@@ -103,8 +113,16 @@ class Chart extends React.Component {
         .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
 
-    x.domain(d3.extent(data, (d) => d.season));
-    y.domain([0, d3.max(data, (d) => d.value)]);
+    const domain = {
+      x: d3.extent(data, (d) => d.season),
+      y: [0, d3.max(data, (d) => d.value)]
+    };
+
+    x.domain(domain.x);
+    y.domain(domain.y);
+
+    // Add extra padding to Y domain
+    y.domain([domain.y[0], d3.max(y.ticks(numTicksY)) + y.ticks(numTicksY)[1]]);
 
     // Nest the entries by symbol
     const dataNest = d3.nest()
@@ -115,10 +133,16 @@ class Chart extends React.Component {
       .attr('class', 'y axis')
       .call(yAxis);
 
+    svg.selectAll('.axis.y .tick text').last()
+      .append('tspan')
+      .text(unit);
+
     svg.append('g')
       .attr('class', 'x axis')
       .attr('transform', `translate(0, ${height})`)
-      .call(xAxis);
+      .call(xAxis)
+      .selectAll('text')
+        .attr('y', 15);
 
     // Loop through each symbol / key
     dataNest.forEach((d, i) => {
@@ -127,15 +151,6 @@ class Chart extends React.Component {
         .attr('d', line(d.values))
         .attr('stroke', () => bucket[i]);
     });
-
-    svg.append('g')
-      .attr('transform', 'translate(-5, -10)').append('text')
-      .attr('class', 'unit')
-      .attr('x', () => 0)
-      .attr('y', '-10')
-      .attr('dy', '.35em')
-      .attr('text-anchor', 'start')
-      .text(() => unit);
   }
 
   render() {
