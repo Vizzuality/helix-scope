@@ -1,23 +1,19 @@
 'use strict';
 import React from 'react';
-import {render} from 'react-dom';
-import {createStore, combineReducers, applyMiddleware, compose} from 'redux';
-import {Provider} from 'react-redux';
-import {browserHistory} from 'react-router';
+import { render } from 'react-dom';
+import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
+import { Provider } from 'react-redux';
+import { browserHistory } from 'react-router';
 import thunk from 'redux-thunk';
-import {syncHistoryWithStore, routerReducer, routerMiddleware} from 'react-router-redux';
+import { syncHistoryWithStore, routerReducer, routerMiddleware } from 'react-router-redux';
 
-import {fetchConfig} from './actions/config';
-import reducers from './reducers';
+import { fetchConfig } from 'actions/config';
+import * as reducers from 'reducers';
 import Routes from './Routes';
 
+import './styles/lib/custom-foundation.css';
 import './styles/main.pcss';
 
-// const DevTools = createDevTools(
-//   <DockMonitor toggleVisibilityKey="ctrl-h" changePositionKey="ctrl-q">
-//     <LogMonitor theme="tomorrow" preserveScrollTop={false} />
-//   </DockMonitor>
-// );
 /**
  * Reducers
  * @info(http://redux.js.org/docs/basics/Reducers.html)

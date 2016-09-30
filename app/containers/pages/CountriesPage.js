@@ -1,17 +1,14 @@
-import {connect} from 'react-redux';
-import CountriesPage from '../../components/pages/CountriesPage';
-import {setCountriesList} from '../../actions/countriesConfig';
+import { connect } from 'react-redux';
+import CountriesPage from 'components/pages/CountriesPage';
+import { getCountriesList } from 'actions/countries';
 
-const mapStateToProps = state => {
-  return {
-    countriesList: state.countriesConfig.countriesList
-  };
-};
+const mapStateToProps = state => ({
+  countriesList: state.countries.countriesList
+});
 
-const mapDispatchToProps = dispatch => {
-  return {
-    setCountriesList: data => dispatch(setCountriesList(data))
-  };
-};
+const mapDispatchToProps = dispatch => ({
+  getCountriesList: () => dispatch(getCountriesList())
+}
+);
 
 export default connect(mapStateToProps, mapDispatchToProps)(CountriesPage);

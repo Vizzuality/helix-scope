@@ -1,7 +1,7 @@
-import {connect} from 'react-redux';
-import Modal from '../../components/common/Modal';
+import { connect } from 'react-redux';
+import Modal from 'components/common/Modal';
 
-import {setModal} from '../../actions/modal';
+import { setModal } from 'actions/modal';
 
 const mapStateToProps = state => ({
   modalOpen: state.modal.modalOpen

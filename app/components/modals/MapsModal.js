@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Select from 'react-select';
-import Button from '../common/Button';
-import Modal from '../common/Modal';
+import Button from 'components/common/Button';
+import Modal from 'components/common/Modal';
 
 class MapsModal extends Component {
   constructor(props) {
@@ -12,15 +12,41 @@ class MapsModal extends Component {
       searchable: false,
       clearable: false,
       /* initial state options for modal */
-      selectedScenario: this.props.initialScenario,
-      selectedCategory: this.props.initialCategory,
-      selectedIndicator: this.props.initialIndicator
+      selectedScenario: this.props.mapConfigData.scenario,
+      selectedCategory: this.props.mapConfigData.category,
+      selectedIndicator: this.props.mapConfigData.indicator,
+      selectedMeasure: this.props.mapConfigData.measure
     };
     this.handleScenarioChange = this.handleScenarioChange.bind(this);
     this.handleCategory = this.handleCategory.bind(this);
     this.handleIndicator = this.handleIndicator.bind(this);
+    this.handleMeasure = this.handleMeasure.bind(this);
     this.setMapState = this.setMapState.bind(this);
-    this.setIndicators = this.setIndicators.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      selectedScenario: nextProps.mapConfigData.scenario,
+      selectedCategory: nextProps.mapConfigData.category,
+      selectedIndicator: nextProps.mapConfigData.indicator,
+      selectedMeasure: nextProps.mapConfigData.measure
+    });
+  }
+
+  setMapState() {
+    const mapState = {
+      measure: this.state.selectedMeasure,
+      scenario: this.state.selectedScenario,
+      category: this.state.selectedCategory,
+      indicator: this.state.selectedIndicator
+    };
+
+    if (this.props.mapSelectedId) {
+      mapState.id = this.props.mapSelectedId;
+    }
+
+    this.props.setMapState(mapState);
+    this.props.onSetMapModal(false);
   }
 
   handleScenarioChange(newValue) {
@@ -31,55 +57,24 @@ class MapsModal extends Component {
 
   handleCategory(newValue) {
     this.setState({
-      selectedCategory: newValue.slug,
-      selectedIndicator: null
+      selectedCategory: newValue,
+      selectedIndicator: newValue.indicator[0]
     });
   }
 
   handleIndicator(newValue) {
     this.setState({
-      selectedIndicator: newValue.slug
+      selectedIndicator: newValue
     });
   }
 
-  componentWillReceiveProps(nextProps) {
+  handleMeasure(newValue) {
     this.setState({
-      selectedScenario: nextProps.initialScenario,
-      selectedCategory: nextProps.initialCategory,
-      selectedIndicator: nextProps.initialIndicator
+      selectedMeasure: newValue
     });
-  }
-
-  setMapState(newObj) {
-    this.props.setMapState(newObj);
-    this.props.onSetMapModal(false);
-  }
-
-  setIndicators() {
-    const indicators = this.props.indicators;
-    const activeIndicators = [];
-    let indicatorValue = this.state.selectedIndicator;
-    for (let i = 0; i < indicators.length; i++) {
-      if (indicators[i].categorySlug === this.state.selectedCategory) {
-        activeIndicators.push(indicators[i]);
-      }
-    }
-
-    if (!indicatorValue && activeIndicators.length > 0) {
-      indicatorValue = activeIndicators[0].slug;
-    }
-
-    const mapState = {
-      scenario: this.state.selectedScenario,
-      category: this.state.selectedCategory,
-      indicator: indicatorValue
-    };
-    return {activeIndicators, indicatorValue, mapState};
   }
 
   render() {
-    const newIndicators = this.setIndicators();
-
     return (
       <div>
         <Modal
@@ -87,55 +82,90 @@ class MapsModal extends Component {
           modalOpen={this.props.mapModalOpen}
           onSetModal={this.props.onSetMapModal}
           btnStyle="dark"
-          >
-          <div className="title">
-            Add Scenario
+        >
+          <div className="row">
+            <div className="column">
+              <div className="title">
+                Add Scenario
+              </div>
+            </div>
           </div>
-          <div className="scenarios">
-          {this.props.scenarios.map((scenario, index) =>
-            <div className={`scenario scenario-${scenario.id}`} key={scenario.id}>
+          <div className="row align-center scenarios">
+          {this.props.config.scenarios.map((scenario, index) =>
+            <div
+              key={index}
+              className={`column scenario small-4 medium-3 scenario-${index}`}
+            >
               <input
-                id={`scenario-${scenario.id}`}
+                id={`scenario-${index}`}
                 name="scenario"
                 type="radio"
-                value={scenario.id}
-                checked={scenario.id === this.state.selectedScenario}
-                onChange={() => this.handleScenarioChange(scenario.id)}
-                />
+                value={scenario.slug}
+                checked={scenario.slug === this.state.selectedScenario.slug}
+                onChange={() => this.handleScenarioChange(scenario)}
+              />
               <label htmlFor={`scenario-${index}`}>
-                {scenario.title}
+                {scenario.name}
               </label>
             </div>
           )}
           </div>
-          <div className="text">
-            Select the variables and type of impacts you would like to explore
+          <div className="row">
+            <div className="column">
+              <div className="text">
+                Select the variables and type of impacts you would like to explore
+              </div>
+            </div>
           </div>
-          <div className="actions">
-          </div>
-          <div className="c-dropdowns">
-            <Select
-              options={this.props.categories}
-              clearable={this.state.clearable}
-              disabled={this.state.disabled}
-              value={this.state.selectedCategory}
-              onChange={this.handleCategory}
-              searchable={this.state.searchable}
-              labelKey="title"
-              valueKey="slug"
+          <div className="row">
+            <div className="column small-12 medium-4">
+              <Select
+                className="c-react-select"
+                options={this.props.config.categories}
+                clearable={this.state.clearable}
+                disabled={this.state.disabled}
+                value={this.state.selectedCategory.slug}
+                onChange={this.handleCategory}
+                searchable={this.state.searchable}
+                labelKey="name"
+                valueKey="slug"
               />
-            <Select
-              options={newIndicators.activeIndicators}
-              clearable={this.state.clearable}
-              disabled={this.state.disabled}
-              value={newIndicators.indicatorValue}
-              onChange={this.handleIndicator}
-              searchable={this.state.searchable}
-              labelKey="title"
-              valueKey="slug"
+            </div>
+            <div className="column small-12 medium-4">
+              <Select
+                className="c-react-select"
+                options={this.state.selectedCategory.indicator}
+                clearable={this.state.clearable}
+                disabled={this.state.disabled}
+                value={this.state.selectedIndicator.slug}
+                onChange={this.handleIndicator}
+                searchable={this.state.searchable}
+                labelKey="name"
+                valueKey="slug"
               />
+            </div>
+            <div className="column small-12 medium-4">
+              <Select
+                className="c-react-select"
+                options={this.props.config.measurements}
+                clearable={this.state.clearable}
+                disabled={this.state.disabled}
+                value={this.state.selectedMeasure.slug}
+                onChange={this.handleMeasure}
+                searchable={this.state.searchable}
+                labelKey="name"
+                valueKey="slug"
+              />
+            </div>
           </div>
-          <Button onClick={() => this.setMapState(newIndicators.mapState)} icon="arrow" style="primary" size="large" text="explore" color="dark"/>
+          <div className="row">
+            <div className="column">
+              <Button
+                onClick={() => this.setMapState()}
+                icon="arrow" style="primary" size="large" text="explore" color="dark"
+              />
+            </div>
+          </div>
         </Modal>
       </div>
     );
@@ -152,33 +182,31 @@ MapsModal.propTypes = {
   **/
   mapModalOpen: React.PropTypes.bool,
   /**
-  * Scenarios array for populating modal
+  * Default config to populating modals
   **/
-  scenarios: React.PropTypes.array,
+  config: React.PropTypes.shape({
+    measurements: React.PropTypes.array,
+    indicators: React.PropTypes.array,
+    categories: React.PropTypes.array,
+    scenarios: React.PropTypes.array
+  }).isRequired,
   /**
-  * Categories array for populating modal
+  * Data of the map config
   **/
-  categories: React.PropTypes.array,
-  /**
-  * Indicators array for populating modal
-  **/
-  indicators: React.PropTypes.array,
-  /**
-  * Initial value passed to modal when opened
-  **/
-  initialScenario: React.PropTypes.string,
-  /**
-  * Initial value passed to modal when opened
-  **/
-  initialCategory: React.PropTypes.string,
-  /**
-  * Initial value passed to modal when opened
-  **/
-  initialIndicator: React.PropTypes.string,
+  mapConfigData: React.PropTypes.shape({
+    measure: React.PropTypes.object,
+    indicator: React.PropTypes.object,
+    scenario: React.PropTypes.object,
+    category: React.PropTypes.object
+  }),
   /**
   * Function to supply setMap action to Maps page
   **/
-  setMapState: React.PropTypes.func
+  setMapState: React.PropTypes.func,
+  /**
+  * Define selected map id
+  **/
+  mapSelectedId: React.PropTypes.string
 };
 
 export default MapsModal;

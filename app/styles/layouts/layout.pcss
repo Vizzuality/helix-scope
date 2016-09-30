@@ -5,25 +5,30 @@
 
 .l-maps-container {
   position: relative;
-  padding-top: 110px;
+  padding-top: calc($header-height + $margin-medium + 1rem);
 }
 
 .l-banner {
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
-  padding: 110px 0 70px;
+  padding-top: calc($header-height + $margin-large + 1rem);
+  padding-bottom: $margin-extra-large;
+  min-height: 350px;
+
+  &.-country {
+    background-image: url('/images/covers/countries_detail.jpg');
+  }
 
   &.-countries {
-    background-image: url('/images/covers_countries.jpg');
+    background-image: url('/images/covers/countries.jpg');
   }
 
   &.-compare {
-    background-image: url('/images/covers_compare.jpg');
+    background-image: url('/images/covers/compare.jpg');
   }
 
   &.-blank {
-
     .c-txt-title,
     .c-txt-intro,
     .c-breadcrumbs {
@@ -32,28 +37,37 @@
   }
 }
 
-.l-wrap {
-  padding: 0 10px;
-  max-width: 1188px;
+/* Main */
+.l-main {
+  /* 1rem because of the header top positon */
+  padding-top: calc($header-height + $margin-large + 1rem);
+  padding-bottom: $margin-extra-large;
 
   @media (--large-viewport) {
-    padding: 0 30px;
-  }
-
-  @media (--medium-viewport) {
-    padding: 0 60px;
-  }
-
-  @media (--mobile-viewport) {
-    padding: 0 110px;
+    min-height: calc(100vh - $header-height);
   }
 }
 
 .l-page-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin: auto;
-  max-width: 800px;
-  min-height: 300px;
+  padding: $margin-large 0;
+
+  h2 {
+    margin: $margin-small;
+    margin-left: 0;
+    font-family: $font-body;
+    font-size: $font-size-medium-large;
+    font-weight: normal;
+    line-height: 1.3;
+    color: $font-main;
+  }
+
+  > .row {
+    margin-top: $margin-large;
+    margin-bottom: $margin-large;
+  }
+}
+
+.l-page-modules {
+  padding: $margin-small 0;
+  background-color: $color-bg-main;
 }

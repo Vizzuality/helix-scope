@@ -16,7 +16,7 @@ function HomeSlide5() {
           link: '/countries'
         }
       ]}
-      />
+    />
   );
 }
 

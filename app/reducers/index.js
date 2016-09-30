@@ -1,13 +1,5 @@
-import config from './config';
-import headlines from './headlines';
-import maps from './maps';
-import countriesConfig from './countries';
-import modal from './modal';
-
-export default {
-  config,
-  headlines,
-  maps,
-  countriesConfig,
-  modal
-};
+export { default as config } from './config';
+export { default as countries } from './countries';
+export { default as headlines } from './headlines';
+export { default as maps } from './maps';
+export { default as modal } from './modal';

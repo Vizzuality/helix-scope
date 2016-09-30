@@ -1,6 +1,9 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Select from 'react-select';
-import Footer from '../common/Footer';
+import Button from 'components/common/Button';
+import ExploreScenarios from 'components/common/ExploreScenarios';
+import GetUpdates from 'components/common/GetUpdates';
+import Footer from 'components/common/Footer';
 
 class ComparePage extends Component {
   constructor(props) {
@@ -10,67 +13,105 @@ class ComparePage extends Component {
       disabled: false,
       searchable: false,
       clearable: false,
-      optionsOne: [{title: 'Brazil', slug: 'brazil'}, {title: 'Singapore', slug: 'singapore'}],
-      optionsTwo: [{title: 'Brazil', slug: 'brazil'}, {title: 'Singapore', slug: 'singapore'}],
-      valueOne: 'Brazil',
-      valueTwo: 'Singapore'
+      country1: '',
+      country2: ''
     };
-    this.handleCountryOne = this.handleCountryOne.bind(this);
-    this.handleCountryTwo = this.handleCountryTwo.bind(this);
+    this.handleCountry1 = this.handleCountry1.bind(this);
+    this.handleCountry2 = this.handleCountry2.bind(this);
+    this.goToCompareDetail = this.goToCompareDetail.bind(this);
   }
 
-  handleCountryOne(newValue) {
+  componentDidMount() {
+    if (this.props.countriesList && this.props.countriesList.length === 0) {
+      this.props.getCountriesList();
+    }
+  }
+
+  handleCountry1(newValue) {
     this.setState({
-      valueOne: newValue
+      country1: newValue
     });
   }
 
-  handleCountryTwo(newValue) {
+  handleCountry2(newValue) {
     this.setState({
-      valueTwo: newValue
+      country2: newValue
     });
+  }
+
+  goToCompareDetail() {
+    if (this.state.country1.iso && this.state.country2.iso) {
+      this.props.goToCompareDetail(this.state.country1.iso, this.state.country2.iso);
+    }
   }
 
   render() {
     return (
       <div>
         <div className="l-banner -compare">
-          <div className="l-wrap">
-            <div className="c-breadcrumbs">Home / Compare</div>
-            <div className="c-txt-title">Compare</div>
-            <div className="c-txt-intro">Climate change will affect different countries in different ways. Choose the countries you are interested in and find out the impact of the 2°C, 4°C and 6°C scenarios.</div>
-            <div className="c-dropdowns -left">
+          <div className="row">
+            <div className="column">
+              <div className="c-breadcrumbs -inv">Home / Compare</div>
+              <div className="c-txt-title -inv">Compare</div>
+              <div className="c-txt-intro -inv">Climate change will affect different countries in different ways. Choose the countries you are interested in and find out the impact of the 2°C, 4°C and 6°C scenarios.</div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="column small-12 medium-4">
               <Select
-                options={this.state.optionsOne}
+                className="c-react-select"
+                options={this.props.countriesList}
                 clearable={this.state.clearable}
                 disabled={this.state.disabled}
-                value={this.state.valueOne}
-                onChange={this.handleCountryOne}
+                value={this.state.country1.iso}
+                onChange={this.handleCountry1}
                 searchable={this.state.searchable}
-                labelKey="title"
-                valueKey="slug"
+                labelKey="name"
+                valueKey="iso"
                 placeholder="Choose country"
-                />
+              />
+            </div>
+            <div className="column small-12 medium-4">
               <Select
-                options={this.state.optionsTwo}
+                className="c-react-select"
+                options={this.props.countriesList}
                 clearable={this.state.clearable}
                 disabled={this.state.disabled}
-                value={this.state.valueTwo}
-                onChange={this.handleCountryTwo}
+                value={this.state.country2.iso}
+                onChange={this.handleCountry2}
                 searchable={this.state.searchable}
-                labelKey="title"
-                valueKey="slug"
+                labelKey="name"
+                valueKey="iso"
                 placeholder="Choose country"
-                />
+              />
+            </div>
+            <div className="column small-12 medium-4">
+              <Button
+                icon="arrow"
+                style="primary"
+                size="large"
+                onClick={this.goToCompareDetail}
+                text="Compare"
+              />
             </div>
           </div>
         </div>
         <div className="l-page-content">
         </div>
-        <Footer className="l-footer"/>
+        <div className="l-page-modules">
+          <GetUpdates />
+          <ExploreScenarios />
+        </div>
+        <Footer className="l-footer" />
       </div>
     );
   }
 }
+
+ComparePage.propTypes = {
+  getCountriesList: React.PropTypes.func,
+  goToCompareDetail: React.PropTypes.func,
+  countriesList: React.PropTypes.array
+};
 
 export default ComparePage;

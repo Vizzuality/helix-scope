@@ -1,5 +1,3 @@
-'use strict';
-
 export const SET_SHARE_MODAL = 'SET_SHARE_MODAL';
 export const SET_MENU_MODAL = 'SET_MENU_MODAL';
 

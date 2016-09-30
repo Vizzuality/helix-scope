@@ -1,70 +1,106 @@
 import React from 'react';
-import MapsListContainer from '../../containers/maps/MapsListContainer';
-import Button from '../common/Button';
-import MapsModal from '../modals/MapsModal';
+import MapsListContainer from 'containers/maps/MapsListContainer';
+import Button from 'components/common/Button';
+import MapsModal from 'containers/modals/MapsModal';
 
 class MapsPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mapModalOpen: false,
-      initialScenario: '0',
-      initialCategory: 'climate',
-      initialIndicator: 'avg-precipitation'
+      mapModalOpen: true,
+      mapSelectedId: null
     };
-    this.handleSetMapModal = this.handleSetMapModal.bind(this);
+    this.setMapModal = this.setMapModal.bind(this);
+    if (!this.props.config.loading && this.props.config) {
+      this.setDefaultMapConfig(this.props.config);
+    } else {
+      this.defaultMapConfig = {
+        scenario: {},
+        category: {},
+        indicator: {},
+        measure: {},
+        layer: null
+      };
+    }
   }
 
-  handleSetMapModal(status) {
+  componentDidMount() {
+    const { query } = this.context.location;
+
+    if (query && query.maps) {
+      this.props.saveParamsFromURL(query.maps);
+    }
+
+    if (!this.props.config.loading) {
+      this.props.initializeMaps();
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.config.loading) {
+      this.props.initializeMaps();
+    }
+    if (nextProps.maps.length === 0) {
+      this.setMapModal(true);
+    } else {
+      this.setMapModal(false);
+    }
+    if (!nextProps.config.loading && nextProps.config !== this.props.config) {
+      this.setDefaultMapConfig(nextProps.config);
+    }
+  }
+
+  setDefaultMapConfig(config) {
+    this.defaultMapConfig = {
+      scenario: config.scenarios[0],
+      category: config.categories[0],
+      indicator: config.categories[0].indicator[0],
+      measure: config.measurements[0]
+    };
+  }
+
+  setMapConfigModal(id) {
+    this.setState({
+      mapModalOpen: true,
+      mapSelectedId: id
+    });
+  }
+
+  setMapModal(status) {
     this.setState({
       mapModalOpen: status
     });
   }
 
-  componentDidMount() {
-    const {query} = this.context.location;
-
-    if (query && query.maps) {
-      this.props.setParamsFromURL(query.maps);
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.maps.length === 0) {
-      this.setState({
-        mapModalOpen: true
-      });
-    }
-  }
-
   render() {
+    if (this.props.config.loading) return null;
+
     let addBtn;
     const mapsList = this.props.maps;
     if (mapsList.length < 4) {
-      addBtn = <Button icon="plus-big" style="primary" size="large" onClick={() => this.handleSetMapModal(true)}/>;
+      addBtn = <Button icon="plus-big" style="primary" size="large" onClick={() => this.setMapConfigModal(null)} />;
     }
+
+    const selectedMap = this.props.maps.find((elem) => (
+      elem.id === this.state.mapSelectedId
+    ));
+    const mapConfigData = selectedMap || this.defaultMapConfig;
+
     return (
       <div className="-dark">
         <div className="c-add-map">
           {addBtn}
         </div>
         <MapsListContainer
-          maps={this.props.maps}
-          latLng={this.props.latLng}
-          zoom={this.props.zoom}
-          deleteMap={this.props.deleteMap}
-          />
+          handleMapConfig={(id) => this.setMapConfigModal(id)}
+          createLayer={this.props.createLayer}
+        />
         <MapsModal
+          mapConfigData={mapConfigData}
+          mapSelectedId={this.state.mapSelectedId}
           mapModalOpen={this.state.mapModalOpen}
-          onSetMapModal={this.handleSetMapModal}
-          scenarios={this.props.scenarios}
-          categories={this.props.categories}
-          indicators={this.props.indicators}
-          initialScenario={this.state.initialScenario}
-          initialCategory={this.state.initialCategory}
-          initialIndicator={this.state.initialIndicator}
-          setMapState={this.props.setMap}
-          />
+          onSetMapModal={this.setMapModal}
+        />
       </div>
     );
   }
@@ -75,16 +111,11 @@ MapsPage.contextTypes = {
 };
 
 MapsPage.propTypes = {
-  onSetMapModal: React.PropTypes.func,
-  setParamsFromURL: React.PropTypes.func,
+  initializeMaps: React.PropTypes.func,
+  saveParamsFromURL: React.PropTypes.func,
   maps: React.PropTypes.array,
-  latLng: React.PropTypes.object,
-  zoom: React.PropTypes.number,
-  scenarios: React.PropTypes.array,
-  categories: React.PropTypes.array,
-  indicators: React.PropTypes.array,
-  setMap: React.PropTypes.func,
-  deleteMap: React.PropTypes.func
+  config: React.PropTypes.object,
+  createLayer: React.PropTypes.func
 };
 
 export default MapsPage;

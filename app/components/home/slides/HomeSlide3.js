@@ -12,7 +12,7 @@ function HomeSlide3() {
           link: '/global-scenarios/32.47/-50.10/3?maps=0,climate,avg-precipitation/0,climate,avg-precipitation'
         }
       ]}
-      />
+    />
   );
 }
 

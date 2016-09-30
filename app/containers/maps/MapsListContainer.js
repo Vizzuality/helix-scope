@@ -1,12 +1,9 @@
-import {connect} from 'react-redux';
-import MapsList from '../../components/maps/MapsList';
-import {panMaps, updateURL} from '../../actions/maps';
+import { connect } from 'react-redux';
+import MapsList from 'components/maps/MapsList';
 
-const mapDispatchToProps = dispatch => ({
-  onMapDrag: params => {
-    dispatch(panMaps(params));
-    dispatch(updateURL());
-  }
+const mapStateToProps = state => ({
+  maps: state.maps.mapsList
 });
 
-export default connect(null, mapDispatchToProps)(MapsList);
+
+export default connect(mapStateToProps, null)(MapsList);

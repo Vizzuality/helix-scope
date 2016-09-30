@@ -11,33 +11,35 @@
     padding-bottom: 40px;
   }
 
-  > .title {
+  .title {
     font-family: $font-heading;
-    font-size: 30px;
+    font-size: $font-size-medium-large;
     color: $font-main;
     line-height: 1;
-    margin-top: 30px;
+    margin-top: $margin-medium;
+    margin-bottom: $margin-small;
 
     @media (--medium-viewport) {
-      font-size: 40px;
-      margin-top: 50px;
+      font-size: $font-size-large;
+      margin-top: $margin-large;
+      margin-bottom: $margin-medium;
     }
   }
 
-  > .text {
+  .text {
     font-family: $font-body;
-    font-size: 15px;
+    font-size: $font-size;
     line-height: 1.6;
     color: $font-main;
-    margin: 0 0 20px;
+    margin: $margin-medium 0 &margin-small 0;
 
     @media (--medium-viewport) {
       font-size: $font-size-medium;
-      margin: 0 0 40px;
+      margin: $margin-large 0 $margin-medium 0;
     }
   }
 
-  > .actions {
+  .actions {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -48,11 +50,11 @@
     }
   }
 
-  > .link {
+  .link {
     margin: 20px 0;
   }
 
-  > .link span {
+  .link span {
     font-family: $font-heading;
     font-size: $font-size-small;
     line-height: 1;
@@ -60,41 +62,37 @@
     color: $font-main;
     float: left;
     margin: 20px 0 0 15px;
-
   }
 
-  > .link .icon {
+  .link .icon {
     float: left;
   }
 
   .scenarios {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    height: 140px;
+    > .scenario {
+      margin-bottom: $margin-medium;
 
-    @media (--medium-viewport) {
-      height: 200px;
-    }
-
-    .scenario {
+      @media (--medium-viewport) {
+        margin-bottom: 0;
+      }
 
       > label {
         font-family: $font-heading;
-        font-size: $font-size-medium;
+        font-size: $font-size;
         border-radius: 50%;
-        padding: 27px 26px;
-        background-color: #f7fafa;
+        background-color: $color-base-dark;
         box-shadow: 0 0 3px 0 rgba(29, 30, 30, 0.2);
         color: $color-main;
         cursor: pointer;
-        margin: 0 10px;
+        margin: 0 auto;
+        width: 120px;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
         @media (--medium-viewport) {
-          margin: 0 30px;
-          font-size: 26px;
-          padding: 40px 37px;
+          font-size: 30px;
         }
       }
 
@@ -105,21 +103,28 @@
 
     .scenario-0 {
       > input[type="radio"]:checked + label {
-        background-color: $olive-green;
+        background-color: $scenary-1-color;
         color: $white;
       }
     }
 
     .scenario-1 {
       > input[type="radio"]:checked + label {
-        background-color: $color-main;
+        background-color: $scenary-2-color;
         color: $white;
       }
     }
 
     .scenario-2 {
       > input[type="radio"]:checked + label {
-        background-color: $pale-red;
+        background-color: $scenary-3-color;
+        color: $white;
+      }
+    }
+
+    .scenario-3 {
+      > input[type="radio"]:checked + label {
+        background-color: $scenary-4-color;
         color: $white;
       }
     }

@@ -2,19 +2,10 @@
 $font-heading: "FjallaOneRegular", sans-serif;
 $font-body: "PTSerif-Regular", serif;
 
-/* SCREENS */
-$screen-xs: 320px;
-$screen-s: 540px;
-$screen-m: 768px;
-$screen-l: 1024px;
-$screen-xl: 1280px;
-$screen-xxl: 2000px;
-
 /* View ports */
-@custom-media --mobile-viewport (min-width: 320px) ;
-@custom-media --medium-viewport (min-width: 768px) ;
-@custom-media --large-viewport (min-width: 1280px) ;
-@custom-media --desktop-viewport (min-width: 2000px) ;
+@custom-media --medium-viewport (min-width: 40em);
+@custom-media --desktop-viewport (min-width: 64em);
+@custom-media --large-viewport (min-width: 85.333rem);
 
 /* GRID  */
 $wrap-padding-desktop: 100px;
@@ -55,11 +46,19 @@ $color-base-dark: $pale-white;
 $color-dark: $black;
 $color-dark-light: $pale-black;
 
+$color-bg-main: $grey;
+
 $color-green: $olive-green;
 $color-light-green: $light-green;
 
 $color-red: $pale-red;
 $color-red-bold: $bold-red;
+
+/* SCENARIO COLORS */
+$scenary-1-color: $light-green;
+$scenary-2-color: $olive-green;
+$scenary-3-color: $orange-tangerine;
+$scenary-4-color: $bold-red;
 
 /* FONT COLORS */
 $font-main: $font-black;
@@ -70,9 +69,15 @@ $font-grey: $light-grey;
 $font-box-grey: $box-grey;
 
 /* Font sizes */
-$font-size-extra-large: 73px;
+$font-size-huge: 73px;
+$font-size-extra-large: 50px;
 $font-size-large: 40px;
+$font-size-medium-large: 30px;
 $font-size-medium: 20px;
 $font-size: 15px;
 $font-size-small: 13px;
 $font-size-x-small: 12px;
+
+/* Modules sizes */
+$header-height: 80px;
+$footer-height: 80px;
