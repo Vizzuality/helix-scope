@@ -11,13 +11,17 @@ class MapsPage extends React.Component {
       mapSelectedId: null
     };
     this.setMapModal = this.setMapModal.bind(this);
-    this.defaultMapConfig = {
-      scenario: {},
-      category: {},
-      indicator: {},
-      measure: {},
-      layer: null
-    };
+    if (!this.props.config.loading && this.props.config) {
+      this.setDefaultMapConfig(this.props.config);
+    } else {
+      this.defaultMapConfig = {
+        scenario: {},
+        category: {},
+        indicator: {},
+        measure: {},
+        layer: null
+      };
+    }
   }
 
   componentDidMount() {
@@ -26,22 +30,33 @@ class MapsPage extends React.Component {
     if (query && query.maps) {
       this.props.saveParamsFromURL(query.maps);
     }
+
+    if (!this.props.config.loading) {
+      this.props.initializeMaps();
+    }
   }
 
   componentWillReceiveProps(nextProps) {
+    if (!nextProps.config.loading) {
+      this.props.initializeMaps();
+    }
     if (nextProps.maps.length === 0) {
       this.setMapModal(true);
     } else {
       this.setMapModal(false);
     }
     if (!nextProps.config.loading && nextProps.config !== this.props.config) {
-      this.defaultMapConfig = {
-        scenario: nextProps.config.scenarios[0],
-        category: nextProps.config.categories[0],
-        indicator: nextProps.config.categories[0].indicator[0],
-        measure: nextProps.config.measurements[0]
-      };
+      this.setDefaultMapConfig(nextProps.config);
     }
+  }
+
+  setDefaultMapConfig(config) {
+    this.defaultMapConfig = {
+      scenario: config.scenarios[0],
+      category: config.categories[0],
+      indicator: config.categories[0].indicator[0],
+      measure: config.measurements[0]
+    };
   }
 
   setMapConfigModal(id) {
@@ -96,6 +111,7 @@ MapsPage.contextTypes = {
 };
 
 MapsPage.propTypes = {
+  initializeMaps: React.PropTypes.func,
   saveParamsFromURL: React.PropTypes.func,
   maps: React.PropTypes.array,
   config: React.PropTypes.object,
