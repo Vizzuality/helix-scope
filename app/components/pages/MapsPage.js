@@ -37,9 +37,6 @@ class MapsPage extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!nextProps.config.loading) {
-      this.props.initializeMaps();
-    }
     if (nextProps.maps.length === 0) {
       this.setMapModal(true);
     } else {
