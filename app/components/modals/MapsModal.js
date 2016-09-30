@@ -128,7 +128,7 @@ class MapsModal extends Component {
                 onChange={this.handleCategory}
                 searchable={this.state.searchable}
                 labelKey="name"
-                valueKey="name"
+                valueKey="slug"
               />
             </div>
             <div className="column small-12 medium-4">
