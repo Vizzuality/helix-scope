@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router';
 import Select from 'react-select';
 import Chart from 'components/common/Chart';
 import CallToAction from 'components/common/CallToAction';
@@ -45,7 +46,7 @@ class CountriesPage extends Component {
         <div className="l-banner -country">
           <div className="row">
             <div className="column">
-              <div className="c-breadcrumbs -inv">Home / Countries / {this.props.iso}</div>
+              <div className="c-breadcrumbs -inv"><Link to="/countries"> &lt; Select a new country </Link> </div>
               <div className="c-txt-title -inv">{this.props.countryData.name}</div>
             </div>
           </div>
