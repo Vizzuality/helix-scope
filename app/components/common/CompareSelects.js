@@ -15,6 +15,8 @@ class CompareSelects extends Component {
     };
     this.handleCountry1 = this.handleCountry1.bind(this);
     this.handleCountry2 = this.handleCountry2.bind(this);
+    this.excludeSelectedOptions1 = this.excludeSelectedOptions1.bind(this);
+    this.excludeSelectedOptions2 = this.excludeSelectedOptions2.bind(this);
     this.goToCompareDetail = this.goToCompareDetail.bind(this);
   }
 
@@ -30,6 +32,13 @@ class CompareSelects extends Component {
     });
   }
 
+  excludeSelectedOptions1(option) {
+    return option.iso !== this.state.country2.iso;
+  }
+  excludeSelectedOptions2(option) {
+    return option.iso !== this.state.country1.iso;
+  }
+
   goToCompareDetail() {
     if (this.state.country1.iso && this.state.country2.iso) {
       this.props.goToCompareDetail(this.state.country1.iso, this.state.country2.iso);
@@ -37,12 +46,14 @@ class CompareSelects extends Component {
   }
 
   render() {
+    if (this.props.countriesList.length === 0) return null;
+
     return (
       <div className="row">
         <div className={`column ${this.props.inline ? 'small-12 medium-4' : 'small-12 medium-6'}`}>
           <Select
             className="c-react-select"
-            options={this.props.countriesList}
+            options={this.props.countriesList.filter(this.excludeSelectedOptions1)}
             clearable={this.state.clearable}
             disabled={this.state.disabled}
             value={this.state.country1.iso}
@@ -56,7 +67,7 @@ class CompareSelects extends Component {
         <div className={`column ${this.props.inline ? 'small-12 medium-4' : 'small-12 medium-6'}`}>
           <Select
             className="c-react-select"
-            options={this.props.countriesList}
+            options={this.props.countriesList.filter(this.excludeSelectedOptions2)}
             clearable={this.state.clearable}
             disabled={this.state.disabled}
             value={this.state.country2.iso}
