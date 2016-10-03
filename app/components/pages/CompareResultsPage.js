@@ -25,9 +25,6 @@ class CountriesPage extends Component {
   }
 
   componentDidMount() {
-    if (this.props.countriesList && this.props.countriesList.length === 0) {
-      this.props.getCountriesList();
-    }
     this.props.getCountryData(this.props.iso1);
     this.props.getCountryData(this.props.iso2);
   }
@@ -128,7 +125,6 @@ class CountriesPage extends Component {
 }
 
 CountriesPage.propTypes = {
-  getCountriesList: React.PropTypes.func,
   countriesList: React.PropTypes.array,
   getCountryData: React.PropTypes.func,
   countryData1: React.PropTypes.any,
