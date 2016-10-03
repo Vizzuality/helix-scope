@@ -45,6 +45,7 @@ class MapsPage extends React.Component {
     }
     if (!nextProps.config.loading && nextProps.config !== this.props.config) {
       this.setDefaultMapConfig(nextProps.config);
+      this.props.initializeMaps();
     }
   }
 
