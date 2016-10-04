@@ -41,11 +41,42 @@ class CountriesPage extends Component {
     }
   }
 
+  getCharts() {
+    const country1Indicators = this.props.countryData1.indicators;
+    const country2Indicators = this.props.countryData2.indicators;
+    const maxLength = country1Indicators.length >= country2Indicators.length
+      ? country1Indicators.length
+      : country2Indicators.length;
+    const charts = [];
+
+    for (let i = 0; i < maxLength; i++) {
+      const indicator1 = country1Indicators[i];
+      const indicator2 = country2Indicators[i];
+      charts.push(
+        <div className="column small-12 medium-6 country-1" key={`chart-${Math.floor(Math.random() * 1000)}`}>
+          {indicator1
+            ? <Chart data={indicator1} />
+            : null
+          }
+        </div>
+      );
+      charts.push(
+        <div className="column small-12 medium-6 country-2" key={`chart-${Math.floor(Math.random() * 1000)}`}>
+          {indicator2
+            ? <Chart data={indicator2} dark />
+            : null
+          }
+        </div>
+      );
+    }
+    return charts;
+  }
+
   handleCountry1Change(newValue) {
     if (newValue) {
       this.setState({
         selectedCountry1: newValue
-      });
+      }, () => this.updateCountryParams(newValue.iso));
     }
   }
 
@@ -53,9 +84,15 @@ class CountriesPage extends Component {
     if (newValue) {
       this.setState({
         selectedCountry2: newValue
-      });
+      }, () => this.updateCountryParams(newValue.iso));
     }
   }
+
+  updateCountryParams(newCountryIso) {
+    this.props.getCountryData(newCountryIso);
+    this.props.updateCompareUrl(this.state.selectedCountry1.iso, this.state.selectedCountry2.iso);
+  }
+
 
   render() {
     if (!this.props.countryData1 || !this.props.countryData2) return null;
@@ -70,7 +107,7 @@ class CountriesPage extends Component {
             </div>
           </div>
         </div>
-        <div className="l-page-content">
+        <div className="l-page-content -no-gutter">
           <div className="row">
             <div className="column small-12 medium-8 medium-offset-2">
               <div className="c-txt-intro -small">
@@ -105,12 +142,10 @@ class CountriesPage extends Component {
               />
             </div>
           </div>
-          <div className="row">
-            {this.props.countryData1.indicators.map((indicator, index) => (
-              <div className="column small-12 medium-6" key={`chart-${index}`}>
-                <Chart data={indicator} />
-              </div>
-            ))}
+          <div className="l-split">
+            <div className="row">
+              {this.getCharts()}
+            </div>
           </div>
         </div>
         <CallToAction
@@ -130,6 +165,7 @@ class CountriesPage extends Component {
 CountriesPage.propTypes = {
   getCountriesList: React.PropTypes.func,
   countriesList: React.PropTypes.array,
+  updateCompareUrl: React.PropTypes.func,
   getCountryData: React.PropTypes.func,
   countryData1: React.PropTypes.any,
   countryData2: React.PropTypes.any,
