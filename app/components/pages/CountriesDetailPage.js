@@ -41,13 +41,18 @@ class CountriesPage extends Component {
   render() {
     if (!this.props.countryData) return null;
 
+    let countryName = '';
+    if (this.props.countriesList.length) {
+      countryName = this.props.countriesList.find((elem) => (elem.iso === this.props.iso)).name;
+    }
+
     return (
       <div>
         <div className="l-banner -country">
           <div className="row">
             <div className="column">
               <div className="c-breadcrumbs -inv"><Link to="/countries"> &lt; Select a new country </Link> </div>
-              <div className="c-txt-title -inv">{this.props.countryData.name}</div>
+              <div className="c-txt-title -inv">{countryName}</div>
             </div>
           </div>
         </div>
@@ -97,6 +102,7 @@ class CountriesPage extends Component {
 CountriesPage.propTypes = {
   getCountryData: React.PropTypes.func,
   countryData: React.PropTypes.any,
+  countriesList: React.PropTypes.array,
   iso: React.PropTypes.string
 };
 
