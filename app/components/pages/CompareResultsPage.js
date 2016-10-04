@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
+import { StickyContainer, Sticky } from 'react-sticky';
 import Chart from 'components/common/Chart';
 import CallToAction from 'components/common/CallToAction';
 import ExploreScenarios from 'components/common/ExploreScenarios';
@@ -121,37 +122,41 @@ class CountriesPage extends Component {
               </div>
             </div>
           </div>
-          <div className="row">
-            <div className="column small-12 medium-3 medium-offset-2">
-              <Select
-                className="c-react-select"
-                options={this.props.countriesList.filter(this.excludeSelectedOptions1)}
-                value={this.state.selectedCountry1.iso}
-                onChange={this.handleCountry1Change}
-                searchable={false}
-                clearable={false}
-                labelKey="name"
-                valueKey="iso"
-              />
+          <StickyContainer>
+            <Sticky className="c-sticky">
+              <div className="row">
+                <div className="column small-12 medium-3 medium-offset-2">
+                  <Select
+                    className="c-react-select"
+                    options={this.props.countriesList}
+                    value={this.state.selectedCountry1.iso}
+                    onChange={this.handleCountry1Change}
+                    searchable={false}
+                    clearable={false}
+                    labelKey="name"
+                    valueKey="iso"
+                  />
+                </div>
+                <div className="column small-12 medium-3 medium-offset-2">
+                  <Select
+                    className="c-react-select"
+                    options={this.props.countriesList}
+                    value={this.state.selectedCountry2.iso}
+                    onChange={this.handleCountry2Change}
+                    searchable={false}
+                    clearable={false}
+                    labelKey="name"
+                    valueKey="iso"
+                  />
+                </div>
+              </div>
+            </Sticky>
+            <div className="l-split">
+              <div className="row">
+                {this.getCharts()}
+              </div>
             </div>
-            <div className="column small-12 medium-3 medium-offset-2">
-              <Select
-                className="c-react-select"
-                options={this.props.countriesList.filter(this.excludeSelectedOptions2)}
-                value={this.state.selectedCountry2.iso}
-                onChange={this.handleCountry2Change}
-                searchable={false}
-                clearable={false}
-                labelKey="name"
-                valueKey="iso"
-              />
-            </div>
-          </div>
-          <div className="l-split">
-            <div className="row">
-              {this.getCharts()}
-            </div>
-          </div>
+          </StickyContainer>
         </div>
         <CallToAction
           type="partners"
