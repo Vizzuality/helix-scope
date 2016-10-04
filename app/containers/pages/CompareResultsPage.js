@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import CompareResultsPage from 'components/pages/CompareResultsPage';
-import { getCountriesList, getCountryData } from 'actions/countries';
+import { getCountryData } from 'actions/countries';
 
 const mapStateToProps = (state, { params }) => ({
   countriesList: state.countries.countriesList,
@@ -13,9 +13,7 @@ const mapStateToProps = (state, { params }) => ({
 
 const mapDispatchToProps = dispatch => ({
   getCountryData: (iso) => dispatch(getCountryData(iso)),
-  updateCompareUrl: (iso1, iso2) => dispatch(push(`/compare/${iso1}/${iso2}`)),
-  getCountriesList: () => dispatch(getCountriesList())
-}
-);
+  updateCompareUrl: (iso1, iso2) => dispatch(push(`/compare/${iso1}/${iso2}`))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(CompareResultsPage);

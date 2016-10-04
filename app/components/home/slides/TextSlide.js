@@ -27,6 +27,9 @@ function TextSlide(props) {
           <div className="buttons">
             {buttons}
           </div>
+          <div className="actions">
+            {props.children}
+          </div>
         </section>
       </div>
     </div>
@@ -38,5 +41,6 @@ export default TextSlide;
 TextSlide.propTypes = {
   title: React.PropTypes.string,
   content: React.PropTypes.string,
-  buttons: React.PropTypes.array
+  buttons: React.PropTypes.array,
+  children: React.PropTypes.any
 };

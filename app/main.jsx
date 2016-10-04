@@ -8,6 +8,7 @@ import thunk from 'redux-thunk';
 import { syncHistoryWithStore, routerReducer, routerMiddleware } from 'react-router-redux';
 
 import { fetchConfig } from 'actions/config';
+import { fetchCountriesList } from 'actions/countries';
 import * as reducers from 'reducers';
 import Routes from './Routes';
 
@@ -59,3 +60,4 @@ render(
 );
 
 store.dispatch(fetchConfig());
+store.dispatch(fetchCountriesList());

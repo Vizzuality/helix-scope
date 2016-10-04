@@ -22,12 +22,11 @@ class CountriesPage extends Component {
     }
     this.handleCountry1Change = this.handleCountry1Change.bind(this);
     this.handleCountry2Change = this.handleCountry2Change.bind(this);
+    this.excludeSelectedOptions1 = this.excludeSelectedOptions1.bind(this);
+    this.excludeSelectedOptions2 = this.excludeSelectedOptions2.bind(this);
   }
 
   componentDidMount() {
-    if (this.props.countriesList && this.props.countriesList.length === 0) {
-      this.props.getCountriesList();
-    }
     this.props.getCountryData(this.props.iso1);
     this.props.getCountryData(this.props.iso2);
   }
@@ -88,11 +87,17 @@ class CountriesPage extends Component {
     }
   }
 
+  excludeSelectedOptions1(option) {
+    return option.iso !== this.state.selectedCountry2.iso;
+  }
+  excludeSelectedOptions2(option) {
+    return option.iso !== this.state.selectedCountry1.iso;
+  }
+
   updateCountryParams(newCountryIso) {
     this.props.getCountryData(newCountryIso);
     this.props.updateCompareUrl(this.state.selectedCountry1.iso, this.state.selectedCountry2.iso);
   }
-
 
   render() {
     if (!this.props.countryData1 || !this.props.countryData2) return null;
@@ -120,7 +125,7 @@ class CountriesPage extends Component {
             <div className="column small-12 medium-3 medium-offset-2">
               <Select
                 className="c-react-select"
-                options={this.props.countriesList}
+                options={this.props.countriesList.filter(this.excludeSelectedOptions1)}
                 value={this.state.selectedCountry1.iso}
                 onChange={this.handleCountry1Change}
                 searchable={false}
@@ -132,7 +137,7 @@ class CountriesPage extends Component {
             <div className="column small-12 medium-3 medium-offset-2">
               <Select
                 className="c-react-select"
-                options={this.props.countriesList}
+                options={this.props.countriesList.filter(this.excludeSelectedOptions2)}
                 value={this.state.selectedCountry2.iso}
                 onChange={this.handleCountry2Change}
                 searchable={false}
@@ -163,7 +168,6 @@ class CountriesPage extends Component {
 }
 
 CountriesPage.propTypes = {
-  getCountriesList: React.PropTypes.func,
   countriesList: React.PropTypes.array,
   updateCompareUrl: React.PropTypes.func,
   getCountryData: React.PropTypes.func,
