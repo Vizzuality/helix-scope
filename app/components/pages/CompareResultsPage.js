@@ -23,12 +23,11 @@ class CountriesPage extends Component {
     }
     this.handleCountry1Change = this.handleCountry1Change.bind(this);
     this.handleCountry2Change = this.handleCountry2Change.bind(this);
+    this.excludeSelectedOptions1 = this.excludeSelectedOptions1.bind(this);
+    this.excludeSelectedOptions2 = this.excludeSelectedOptions2.bind(this);
   }
 
   componentDidMount() {
-    if (this.props.countriesList && this.props.countriesList.length === 0) {
-      this.props.getCountriesList();
-    }
     this.props.getCountryData(this.props.iso1);
     this.props.getCountryData(this.props.iso2);
   }
@@ -42,11 +41,42 @@ class CountriesPage extends Component {
     }
   }
 
+  getCharts() {
+    const country1Indicators = this.props.countryData1.indicators;
+    const country2Indicators = this.props.countryData2.indicators;
+    const maxLength = country1Indicators.length >= country2Indicators.length
+      ? country1Indicators.length
+      : country2Indicators.length;
+    const charts = [];
+
+    for (let i = 0; i < maxLength; i++) {
+      const indicator1 = country1Indicators[i];
+      const indicator2 = country2Indicators[i];
+      charts.push(
+        <div className="column small-12 medium-6 country-1" key={`chart-${Math.floor(Math.random() * 1000)}`}>
+          {indicator1
+            ? <Chart data={indicator1} />
+            : null
+          }
+        </div>
+      );
+      charts.push(
+        <div className="column small-12 medium-6 country-2" key={`chart-${Math.floor(Math.random() * 1000)}`}>
+          {indicator2
+            ? <Chart data={indicator2} dark />
+            : null
+          }
+        </div>
+      );
+    }
+    return charts;
+  }
+
   handleCountry1Change(newValue) {
     if (newValue) {
       this.setState({
         selectedCountry1: newValue
-      });
+      }, () => this.updateCountryParams(newValue.iso));
     }
   }
 
@@ -54,8 +84,20 @@ class CountriesPage extends Component {
     if (newValue) {
       this.setState({
         selectedCountry2: newValue
-      });
+      }, () => this.updateCountryParams(newValue.iso));
     }
+  }
+
+  excludeSelectedOptions1(option) {
+    return option.iso !== this.state.selectedCountry2.iso;
+  }
+  excludeSelectedOptions2(option) {
+    return option.iso !== this.state.selectedCountry1.iso;
+  }
+
+  updateCountryParams(newCountryIso) {
+    this.props.getCountryData(newCountryIso);
+    this.props.updateCompareUrl(this.state.selectedCountry1.iso, this.state.selectedCountry2.iso);
   }
 
   render() {
@@ -66,12 +108,12 @@ class CountriesPage extends Component {
         <div className="l-banner -compare">
           <div className="row">
             <div className="column">
-              <div className="c-breadcrumbs -inv">Home / Countries / Results </div>
               <div className="c-txt-title -inv">Compare results</div>
+              <div className="c-txt-intro -inv"> {this.state.selectedCountry1.name} - {this.state.selectedCountry2.name} </div>
             </div>
           </div>
         </div>
-        <div className="l-page-content">
+        <div className="l-page-content -no-gutter">
           <div className="row">
             <div className="column small-12 medium-8 medium-offset-2">
               <div className="c-txt-intro -small">
@@ -109,12 +151,10 @@ class CountriesPage extends Component {
                 </div>
               </div>
             </Sticky>
-            <div className="row">
-              {this.props.countryData1.indicators.map((indicator, index) => (
-                <div className="column small-12 medium-6" key={`chart-${index}`}>
-                  <Chart data={indicator} />
-                </div>
-              ))}
+            <div className="l-split">
+              <div className="row">
+                {this.getCharts()}
+              </div>
             </div>
           </StickyContainer>
         </div>
@@ -133,8 +173,8 @@ class CountriesPage extends Component {
 }
 
 CountriesPage.propTypes = {
-  getCountriesList: React.PropTypes.func,
   countriesList: React.PropTypes.array,
+  updateCompareUrl: React.PropTypes.func,
   getCountryData: React.PropTypes.func,
   countryData1: React.PropTypes.any,
   countryData2: React.PropTypes.any,
