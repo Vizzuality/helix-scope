@@ -102,8 +102,8 @@ class CountriesPage extends Component {
         <div className="l-banner -compare">
           <div className="row">
             <div className="column">
-              <div className="c-breadcrumbs -inv">Home / Countries / Results </div>
               <div className="c-txt-title -inv">Compare results</div>
+              <div className="c-txt-intro -inv"> {this.state.selectedCountry1.name} - {this.state.selectedCountry2.name} </div>
             </div>
           </div>
         </div>
