@@ -26,10 +26,10 @@ class MapsPage extends React.Component {
   }
 
   componentDidMount() {
-    const { query } = this.context.location;
+    const { query, params } = this.context.location;
 
     if (query && query.maps) {
-      this.props.saveParamsFromURL(query.maps);
+      this.props.saveParamsFromURL(query.maps, params);
     }
 
     if (!this.props.config.loading) {
