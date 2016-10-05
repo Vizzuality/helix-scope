@@ -6,10 +6,18 @@ class Chart extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
+    this.data = {};
+    this.timer = null;
   }
 
   componentDidMount() {
-    this.drawChart(this.getParsedData(this.props.data.data));
+    this.onPageResize = () => {
+      this.debounceDraw();
+    };
+    window.addEventListener('resize', this.onPageResize);
+
+    this.data = this.getParsedData(this.props.data.data);
+    this.drawChart();
   }
 
   getBucketsColor(category) {
@@ -42,7 +50,14 @@ class Chart extends React.Component {
     return values;
   }
 
-  drawChart(data) {
+  debounceDraw() {
+    if (this.timer) clearTimeout(this.timer);
+    this.timer = setTimeout(() => {
+      this.drawChart();
+    }, 200);
+  }
+
+  drawChart() {
     let width = this.chart.offsetWidth;
     let height = this.chart.offsetHeight;
     const interpolate = 'linear';
@@ -92,7 +107,9 @@ class Chart extends React.Component {
         .defined((d) => d.value)
         .interpolate(interpolate);
 
-    const svg = d3.select(this.chart).append('svg')
+    const d3Chart = d3.select(this.chart);
+    d3Chart.select('svg').remove();
+    const svg = d3Chart.append('svg')
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
@@ -100,8 +117,8 @@ class Chart extends React.Component {
 
 
     const domain = {
-      x: d3.extent(data, (d) => d.season),
-      y: [0, d3.max(data, (d) => d.value)]
+      x: d3.extent(this.data, (d) => d.season),
+      y: [0, d3.max(this.data, (d) => d.value)]
     };
 
     x.domain(domain.x);
@@ -113,7 +130,7 @@ class Chart extends React.Component {
     // Nest the entries by symbol
     const dataNest = d3.nest()
       .key((d) => d.symbol)
-      .entries(data);
+      .entries(this.data);
 
     svg.append('g')
       .attr('class', 'y axis')
