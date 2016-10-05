@@ -23,7 +23,6 @@ export function getCountryData(iso) {
     type: GET_COUNTRY_DATA,
     payload: {
       iso,
-      name: 'Brazil',
       regions: [
         {
           name: 'North',

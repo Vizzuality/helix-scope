@@ -1,8 +1,16 @@
 import React from 'react';
 import L from 'leaflet';
+import LoadingSpinner from 'components/common/LoadingSpinner';
 import { BASEMAP_GEOM_TILE, BASEMAP_LABELS_TILE, MAP_MAX_BOUNDS, MAP_MIN_ZOOM, MAP_LAYER_SPEC, MAP_LAYER_SPEC_RASTER, MAP_VECTOR_CSS, MAP_RASTER_CSS } from 'constants/map';
 
 class Map extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: true
+    };
+    this.onTileLoaded = this.onTileLoaded.bind(this);
+  }
 
   componentDidMount() {
     this.map = L.map(`map${this.props.mapData.id}`, {
@@ -49,6 +57,7 @@ class Map extends React.Component {
 
     if (props.mapData.bucket && !props.mapData.bucket.length) {
       this.bucket = props.mapData.bucket;
+      this.setLoadingStatus(true);
       props.getMapBuckets(this.props.mapData);
     }
 
@@ -63,17 +72,28 @@ class Map extends React.Component {
     }
   }
 
-  shouldComponentUpdate(props) {
+  shouldComponentUpdate(props, state) {
     const shouldUpdate = props.mapData.scenario !== this.props.mapData.scenario ||
       props.mapData.scenario !== this.props.mapData.scenario ||
       props.mapData.category !== this.props.mapData.category ||
-      props.mapData.indicator !== this.props.mapData.indicator;
+      props.mapData.indicator !== this.props.mapData.indicator ||
+      state.loading !== this.state.loading;
 
     return shouldUpdate;
   }
 
   componentWillUnmount() {
     this.map.remove();
+  }
+
+  onTileLoaded() {
+    this.setLoadingStatus(false);
+  }
+
+  setLoadingStatus(status) {
+    this.setState({
+      loading: status
+    });
   }
 
   setListeners() {
@@ -165,7 +185,9 @@ class Map extends React.Component {
     if (this.layer) {
       this.map.removeLayer(this.layer);
     }
+
     this.layer = L.tileLayer(layer.tileUrl, { noWrap: true }).setZIndex(2);
+    this.layer.on('load', this.onTileLoaded);
     this.layer.addTo(this.map);
     this.currentLayer = layer.slug;
   }
@@ -228,7 +250,10 @@ class Map extends React.Component {
   render() {
     const { id } = this.props.mapData;
     return (
-      <div id={`map${id}`} className="c-map"></div>
+      <div className="c-map">
+        <div id={`map${id}`}></div>
+        {this.state.loading && <LoadingSpinner inner />}
+      </div>
     );
   }
 }
