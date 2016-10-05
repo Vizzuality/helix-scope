@@ -20,6 +20,10 @@ class Chart extends React.Component {
     this.drawChart();
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onPageResize);
+  }
+
   getBucketsColor(category) {
     switch (category) {
       case 'biodiversity':
