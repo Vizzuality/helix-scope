@@ -149,7 +149,17 @@ class Chart extends React.Component {
       .attr('transform', `translate(0, ${height})`)
       .call(xAxis)
       .selectAll('text')
-        .attr('y', 15);
+        .attr('y', 15)
+        .style('text-anchor', 'start');
+
+    const xSvg = svg.select('.x.axis');
+    const labelsSize = xSvg[0][0].getBBox().width;
+    const axisSize = xSvg.select('.domain')[0][0].getBBox().width;
+    const labelsText = xSvg.selectAll('text');
+    const labelLength = labelsText[0].length;
+    labelsText.attr('transform', (d, i) => (
+      `translate(-${(labelsSize - axisSize + margin.right / 2) / labelLength * i}, 0)`
+    ));
 
     // Loop through each symbol / key
     dataNest.forEach((d, i) => {
