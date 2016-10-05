@@ -105,6 +105,16 @@ class Chart extends React.Component {
         .outerTickSize(1)
         .tickPadding(4);
 
+    const yAxisValues = this.data
+      .filter((elem) => (elem.season === 4))
+      .map((elem) => elem.value);
+
+    const yAxis2 = d3.svg.axis()
+        .scale(y)
+        .tickValues(yAxisValues)
+        .orient('right')
+        .tickFormat(d3.format(',.1f'));
+
     const line = d3.svg.line()
         .x((d) => x(d.season))
         .y((d) => y(d.value))
@@ -137,6 +147,11 @@ class Chart extends React.Component {
       .entries(this.data);
 
     svg.append('g')
+      .attr('class', 'y axis -no-line')
+      .attr('transform', `translate(${width}, 0)`)
+      .call(yAxis2);
+
+    svg.append('g')
       .attr('class', 'y axis')
       .call(yAxis);
 
@@ -149,7 +164,17 @@ class Chart extends React.Component {
       .attr('transform', `translate(0, ${height})`)
       .call(xAxis)
       .selectAll('text')
-        .attr('y', 15);
+        .attr('y', 15)
+        .style('text-anchor', 'start');
+
+    const xSvg = svg.select('.x.axis');
+    const labelsSize = xSvg[0][0].getBBox().width;
+    const axisSize = xSvg.select('.domain')[0][0].getBBox().width;
+    const labelsText = xSvg.selectAll('text');
+    const labelLength = labelsText[0].length;
+    labelsText.attr('transform', (d, i) => (
+      `translate(-${(labelsSize - axisSize + margin.right / 2) / labelLength * i}, 0)`
+    ));
 
     // Loop through each symbol / key
     dataNest.forEach((d, i) => {
