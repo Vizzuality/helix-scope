@@ -7,7 +7,6 @@ export default function () {
       <div className="l-main">
         <div className="row">
           <div className="column">
-            <div className="c-breadcrumbs"><span>Home</span> / Contact</div>
             <div className="c-txt-title">Contact</div>
             <div className="c-txt-intro">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent lacinia nisl in nisi tristique, et vestibulum metus semper.</div>
           </div>

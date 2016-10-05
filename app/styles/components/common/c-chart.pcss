@@ -3,6 +3,7 @@
   padding: $margin-large;
   background-color: $color-base;
   box-shadow: 0 0 4px 0 rgba(81, 81, 83, 0.2);
+  overflow: hidden;
 
   > .subtitle {
     font-family: $font-heading;
@@ -32,9 +33,16 @@
       fill: $font-grey;
     }
 
-    .axis .domain {
-      stroke-width: 1px;
-      fill: $font-white-light;
+    .axis {
+      .domain {
+        stroke-width: 1px;
+        fill: $font-white-light;
+      }
+
+      &.-no-line .domain {
+        stroke-width: 0;
+        fill: transparent;
+      }
     }
 
     .multiline {

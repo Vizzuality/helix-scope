@@ -15,7 +15,7 @@ const Legend = (props) => {
         <div className="range" style={{ background: gradient }}></div>
         {props.mapData.bucket.map((bucket, index) =>
           <li key={`legend-item-${index}`}>
-            {bucket.value.toFixed(2)}
+            {parseFloat(bucket.value.toFixed(2))}
           </li>
         )}
       </ul>

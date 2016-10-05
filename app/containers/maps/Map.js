@@ -6,7 +6,8 @@ const mapStateToProps = state => ({
   maps: state.maps.mapsList,
   mapConfig: {
     latLng: state.maps.latLng,
-    zoom: state.maps.zoom
+    zoom: state.maps.zoom,
+    source: state.maps.source
   }
 });
 

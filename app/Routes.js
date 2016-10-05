@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { IndexRoute, IndexRedirect, Router, Route } from 'react-router';
 import ContainerPage from './containers/pages/ContainerPage';
-import HomePage from './containers/pages/HomePage';
+import HomePage from './components/pages/HomePage';
 import MapsPage from './containers/pages/MapsPage';
 import CountriesPage from './containers/pages/CountriesPage';
 import CountriesDetailPage from './containers/pages/CountriesDetailPage';

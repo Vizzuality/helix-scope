@@ -5,9 +5,10 @@ const initialState = {
   initialParams: [],
   zoom: 3,
   layer: '',
+  source: '',
   latLng: {
-    lat: 25.657,
-    lng: -102.299
+    lat: 0,
+    lng: 0
   }
 };
 
@@ -22,6 +23,7 @@ export default function (state = initialState, action) {
     case MAP_UPDATE_PAN: {
       return Object.assign({}, state, {
         zoom: action.payload.zoom,
+        source: action.payload.source,
         latLng: {
           lat: action.payload.latLng.lat,
           lng: action.payload.latLng.lng

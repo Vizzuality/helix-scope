@@ -3,6 +3,16 @@ export const ENDPOINT_TILES = `https://${CARTODB_USER}.carto.com/api/v1/map/`;
 export const ENDPOINT_SQL = `https://${CARTODB_USER}.carto.com/api/v2/sql`;
 export const MAX_MAPS = 4;
 export const MAP_NUMBER_BUCKETS = 6;
+export const MAP_MIN_ZOOM = 3;
+export const MAP_MAX_BOUNDS = [
+  [59.44, 182.98],
+  [-30.14, -132.53]
+];
+
+// Basemap
+
+export const BASEMAP_GEOM_TILE = 'https://api.mapbox.com/styles/v1/helixscope/citvn5e3f005g2iolbpyl5g95/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaGVsaXhzY29wZSIsImEiOiJjaXR2bjJmNGMwMDFwMnRuMmdzdWNqOXBkIn0.B6OKT-f3aEZrC6kJJOm76w';
+export const BASEMAP_LABELS_TILE = 'https://api.mapbox.com/styles/v1/helixscope-labels/citvnt8pw00522itb0b7htist/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaGVsaXhzY29wZS1sYWJlbHMiLCJhIjoiY2l0dm5zcmk1MDAyZzJ5bjI0bGc4cGd3MiJ9.wttaMZn3jPGnpaotFhNTFA';
 
 // Layer spec
 

@@ -11,14 +11,30 @@ function getRandomId() {
   return Math.floor(Math.random() * 100).toString();
 }
 
-export function saveParamsFromURL(queryParam) {
-  let initialParams = [];
-  if (queryParam) {
-    initialParams = queryParam.split('/');
-  }
-  return {
-    type: MAP_SAVE_PARAMS,
-    payload: initialParams
+export function saveParamsFromURL(queryParam, mapConfig) {
+  return dispatch => {
+    let initialParams = [];
+    if (queryParam) {
+      initialParams = queryParam.split('/');
+    }
+
+    if (mapConfig) {
+      dispatch({
+        type: MAP_UPDATE_PAN,
+        payload: {
+          zoom: parseInt(mapConfig.zoom, 10),
+          latLng: {
+            lat: mapConfig.lat,
+            lng: mapConfig.lng
+          }
+        }
+      });
+    }
+
+    dispatch({
+      type: MAP_SAVE_PARAMS,
+      payload: initialParams
+    });
   };
 }
 
@@ -169,11 +185,13 @@ export function createLayer(mapData, layerData) {
 
 export function getMapBuckets(mapData) {
   return (dispatch) => {
-    let query = `SELECT * FROM get_buckets(${mapData.indicator.tableName}, false, '${mapData.measure.slug}', ${mapData.scenario.slug}, 2)`;
+    let raster = false;
 
     if (!mapData.raster) {
-      query = `SELECT * FROM get_buckets('${mapData.indicator.tableName}_${mapData.measure.slug}_${mapData.scenario.slug}_1', true)`;
+      raster = true;
     }
+
+    const query = `SELECT * FROM get_buckets('${mapData.indicator.tableName}', ${raster}, '${mapData.measure.slug}', ${mapData.scenario.slug}, 2)`;
 
     $.get({
       url: ENDPOINT_SQL,

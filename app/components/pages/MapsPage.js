@@ -1,6 +1,7 @@
 import React from 'react';
 import MapsListContainer from 'containers/maps/MapsListContainer';
 import Button from 'components/common/Button';
+import BasicMap from 'containers/maps/BasicMap';
 import MapsModal from 'containers/modals/MapsModal';
 
 class MapsPage extends React.Component {
@@ -25,10 +26,10 @@ class MapsPage extends React.Component {
   }
 
   componentDidMount() {
-    const { query } = this.context.location;
+    const { query, params } = this.context.location;
 
     if (query && query.maps) {
-      this.props.saveParamsFromURL(query.maps);
+      this.props.saveParamsFromURL(query.maps, params);
     }
 
     if (!this.props.config.loading) {
@@ -44,6 +45,7 @@ class MapsPage extends React.Component {
     }
     if (!nextProps.config.loading && nextProps.config !== this.props.config) {
       this.setDefaultMapConfig(nextProps.config);
+      this.props.initializeMaps();
     }
   }
 
@@ -78,6 +80,13 @@ class MapsPage extends React.Component {
       addBtn = <Button icon="plus-big" style="primary" size="large" onClick={() => this.setMapConfigModal(null)} />;
     }
 
+    const maps = mapsList.length === 0
+      ? <BasicMap />
+      : <MapsListContainer
+        handleMapConfig={(id) => this.setMapConfigModal(id)}
+        createLayer={this.props.createLayer}
+      />;
+
     const selectedMap = this.props.maps.find((elem) => (
       elem.id === this.state.mapSelectedId
     ));
@@ -88,10 +97,7 @@ class MapsPage extends React.Component {
         <div className="c-add-map">
           {addBtn}
         </div>
-        <MapsListContainer
-          handleMapConfig={(id) => this.setMapConfigModal(id)}
-          createLayer={this.props.createLayer}
-        />
+        {maps}
         <MapsModal
           mapConfigData={mapConfigData}
           mapSelectedId={this.state.mapSelectedId}

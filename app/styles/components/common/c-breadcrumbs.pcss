@@ -1,15 +1,18 @@
 .c-breadcrumbs {
-  font-family: $font-body;
-  font-size: $font-size-x-small;
-  line-height: 1.6;
-  color: $font-main;
-  margin-bottom: $margin-medium;
-
+  > a,
   > span {
-    color: $color-main;
+    font-family: $font-body;
+    font-size: $font-size-x-small;
+    line-height: 1.6;
+    color: $font-main;
+    margin-bottom: $margin-medium;
+    text-decoration: none;
   }
 
   &.-inv {
-    color: $font-white;
+    > a,
+    > span {
+      color: $font-white;
+    }
   }
 }

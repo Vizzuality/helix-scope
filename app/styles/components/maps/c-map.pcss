@@ -1,5 +1,16 @@
 .c-map {
   height: 100%;
+  position: relative;
+
+  &.-full {
+    width: 100%;
+    height: calc(100vh - 110px);
+  }
+}
+
+.leaflet-container {
+  height: 100%;
+  background: $basemap;
 }
 
 .leaflet-bar {
@@ -13,6 +24,11 @@
 
 .leaflet-top .leaflet-control {
   margin-top: 30px;
+}
+
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 1;
 }
 
 .leaflet-bar a {

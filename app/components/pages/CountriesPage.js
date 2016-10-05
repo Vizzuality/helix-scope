@@ -12,19 +12,12 @@ class CountriesPage extends Component {
     this.props = props;
   }
 
-  componentDidMount() {
-    if (this.props.countriesList && this.props.countriesList.length === 0) {
-      this.props.getCountriesList();
-    }
-  }
-
   render() {
     return (
       <div>
         <div className="l-banner -countries">
           <div className="row">
             <div className="column">
-              <div className="c-breadcrumbs -inv">Home / Countries</div>
               <div className="c-txt-title -inv">Countries</div>
               <div className="c-txt-intro -inv">
                 Whats going to happen in your country? Find out the future of your country under different scenarios.
@@ -61,7 +54,6 @@ class CountriesPage extends Component {
 }
 
 CountriesPage.propTypes = {
-  getCountriesList: React.PropTypes.func,
   countriesList: React.PropTypes.array
 };
 

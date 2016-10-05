@@ -8,8 +8,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  saveParamsFromURL: params => {
-    dispatch(saveParamsFromURL(params));
+  saveParamsFromURL: (mapParams, mapConfig) => {
+    dispatch(saveParamsFromURL(mapParams, mapConfig));
   },
   initializeMaps: () => {
     dispatch(initializeMaps());

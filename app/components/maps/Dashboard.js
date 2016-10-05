@@ -22,7 +22,7 @@ function Dashboard(props) {
       </div>
       <div className="legend">
         <h4>{props.mapData.category.name}</h4>
-        <span>{props.mapData.indicator.name}</span>
+        <span>{props.mapData.indicator.name} ({props.mapData.indicator.units})</span>
         <Legend
           mapData={props.mapData}
         />
