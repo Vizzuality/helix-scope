@@ -1,7 +1,7 @@
 import React from 'react';
 import L from 'leaflet';
-import { MAP_LAYER_SPEC, MAP_LAYER_SPEC_RASTER, MAP_VECTOR_CSS, MAP_RASTER_CSS } from 'constants/map';
 import LoadingSpinner from 'components/common/LoadingSpinner';
+import { BASEMAP_GEOM_TILE, BASEMAP_LABELS_TILE, MAP_MAX_BOUNDS, MAP_MIN_ZOOM, MAP_LAYER_SPEC, MAP_LAYER_SPEC_RASTER, MAP_VECTOR_CSS, MAP_RASTER_CSS } from 'constants/map';
 
 class Map extends React.Component {
   constructor(props) {
@@ -13,13 +13,17 @@ class Map extends React.Component {
   }
 
   componentDidMount() {
-    this.map = L.map(`map${this.props.mapData.id}`);
-    this.map.setView(
-      [this.props.mapConfig.latLng.lat, this.props.mapConfig.latLng.lng],
-      this.props.mapConfig.zoom);
+    this.map = L.map(`map${this.props.mapData.id}`, {
+      maxBounds: MAP_MAX_BOUNDS,
+      minZoom: MAP_MIN_ZOOM,
+      zoom: this.props.mapConfig.zoom,
+      center: [this.props.mapConfig.latLng.lat, this.props.mapConfig.latLng.lng]
+    });
+
     this.map.zoomControl.setPosition('topright');
     this.map.scrollWheelZoom.disable();
-    this.tileLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
+    this.tileLayer = L.tileLayer(BASEMAP_GEOM_TILE).addTo(this.map).setZIndex(0);
+    this.tileLayerLabels = L.tileLayer(BASEMAP_LABELS_TILE).addTo(this.map).setZIndex(3);
 
     // Set listeners
     this.setListeners();
@@ -29,19 +33,22 @@ class Map extends React.Component {
   }
 
   componentWillReceiveProps(props) {
-    const paramsChanged = props.mapConfig.latLng.lat !== this.props.mapConfig.latLng.lat ||
+    const paramsChanged = (props.mapConfig.source &&
+      (props.mapConfig.source !== this.props.mapData.id)) && (
+      props.mapConfig.latLng.lat !== this.props.mapConfig.latLng.lat ||
       props.mapConfig.latLng.lng !== this.props.mapConfig.latLng.lng ||
-      props.mapConfig.zoom !== this.props.mapConfig.zoom;
+      props.mapConfig.zoom !== this.props.mapConfig.zoom);
 
     if (paramsChanged) {
-      this.map.setView(
-        [props.mapConfig.latLng.lat, props.mapConfig.latLng.lng],
-        props.mapConfig.zoom);
-
       if (this.resizeTimer) {
         clearTimeout(this.resizeTimer);
         this.resizeTimer = null;
       }
+
+      this.map.panTo([props.mapConfig.latLng.lat, props.mapConfig.latLng.lng], {
+        animate: false
+      });
+      this.map.setZoom(props.mapConfig.zoom);
 
       this.resizeTimer = setTimeout(() => {
         this.map.invalidateSize();
@@ -93,12 +100,12 @@ class Map extends React.Component {
     function zoomend() {
       this.props.onMapDrag(this.getMapParams());
     }
-    function dragend() {
+    function drag() {
       this.props.onMapDrag(this.getMapParams());
     }
 
     this.map.on('zoomend', zoomend.bind(this));
-    this.map.on('dragend', dragend.bind(this));
+    this.map.on('drag', drag.bind(this));
   }
 
   getLatLng() {
@@ -114,10 +121,17 @@ class Map extends React.Component {
   }
 
   getMapParams() {
-    return {
-      latLng: this.getLatLng(),
-      zoom: this.getZoom()
+    const latLng = this.getLatLng();
+    const params = {
+      zoom: this.getZoom(),
+      source: this.props.mapData.id
     };
+
+    if (latLng) {
+      params.latLng = latLng;
+    }
+
+    return params;
   }
 
   getLayerTypeSpec(isRaster) {
@@ -161,7 +175,7 @@ class Map extends React.Component {
     let query = `with r as (select value, iso from ${tableName} where measure like '${measure}' and scenario = ${scenario} and season = ${season} ) select r.iso, value, the_geom_webmercator from r inner join country_geoms s on r.iso=s.iso`;
 
     if (!mapData.raster) {
-      query = `SELECT * FROM o_1_${mapData.indicator.tableName}_${mapData.measure.slug}_${mapData.scenario.slug}_1`;
+      query = `SELECT * FROM ${mapData.indicator.tableName}_${mapData.measure.slug}_${mapData.scenario.slug}_1`;
     }
 
     return query;
@@ -171,7 +185,8 @@ class Map extends React.Component {
     if (this.layer) {
       this.map.removeLayer(this.layer);
     }
-    this.layer = L.tileLayer(layer.tileUrl, { noWrap: true });
+
+    this.layer = L.tileLayer(layer.tileUrl, { noWrap: true }).setZIndex(2);
     this.layer.on('load', this.onTileLoaded);
     this.layer.addTo(this.map);
     this.currentLayer = layer.slug;
@@ -188,14 +203,17 @@ class Map extends React.Component {
   generateCartoRaster(mapData) {
     const colorsBucket = mapData.indicator.colorScheme;
     let stops = '';
+    let isPositiveNumber = false;
 
     this.bucket.forEach((bucket, index) => {
-      // No data and min value
-      if (index === 0) {
-        stops += `stop(${bucket.nodatavalue}, 'transparent', 'exact')`;
-        stops += `stop(${bucket.raster_min}, ${colorsBucket[index]}, 'discrete')`;
+      if (bucket.raster_value > 0 && !isPositiveNumber) {
+        isPositiveNumber = true;
+        // No data and min value
+        stops += `stop(${bucket.nodatavalue}, transparent, exact) `;
+        stops += `stop(${bucket.raster_min}, ${colorsBucket[index]}, discrete) `;
       }
-      stops += `stop(${bucket.raster_value}, ${colorsBucket[index]})`;
+
+      stops += `stop(${bucket.raster_value}, ${colorsBucket[index]}) `;
     });
 
     this.cartoCSS = Object.assign({}, MAP_RASTER_CSS);

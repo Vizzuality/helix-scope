@@ -1,16 +1,21 @@
 import React from 'react';
 import L from 'leaflet';
+import { BASEMAP_GEOM_TILE, BASEMAP_LABELS_TILE, MAP_MAX_BOUNDS, MAP_MIN_ZOOM } from 'constants/map';
 
 class Map extends React.Component {
 
   componentDidMount() {
-    this.map = L.map('map-base');
-    this.map.setView(
-      [this.props.mapConfig.latLng.lat, this.props.mapConfig.latLng.lng],
-      this.props.mapConfig.zoom);
+    this.map = L.map('map-base', {
+      maxBounds: MAP_MAX_BOUNDS,
+      minZoom: MAP_MIN_ZOOM,
+      zoom: this.props.mapConfig.zoom,
+      center: [this.props.mapConfig.latLng.lat, this.props.mapConfig.latLng.lng]
+    });
+
     this.map.zoomControl.setPosition('topright');
     this.map.scrollWheelZoom.disable();
-    this.tileLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
+    this.tileLayer = L.tileLayer(BASEMAP_GEOM_TILE).addTo(this.map).setZIndex(0);
+    this.tileLayerLabels = L.tileLayer(BASEMAP_LABELS_TILE).addTo(this.map).setZIndex(1);
   }
 
   componentWillUnmount() {
