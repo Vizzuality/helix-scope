@@ -105,6 +105,16 @@ class Chart extends React.Component {
         .outerTickSize(1)
         .tickPadding(4);
 
+    const yAxisValues = this.data
+      .filter((elem) => (elem.season === 4))
+      .map((elem) => elem.value);
+
+    const yAxis2 = d3.svg.axis()
+        .scale(y)
+        .tickValues(yAxisValues)
+        .orient('right')
+        .tickFormat(d3.format(',.1f'));
+
     const line = d3.svg.line()
         .x((d) => x(d.season))
         .y((d) => y(d.value))
@@ -135,6 +145,11 @@ class Chart extends React.Component {
     const dataNest = d3.nest()
       .key((d) => d.symbol)
       .entries(this.data);
+
+    svg.append('g')
+      .attr('class', 'y axis -no-line')
+      .attr('transform', `translate(${width}, 0)`)
+      .call(yAxis2);
 
     svg.append('g')
       .attr('class', 'y axis')
