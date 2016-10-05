@@ -65,11 +65,12 @@ class Map extends React.Component {
     }
   }
 
-  shouldComponentUpdate(props) {
+  shouldComponentUpdate(props, state) {
     const shouldUpdate = props.mapData.scenario !== this.props.mapData.scenario ||
       props.mapData.scenario !== this.props.mapData.scenario ||
       props.mapData.category !== this.props.mapData.category ||
-      props.mapData.indicator !== this.props.mapData.indicator;
+      props.mapData.indicator !== this.props.mapData.indicator ||
+      state.loading !== this.state.loading;
 
     return shouldUpdate;
   }
@@ -85,7 +86,7 @@ class Map extends React.Component {
   setLoadingStatus(status) {
     this.setState({
       loading: status
-    }, () => this.forceUpdate());
+    });
   }
 
   setListeners() {
