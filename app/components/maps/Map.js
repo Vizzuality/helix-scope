@@ -40,19 +40,12 @@ class Map extends React.Component {
       props.mapConfig.zoom !== this.props.mapConfig.zoom);
 
     if (paramsChanged) {
-      if (this.resizeTimer) {
-        clearTimeout(this.resizeTimer);
-        this.resizeTimer = null;
-      }
-
       this.map.panTo([props.mapConfig.latLng.lat, props.mapConfig.latLng.lng], {
         animate: false
       });
       this.map.setZoom(props.mapConfig.zoom);
 
-      this.resizeTimer = setTimeout(() => {
-        this.map.invalidateSize();
-      }, 100);
+      this.invalidateSize();
     }
 
     if (props.mapData.bucket && !props.mapData.bucket.length) {
@@ -69,6 +62,10 @@ class Map extends React.Component {
     if ((!this.bucket && props.mapData.bucket) ||
       (this.bucket !== props.mapData.bucket)) {
       this.getLayer(props.mapData);
+    }
+
+    if (props.invalidateSize) {
+      this.invalidateSize();
     }
   }
 
@@ -247,6 +244,17 @@ class Map extends React.Component {
     return cartoCSS;
   }
 
+  invalidateSize() {
+    if (this.resizeTimer) {
+      clearTimeout(this.resizeTimer);
+      this.resizeTimer = null;
+    }
+
+    this.resizeTimer = setTimeout(() => {
+      this.map.invalidateSize();
+    }, 100);
+  }
+
   render() {
     const { id } = this.props.mapData;
     return (
@@ -273,7 +281,8 @@ Map.propTypes = {
   }).isRequired,
   onMapDrag: React.PropTypes.func,
   createLayer: React.PropTypes.func,
-  getMapBuckets: React.PropTypes.func
+  getMapBuckets: React.PropTypes.func,
+  invalidateSize: React.PropTypes.bool
 };
 
 export default Map;
