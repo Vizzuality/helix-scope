@@ -1,9 +1,29 @@
 .c-chart {
+  position: relative;
   margin: $margin-medium 0;
   padding: $margin-large;
   background-color: $color-base;
   box-shadow: 0 0 4px 0 rgba(81, 81, 83, 0.2);
   overflow: hidden;
+
+  > .icon {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    width: 27px;
+    height: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: $color-base-dark;
+    box-shadow: 0 0 3px 0 rgba(29, 30, 30, 0.2);
+    cursor: pointer;
+
+    svg {
+      fill: $color-main;
+    }
+  }
 
   > .subtitle {
     font-family: $font-heading;

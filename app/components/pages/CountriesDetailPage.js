@@ -79,7 +79,7 @@ class CountriesPage extends Component {
           <div className="row">
             {this.props.countryData.indicators.map((indicator, index) => (
               <div className="column small-12 medium-6" key={`chart-${index}`}>
-                <Chart data={indicator} />
+                <Chart data={indicator} iso={this.props.iso} />
               </div>
             ))}
           </div>

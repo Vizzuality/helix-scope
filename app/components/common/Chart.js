@@ -1,5 +1,6 @@
 import React from 'react';
 import d3 from 'd3';
+import { ENDPOINT_SQL } from 'constants/map';
 import { getSeasonTextById } from 'constants/season';
 
 class Chart extends React.Component {
@@ -191,8 +192,14 @@ class Chart extends React.Component {
   }
 
   render() {
+    const downloadLink = `${ENDPOINT_SQL}?q=SELECT * FROM ${this.props.data.table_name} WHERE iso='${this.props.iso}' & format='csv'`;
     return (
       <div className="c-chart">
+        <div className="icon">
+          <a href={downloadLink} target="_blank" download>
+            <svg width="10" height="10" viewBox="0 0 16 16"><title>Download</title><path d="M12.307 16H3.693a1 1 0 0 1-.936-.649L0 8h16l-2.757 7.351a1 1 0 0 1-.936.649zM4 3l4 4 4-4h-2V0H6v3H4z" fillRule="evenodd" /></svg>
+          </a>
+        </div>
         <div className="subtitle">{this.props.data.category}</div>
         <div className="title">{this.props.data.indicator}</div>
         <div className="chart" ref={ref => (this.chart = ref)}></div>
@@ -202,7 +209,8 @@ class Chart extends React.Component {
 }
 
 Chart.propTypes = {
-  data: React.PropTypes.object.isRequired
+  data: React.PropTypes.object.isRequired,
+  iso: React.PropTypes.string.isRequired
 };
 
 export default Chart;
