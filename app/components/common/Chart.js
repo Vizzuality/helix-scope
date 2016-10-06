@@ -16,7 +16,7 @@ class Chart extends React.Component {
     };
     window.addEventListener('resize', this.onPageResize);
 
-    this.data = this.getParsedData(this.props.data.data);
+    this.data = this.getParsedData(this.props.data);
     this.drawChart();
   }
 
@@ -25,7 +25,7 @@ class Chart extends React.Component {
   }
 
   getBucketsColor(category) {
-    switch (category) {
+    switch (category.toLowerCase()) {
       case 'biodiversity':
         return ['#DDE133', '#E5CF19', '#A4C504', '#268434'];
       case 'water':
@@ -39,18 +39,23 @@ class Chart extends React.Component {
 
   getParsedData(data) {
     if (!data) return null;
-
     const values = [];
-    for (let i = 0, dataLength = data.length; i < dataLength; i++) {
-      const indicators = Object.keys(data[i]).filter((elem) => elem !== 'season');
-      for (let j = 0, iLength = indicators.length; j < iLength; j++) {
+    for (let i = 0, dataLength = data.data.length; i < dataLength; i++) {
+      Object.keys(data.data[i].scenarios).forEach((key) => {
         values.push({
-          symbol: indicators[j],
-          value: data[i][indicators[j]],
-          season: data[i].season
+          scenario: key,
+          value: data.data[i].scenarios[key].mean,
+          season: data.data[i].season
         });
-      }
+      });
     }
+
+    values.sort((a, b) => {
+      if (a.season < b.season) return -1;
+      if (a.season > b.season) return 1;
+      return 0;
+    });
+
     return values;
   }
 
@@ -66,7 +71,7 @@ class Chart extends React.Component {
     let height = this.chart.offsetHeight;
     const interpolate = 'linear';
     const numTicksY = 5;
-    const unit = this.props.data.unit;
+    const unit = this.props.data.units;
     const bucket = this.getBucketsColor(this.props.data.category);
     const margin = {
       top: 30,
@@ -141,9 +146,9 @@ class Chart extends React.Component {
     // Add extra padding to Y domain
     y.domain([domain.y[0], d3.max(y.ticks(numTicksY)) + y.ticks(numTicksY)[1]]);
 
-    // Nest the entries by symbol
+    // Nest the entries by scenario
     const dataNest = d3.nest()
-      .key((d) => d.symbol)
+      .key((d) => d.scenario)
       .entries(this.data);
 
     svg.append('g')
@@ -176,7 +181,7 @@ class Chart extends React.Component {
       `translate(-${(labelsSize - axisSize + margin.right / 2) / labelLength * i}, 0)`
     ));
 
-    // Loop through each symbol / key
+    // Loop through each scenario / key
     dataNest.forEach((d, i) => {
       svg.append('path')
         .attr('class', 'multiline')
@@ -189,7 +194,7 @@ class Chart extends React.Component {
     return (
       <div className="c-chart">
         <div className="subtitle">{this.props.data.category}</div>
-        <div className="title">{this.props.data.name}</div>
+        <div className="title">{this.props.data.indicator}</div>
         <div className="chart" ref={ref => (this.chart = ref)}></div>
       </div>
     );
