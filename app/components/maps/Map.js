@@ -180,13 +180,13 @@ class Map extends React.Component {
 
   updateLayer(layer) {
     if (this.layer) {
-      this.map.removeLayer(this.layer);
+      this.layer.setUrl(layer.tileUrl);
+    } else {
+      this.layer = L.tileLayer(layer.tileUrl, { noWrap: true }).setZIndex(2);
+      this.layer.on('load', this.onTileLoaded);
+      this.layer.addTo(this.map);
+      this.currentLayer = layer.slug;
     }
-
-    this.layer = L.tileLayer(layer.tileUrl, { noWrap: true }).setZIndex(2);
-    this.layer.on('load', this.onTileLoaded);
-    this.layer.addTo(this.map);
-    this.currentLayer = layer.slug;
   }
 
   generateCartoCSS(mapData) {
