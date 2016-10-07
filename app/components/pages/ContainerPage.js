@@ -11,10 +11,15 @@ class ContainerPage extends React.Component {
     return { location };
   }
 
+  isPageMiniHeader() {
+    return this.props.location.pathname.indexOf('global-scenarios') > 0;
+  }
+
   render() {
     return (
       <div>
         <Header
+          mini={this.isPageMiniHeader()}
           setShareModal={this.props.setShareModal}
           setMenuModal={this.props.setMenuModal}
         />

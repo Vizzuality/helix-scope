@@ -3,8 +3,8 @@ import NavLink from 'components/common/NavLink';
 import Button from 'components/common/Button';
 
 const Header = (props) => (
-  <header className="l-header">
-    <nav className="row align-middle c-header">
+  <header className={`l-header ${props.mini ? '-mini' : ''}`}>
+    <nav className={`row align-middle c-header ${props.mini ? '-mini' : ''}`}>
       <div className="column small-9 medium-4">
         <NavLink to="/"><img alt="Helix Scope" src="/images/Helixlogo01.png" className="icon-logo" /></NavLink>
       </div>
