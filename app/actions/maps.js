@@ -175,7 +175,7 @@ export function createLayer(mapData, layerData) {
     }).then((res) => {
       dispatch(setMapData(mapData, {
         layer: {
-          tileUrl: `${ENDPOINT_TILES}${res.layergroupid}/{z}/{x}/{y}.png32`,
+          tileUrl: `${ENDPOINT_TILES}${res.layergroupid}/{z}/{x}/{y}@2x.png32`,
           slug: `layer_${mapData.indicator.slug}_${mapData.scenario.slug}_${mapData.measure.slug}`
         }
       }));

@@ -11,8 +11,8 @@ export const MAP_MAX_BOUNDS = [
 
 // Basemap
 
-export const BASEMAP_GEOM_TILE = 'https://api.mapbox.com/styles/v1/helixscope/citvn5e3f005g2iolbpyl5g95/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaGVsaXhzY29wZSIsImEiOiJjaXR2bjJmNGMwMDFwMnRuMmdzdWNqOXBkIn0.B6OKT-f3aEZrC6kJJOm76w';
-export const BASEMAP_LABELS_TILE = 'https://api.mapbox.com/styles/v1/helixscope-labels/citvnt8pw00522itb0b7htist/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaGVsaXhzY29wZS1sYWJlbHMiLCJhIjoiY2l0dm5zcmk1MDAyZzJ5bjI0bGc4cGd3MiJ9.wttaMZn3jPGnpaotFhNTFA';
+export const BASEMAP_GEOM_TILE = 'https://api.mapbox.com/styles/v1/helixscope/citvn5e3f005g2iolbpyl5g95/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiaGVsaXhzY29wZSIsImEiOiJjaXR2bjJmNGMwMDFwMnRuMmdzdWNqOXBkIn0.B6OKT-f3aEZrC6kJJOm76w';
+export const BASEMAP_LABELS_TILE = 'https://api.mapbox.com/styles/v1/helixscope-labels/citvnt8pw00522itb0b7htist/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiaGVsaXhzY29wZS1sYWJlbHMiLCJhIjoiY2l0dm5zcmk1MDAyZzJ5bjI0bGc4cGd3MiJ9.wttaMZn3jPGnpaotFhNTFA';
 
 // Layer spec
 
