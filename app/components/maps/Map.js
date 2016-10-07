@@ -17,7 +17,8 @@ class Map extends React.Component {
       maxBounds: MAP_MAX_BOUNDS,
       minZoom: MAP_MIN_ZOOM,
       zoom: this.props.mapConfig.zoom,
-      center: [this.props.mapConfig.latLng.lat, this.props.mapConfig.latLng.lng]
+      center: [this.props.mapConfig.latLng.lat, this.props.mapConfig.latLng.lng],
+      detectRetina: true
     });
 
     this.map.zoomControl.setPosition('topright');
