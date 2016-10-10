@@ -58,7 +58,7 @@ class ShareModal extends Component {
             Copy this URL to Share
           </div>
           <div className="actions">
-            <input ref={ref => (this.url = ref)} defaultValue={`http://helixscope.org${this.props.shareUrl}`} className="url" />
+            <input ref={ref => (this.url = ref)} defaultValue={`http://helixscope.org${this.props.shareUrl}`} className="c-input url" />
             <Button onClick={this.handleCopyClick} icon="arrow" style="primary" size="large" text={btnText} color="dark" position="copy-link" />
           </div>
           <div className="copy-text">

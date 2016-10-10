@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Select from 'react-select';
 import Button from 'components/common/Button';
 import Modal from 'components/common/Modal';
+import { DEFAULT_SEASON } from 'constants/season';
 
 class MapsModal extends Component {
   constructor(props) {
@@ -38,7 +39,8 @@ class MapsModal extends Component {
       measure: this.state.selectedMeasure,
       scenario: this.state.selectedScenario,
       category: this.state.selectedCategory,
-      indicator: this.state.selectedIndicator
+      indicator: this.state.selectedIndicator,
+      season: this.props.mapConfigData.season || DEFAULT_SEASON
     };
 
     if (this.props.mapSelectedId) {
@@ -197,7 +199,8 @@ MapsModal.propTypes = {
     measure: React.PropTypes.object,
     indicator: React.PropTypes.object,
     scenario: React.PropTypes.object,
-    category: React.PropTypes.object
+    category: React.PropTypes.object,
+    season: React.PropTypes.number
   }),
   /**
   * Function to supply setMap action to Maps page
