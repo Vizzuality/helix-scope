@@ -183,6 +183,7 @@ class Map extends React.Component {
   updateLayer(layer) {
     if (this.layer) {
       this.layer.setUrl(layer.tileUrl);
+      this.currentLayer = layer.slug;
     } else {
       this.layer = L.tileLayer(layer.tileUrl, {
         noWrap: true,
