@@ -14,7 +14,7 @@ class ShareModal extends Component {
 
   handleCopyClick() {
     try {
-      this.url.urlInput.select();
+      this.url.select();
       const isEnabled = document.queryCommandEnabled('copy');
       const successful = document.execCommand('copy');
 
