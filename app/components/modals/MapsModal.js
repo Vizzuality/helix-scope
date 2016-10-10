@@ -40,7 +40,7 @@ class MapsModal extends Component {
       scenario: this.state.selectedScenario,
       category: this.state.selectedCategory,
       indicator: this.state.selectedIndicator,
-      season: DEFAULT_SEASON
+      season: this.props.mapConfigData.season || DEFAULT_SEASON
     };
 
     if (this.props.mapSelectedId) {
@@ -199,7 +199,8 @@ MapsModal.propTypes = {
     measure: React.PropTypes.object,
     indicator: React.PropTypes.object,
     scenario: React.PropTypes.object,
-    category: React.PropTypes.object
+    category: React.PropTypes.object,
+    season: React.PropTypes.number
   }),
   /**
   * Function to supply setMap action to Maps page
