@@ -6,9 +6,9 @@ class Legend extends React.Component {
     this.state = {};
   }
 
-  shouldComponentUpdate(props, state) {
+  shouldComponentUpdate(props) {
     const paramsChanged = props.mapData.bucket &&
-      props.mapData.bucket.length ? true : false;
+      props.mapData.bucket.length > 0;
 
     return paramsChanged;
   }
