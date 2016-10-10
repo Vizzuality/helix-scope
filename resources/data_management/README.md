@@ -20,7 +20,7 @@ $ python raster_manipulation.py hdr.adf
 
 
 
-# Instructions for tabular data management, run in your console::
+# Instructions for tabular data management, run in your console:
 ```sh
 $ python unify_data.py *.xls
 ```
