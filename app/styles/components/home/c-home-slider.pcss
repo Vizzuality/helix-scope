@@ -3,16 +3,18 @@
 }
 
 .slick-track {
-  height: 100vh;
+  @media (--medium-viewport) {
+    height: 100vh;
+  }
 }
 
 .slick-slide {
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  display: flex !important;
-  justify-content: center;
-  align-items: center;
+  padding-top: calc($header-height + $margin-medium + 1rem);
+  padding-bottom: 60px;
+
+  @media (--medium-viewport) {
+    padding: calc($header-height + $margin-large + 1rem) 0;
+  }
 
   &.slide-1 {
     background-image: url('/images/homeslider01.jpg');
@@ -40,9 +42,19 @@
 }
 
 .slick-dots {
+  display: flex !important;
+  align-items: center;
+  height: 25px;
   width: 100%;
-  bottom: 20px;
-  padding: 0 $wrap-padding-desktop;
+  bottom: 0;
+  padding: 0 $margin-small;
+  background-color: rgba(13, 12, 19, 0.2);
+
+  @media (--medium-viewport) {
+    bottom: 20px;
+    padding: 0 1.3335rem;
+    background-color: transparent;
+  }
 
   > li {
     width: calc(99.9% * 1 / 6 - 10px);
