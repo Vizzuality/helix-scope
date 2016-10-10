@@ -16,3 +16,12 @@
 
 # Compiled assets
 /dist
+
+# Data management
+# Ignore data files.
+/resources/data_management/rasters/data/*
+/resources/data_management/tabular_data/data/*
+
+# Ignore data outputs.
+/resources/data_management/rasters/dst/*
+/resources/data_management/tabular_data/dst/*
