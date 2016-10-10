@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from 'components/common/Button';
 import Legend from './Legend';
+import SeasonSelector from './SeasonSelector';
 
 function Dashboard(props) {
   let deleteBtn;
@@ -26,6 +27,9 @@ function Dashboard(props) {
         <Legend
           mapData={props.mapData}
         />
+      </div>
+      <div className="season">
+        <SeasonSelector />
       </div>
     </div>
  );
