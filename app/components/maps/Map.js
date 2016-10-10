@@ -21,6 +21,7 @@ class Map extends React.Component {
       detectRetina: true
     });
 
+    this.map.attributionControl.addAttribution('© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a>');
     this.map.zoomControl.setPosition('topright');
     this.map.scrollWheelZoom.disable();
     this.tileLayer = L.tileLayer(BASEMAP_GEOM_TILE).addTo(this.map).setZIndex(0);
@@ -30,7 +31,17 @@ class Map extends React.Component {
     this.setListeners();
 
     // Get buckets for the legend and layer
-    this.props.getMapBuckets(this.props.mapData);
+    if (!this.props.mapData.bucket) {
+      this.props.getMapBuckets(this.props.mapData);
+    }
+    // Get layer
+    if (this.props.mapData.bucket) {
+      if (this.props.mapData.layer) {
+        this.updateLayer(this.props.mapData.layer);
+      } else {
+        this.getLayer(this.props.mapData);
+      }
+    }
   }
 
   componentWillReceiveProps(props) {
@@ -182,8 +193,12 @@ class Map extends React.Component {
   updateLayer(layer) {
     if (this.layer) {
       this.layer.setUrl(layer.tileUrl);
+      this.currentLayer = layer.slug;
     } else {
-      this.layer = L.tileLayer(layer.tileUrl, { noWrap: true }).setZIndex(2);
+      this.layer = L.tileLayer(layer.tileUrl, {
+        noWrap: true,
+        attribution: 'CARTO <a href="https://carto.com/attributions" target="_blank">attribution</a>'
+      }).setZIndex(2);
       this.layer.on('load', this.onTileLoaded);
       this.layer.addTo(this.map);
       this.currentLayer = layer.slug;

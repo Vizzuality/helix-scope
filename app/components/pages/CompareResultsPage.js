@@ -55,7 +55,7 @@ class CountriesPage extends Component {
       charts.push(
         <div className="column small-12 medium-6 country-1" key={`chart-${Math.floor(Math.random() * 1000)}`}>
           {indicator1
-            ? <Chart data={indicator1} />
+            ? <Chart data={indicator1} iso={this.props.iso1} />
             : null
           }
         </div>
@@ -63,7 +63,7 @@ class CountriesPage extends Component {
       charts.push(
         <div className="column small-12 medium-6 country-2" key={`chart-${Math.floor(Math.random() * 1000)}`}>
           {indicator2
-            ? <Chart data={indicator2} dark />
+            ? <Chart data={indicator2} iso={this.props.iso2} />
             : null
           }
         </div>

@@ -36,6 +36,23 @@
   }
 }
 
+/* Slides */
+.l-slides {
+  display: flex;
+  flex-direction: column;
+  padding-top: calc($header-height + $margin-medium + 1rem);
+  padding-bottom: 60px;
+  height: 100%;
+
+  > .row:first-of-type {
+    height: 100%;
+  }
+
+  @media (--medium-viewport) {
+    padding-top: calc($header-height + $margin-large + 1rem);
+  }
+}
+
 /* Main */
 .l-main {
   /* 1rem because of the header top positon */

@@ -1,11 +1,17 @@
 .l-header {
   position: absolute;
-  top: 1.3335rem;
-  left: 1.3335rem;
-  right: 1.3335rem;
+  top: 0.6667rem;
+  left: 0.6667rem;
+  right: 0.6667rem;
   background-color: $color-base;
   z-index: 1000;
   box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.1);
+
+  @media (--medium-viewport) {
+    top: 1.3335rem;
+    left: 1.3335rem;
+    right: 1.3335rem;
+  }
 
   &.-mini {
     position: relative;

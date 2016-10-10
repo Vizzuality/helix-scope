@@ -1,6 +1,8 @@
 import React from 'react';
 import Button from 'components/common/Button';
 import Legend from './Legend';
+import MeasureSelector from './MeasureSelector';
+import SeasonSelector from './SeasonSelector';
 
 function Dashboard(props) {
   let deleteBtn;
@@ -27,6 +29,19 @@ function Dashboard(props) {
           mapData={props.mapData}
         />
       </div>
+      <div className="measure">
+        <MeasureSelector
+          mapData={props.mapData}
+          measurements={props.config.measurements}
+          setMapState={props.setMapState}
+        />
+      </div>
+      <div className="season">
+        <SeasonSelector
+          mapData={props.mapData}
+          setMapState={props.setMapState}
+        />
+      </div>
     </div>
  );
 }
@@ -40,8 +55,12 @@ Dashboard.propTypes = {
     indicator: React.PropTypes.object
   }).isRequired,
   deleteMap: React.PropTypes.func,
+  setMapState: React.PropTypes.func,
   handleMapConfig: React.PropTypes.func,
-  maps: React.PropTypes.array
+  maps: React.PropTypes.array,
+  config: React.PropTypes.shape({
+    measurements: React.PropTypes.array
+  }).isRequired
 };
 
 export default Dashboard;

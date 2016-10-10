@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from 'components/common/Button';
+import FooterHome from 'components/common/FooterHome';
 
 function TextSlide(props) {
   let buttons = [];
@@ -19,19 +20,22 @@ function TextSlide(props) {
   }
 
   return (
-    <div>
-      <div className="c-text-slide -center">
-        <section className="content">
-          <h2 className="title">{props.title}</h2>
-          <p className="text">{props.content}</p>
-          <div className="buttons">
-            {buttons}
-          </div>
-          <div className="actions">
-            {props.children}
-          </div>
-        </section>
+    <div className="l-slides">
+      <div className="row align-middle">
+        <div className="column c-text-slide -center">
+          <section className="content">
+            <h2 className="title">{props.title}</h2>
+            <p className="text">{props.content}</p>
+            <div className="buttons">
+              {buttons}
+            </div>
+            <div className="actions">
+              {props.children}
+            </div>
+          </section>
+        </div>
       </div>
+      <FooterHome />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import MapsPage from 'components/pages/MapsPage';
-import { initializeMaps, saveParamsFromURL } from 'actions/maps';
+import { initializeMaps, saveParamsFromURL, updateURL } from 'actions/maps';
 
 const mapStateToProps = state => ({
   maps: state.maps.mapsList,
@@ -13,6 +13,9 @@ const mapDispatchToProps = dispatch => ({
   },
   initializeMaps: () => {
     dispatch(initializeMaps());
+  },
+  updateURL: () => {
+    dispatch(updateURL());
   }
 });
 
