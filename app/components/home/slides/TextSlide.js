@@ -20,8 +20,8 @@ function TextSlide(props) {
   }
 
   return (
-    <div>
-      <div className="row">
+    <div className="l-slides">
+      <div className="row align-middle">
         <div className="column c-text-slide -center">
           <section className="content">
             <h2 className="title">{props.title}</h2>
