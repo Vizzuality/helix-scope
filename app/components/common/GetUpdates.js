@@ -46,7 +46,7 @@ class GetUpdates extends React.Component {
           </div>
           <div className="column">
             <input
-              className={`${this.state.emailEmpty ? '-error' : ''}`}
+              className={`c-input ${this.state.emailEmpty ? '-error' : ''}`}
               type="email"
               value={this.state.email}
               onChange={this.handleChange}

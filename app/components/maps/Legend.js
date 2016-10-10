@@ -1,27 +1,36 @@
 import React from 'react';
 
-const Legend = (props) => {
-  const colors = props.mapData.indicator.colorScheme;
+class Legend extends React.Component {
+  shouldComponentUpdate(props) {
+    const paramsChanged = props.mapData.bucket &&
+      props.mapData.bucket.length > 0;
 
-  if (props.mapData && !props.mapData.bucket) {
-    return <div></div>;
+    return paramsChanged;
   }
 
-  const gradient = `linear-gradient(to right, ${colors[0]}, ${colors[1]} 20%, ${colors[2]} 39%, ${colors[3]} 59%, ${colors[4]} 79%, ${colors[5]})`;
+  render() {
+    const colors = this.props.mapData.indicator.colorScheme;
 
-  return (
-    <div className="c-legend">
-      <ul className="labels">
-        <div className="range" style={{ background: gradient }}></div>
-        {props.mapData.bucket.map((bucket, index) =>
-          <li key={`legend-item-${index}`}>
-            {parseFloat(bucket.value.toFixed(2))}
-          </li>
-        )}
-      </ul>
-    </div>
-  );
-};
+    if (this.props.mapData && !this.props.mapData.bucket) {
+      return <div></div>;
+    }
+
+    const gradient = `linear-gradient(to right, ${colors[0]}, ${colors[1]} 20%, ${colors[2]} 39%, ${colors[3]} 59%, ${colors[4]} 79%, ${colors[5]})`;
+
+    return (
+      <div className="c-legend">
+        <ul className="labels">
+          <div className="range" style={{ background: gradient }}></div>
+          {this.props.mapData.bucket.map((bucket, index) =>
+            <li key={`legend-item-${index}`}>
+              {parseFloat(bucket.value.toFixed(2))}
+            </li>
+          )}
+        </ul>
+      </div>
+    );
+  }
+}
 
 Legend.propTypes = {
   mapData: React.PropTypes.shape({

@@ -1,14 +1,18 @@
 import { connect } from 'react-redux';
 import Dashboard from 'components/maps/Dashboard';
-import { deleteMap } from 'actions/maps';
+import { deleteMap, setMap } from 'actions/maps';
 
 const mapStateToProps = state => ({
-  maps: state.maps.mapsList
+  maps: state.maps.mapsList,
+  config: state.config
 });
 
 const mapDispatchToProps = dispatch => ({
   deleteMap: params => {
     dispatch(deleteMap(params));
+  },
+  setMapState: params => {
+    dispatch(setMap(params));
   }
 });
 
