@@ -31,7 +31,17 @@ class Map extends React.Component {
     this.setListeners();
 
     // Get buckets for the legend and layer
-    this.props.getMapBuckets(this.props.mapData);
+    if (!this.props.mapData.bucket) {
+      this.props.getMapBuckets(this.props.mapData);
+    }
+    // Get layer
+    if (this.props.mapData.bucket) {
+      if (this.props.mapData.layer) {
+        this.updateLayer(this.props.mapData.layer);
+      } else {
+        this.getLayer(this.props.mapData);
+      }
+    }
   }
 
   componentWillReceiveProps(props) {
