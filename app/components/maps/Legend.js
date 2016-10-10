@@ -1,11 +1,6 @@
 import React from 'react';
 
 class Legend extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
   shouldComponentUpdate(props) {
     const paramsChanged = props.mapData.bucket &&
       props.mapData.bucket.length > 0;
