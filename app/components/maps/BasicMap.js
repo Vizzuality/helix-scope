@@ -13,6 +13,7 @@ class Map extends React.Component {
       detectRetina: true
     });
 
+    this.map.attributionControl.addAttribution('© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a>');
     this.map.zoomControl.setPosition('topright');
     this.map.scrollWheelZoom.disable();
     this.tileLayer = L.tileLayer(BASEMAP_GEOM_TILE).addTo(this.map).setZIndex(0);
