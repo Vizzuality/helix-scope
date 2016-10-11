@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { useScroll } from 'react-router-scroll';
-import { IndexRoute, IndexRedirect, Router, Route, applyRouterMiddleware } from 'react-router';
+import { IndexRoute, Router, Route, applyRouterMiddleware } from 'react-router';
 import ContainerPage from './containers/pages/ContainerPage';
 import HomePage from './components/pages/HomePage';
 import MapsPage from './containers/pages/MapsPage';
@@ -13,6 +13,7 @@ import PartnersPage from './components/pages/PartnersPage';
 import AboutPage from './containers/pages/AboutPage';
 import NewsPage from './components/pages/NewsPage';
 import ContactPage from './components/pages/ContactPage';
+import ReactGA from 'react-ga';
 
 function shouldUpdateScroll(prevRouterProps, { location }) {
   /**
@@ -82,18 +83,29 @@ function shouldUpdateScroll(prevRouterProps, { location }) {
   return true;
 }
 
+function trackPageView() {
+  let currentUrl = window.location.pathname;
+
+  if (window.location.search) {
+    currentUrl += window.location.search;
+  }
+
+  ReactGA.set({ page: currentUrl });
+  ReactGA.pageview(currentUrl);
+}
+
 const Routes = ({ history }) => (
   <Router
     history={history}
     render={applyRouterMiddleware(useScroll(shouldUpdateScroll))}
+    onUpdate={trackPageView}
   >
     <Route path="/" component={ContainerPage}>
       <IndexRoute component={HomePage} />
-      <Route path="maps">
-        <IndexRedirect to="global-scenarios" />
-        <Route path="global-scenarios(/:lat)(/:lng)(/:zoom)" component={MapsPage} />
+      <Route path="global-scenarios">
+        <IndexRoute component={MapsPage} />
+        <Route path=":lat/:lng/:zoom" component={MapsPage} />
       </Route>
-      <Route path="global-scenarios(/:lat)(/:lng)(/:zoom)" component={MapsPage} />
       <Route path="countries">
         <IndexRoute component={CountriesPage} />
         <Route path=":iso" component={CountriesDetailPage} />

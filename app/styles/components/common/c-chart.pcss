@@ -42,6 +42,13 @@
     margin: $margin-small 0;
   }
 
+  > .content {
+    min-height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   > .chart {
     height: 350px;
 
@@ -63,11 +70,33 @@
         stroke-width: 0;
         fill: transparent;
       }
+
+      &.x {
+        .tick:not(:first-of-type) line {
+          fill: none;
+          stroke: rgba(227, 227, 227, 0.5);
+          stroke-dasharray: 5, 5;
+        }
+      }
     }
 
     .multiline {
       fill: none;
       stroke-width: 2px;
+
+      &.-events {
+        cursor: pointer;
+        stroke-width: 6px;
+      }
+    }
+
+    > .tooltip {
+      position: absolute;
+      padding: 5px;
+      text-align: center;
+      pointer-events: none;
+      background-color: $color-base;
+      box-shadow: 0 0 4px 0 rgba(81, 81, 83, 0.2);
     }
   }
 }

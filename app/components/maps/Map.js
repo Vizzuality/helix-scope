@@ -1,7 +1,7 @@
 import React from 'react';
 import L from 'leaflet';
 import LoadingSpinner from 'components/common/LoadingSpinner';
-import { BASEMAP_GEOM_TILE, BASEMAP_LABELS_TILE, MAP_MAX_BOUNDS, MAP_MIN_ZOOM, MAP_LAYER_SPEC, MAP_LAYER_SPEC_RASTER, MAP_VECTOR_CSS, MAP_RASTER_CSS } from 'constants/map';
+import { BASEMAP_GEOM_TILE, BASEMAP_LABELS_TILE, MAP_MIN_ZOOM, MAP_LAYER_SPEC, MAP_LAYER_SPEC_RASTER, MAP_VECTOR_CSS, MAP_RASTER_CSS } from 'constants/map';
 
 class Map extends React.Component {
   constructor(props) {
@@ -14,7 +14,6 @@ class Map extends React.Component {
 
   componentDidMount() {
     this.map = L.map(`map${this.props.mapData.id}`, {
-      maxBounds: MAP_MAX_BOUNDS,
       minZoom: MAP_MIN_ZOOM,
       zoom: this.props.mapConfig.zoom,
       center: [this.props.mapConfig.latLng.lat, this.props.mapConfig.latLng.lng],

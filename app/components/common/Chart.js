@@ -6,23 +6,45 @@ import { getSeasonTextById } from 'constants/season';
 class Chart extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      noData: false
+    };
     this.data = {};
     this.timer = null;
   }
 
   componentDidMount() {
-    this.onPageResize = () => {
-      this.debounceDraw();
-    };
-    window.addEventListener('resize', this.onPageResize);
+    if (this.props.data.data && this.props.data.data.length) {
+      this.onPageResize = () => {
+        this.debounceDraw();
+      };
+      window.addEventListener('resize', this.onPageResize);
 
-    this.data = this.getParsedData(this.props.data);
-    this.drawChart();
+      this.data = this.getParsedData(this.props.data);
+      this.setScenarios();
+      this.drawChart();
+    } else {
+      this.setnoDataState(true);
+    }
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.onPageResize);
+  }
+
+  setScenarios() {
+    this.scenariosConfig = {};
+    if (this.props.scenarios.length) {
+      for (let i = 0, sLength = this.props.scenarios.length; i < sLength; i++) {
+        this.scenariosConfig[this.props.scenarios[i].slug] = this.props.scenarios[i].name;
+      }
+    }
+  }
+
+  setnoDataState(state) {
+    this.setState({
+      noData: state
+    });
   }
 
   getBucketsColor(category) {
@@ -76,7 +98,7 @@ class Chart extends React.Component {
     const bucket = this.getBucketsColor(this.props.data.category);
     const margin = {
       top: 30,
-      right: 30,
+      right: 45,
       bottom: 30,
       left: 30
     };
@@ -100,7 +122,9 @@ class Chart extends React.Component {
         .scale(x)
         .orient('bottom')
         .ticks(4)
+        .innerTickSize(-height)
         .outerTickSize(1)
+        .tickPadding(10)
         .tickFormat((d) => getSeasonTextById(d));
 
     const yAxis = d3.svg.axis()
@@ -113,13 +137,13 @@ class Chart extends React.Component {
 
     const yAxisValues = this.data
       .filter((elem) => (elem.season === 4))
-      .map((elem) => elem.value);
+      .map((elem) => elem);
 
     const yAxis2 = d3.svg.axis()
         .scale(y)
-        .tickValues(yAxisValues)
+        .tickValues(yAxisValues.map((elem) => elem.value))
         .orient('right')
-        .tickFormat(d3.format(',.1f'));
+        .tickFormat((d, i) => this.scenariosConfig[yAxisValues[i].scenario]);
 
     const line = d3.svg.line()
         .x((d) => x(d.season))
@@ -135,17 +159,19 @@ class Chart extends React.Component {
       .append('g')
         .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-
+    const minValue = d3.min(this.data, (d) => (d.value));
     const domain = {
       x: d3.extent(this.data, (d) => d.season),
-      y: [0, d3.max(this.data, (d) => d.value)]
+      y: [minValue < 0 ? minValue : 0, d3.max(this.data, (d) => d.value)]
     };
+    const bisectSeason = d3.bisector((d) => (d.season)).left;
+    const bisectValue = d3.bisector((d) => (d.value)).left;
 
     x.domain(domain.x);
     y.domain(domain.y);
 
     // Add extra padding to Y domain
-    y.domain([domain.y[0], d3.max(y.ticks(numTicksY)) + y.ticks(numTicksY)[1]]);
+    y.domain([domain.y[0], d3.max(y.ticks(numTicksY)) + Math.abs(y.ticks(numTicksY)[1])]);
 
     // Nest the entries by scenario
     const dataNest = d3.nest()
@@ -171,16 +197,16 @@ class Chart extends React.Component {
       .call(xAxis)
       .selectAll('text')
         .attr('y', 15)
-        .style('text-anchor', 'start');
+        .style('text-anchor', 'middle');
 
-    const xSvg = svg.select('.x.axis');
-    const labelsSize = xSvg[0][0].getBBox().width;
-    const axisSize = xSvg.select('.domain')[0][0].getBBox().width;
-    const labelsText = xSvg.selectAll('text');
-    const labelLength = labelsText[0].length;
-    labelsText.attr('transform', (d, i) => (
-      `translate(-${(labelsSize - axisSize + margin.right / 2) / labelLength * i}, 0)`
-    ));
+    svg.selectAll('.axis.x .tick text').first()
+      .style('text-anchor', 'start');
+    svg.selectAll('.axis.x .tick text').last()
+      .style('text-anchor', 'end');
+
+    const tooltip = d3Chart.append('div')
+      .attr('class', 'tooltip')
+      .style('opacity', 0);
 
     // Loop through each scenario / key
     dataNest.forEach((d, i) => {
@@ -189,24 +215,83 @@ class Chart extends React.Component {
         .attr('d', line(d.values))
         .attr('stroke', () => bucket[i]);
     });
+
+    // Add same lines to the mouse events
+    dataNest.forEach((d) => {
+      svg.append('path')
+        .attr('class', 'multiline -events')
+        .attr('d', line(d.values))
+        .attr('stroke', 'transparent')
+        .on('mouseover', () => {
+          tooltip.transition()
+              .duration(100)
+              .style('opacity', 0.9);
+        })
+        .on('mousemove', function () {
+          const x0 = x.invert(d3.mouse(this)[0]);
+          const ds = dataNest.map((e) => {
+            const i = bisectSeason(e.values, x0, 1);
+            const d0 = e.values[i - 1];
+            const d1 = e.values[i];
+            return x0 - d0.season > d1.season - x0 ? d1 : d0;
+          });
+
+          ds.sort((a, b) => a.value > b.value);
+
+          const y0 = y.invert(d3.mouse(this)[1]);
+          const i = bisectValue(ds.sort(), y0, 1);
+
+          const d0 = ds[i - 1];
+          const d1 = ds[i];
+
+          if (d0 && d1) {
+            const currentData = y0 - d0.value > d1.value - y0 ? d1 : d0;
+
+            if (currentData && currentData.value) {
+              tooltip.html(currentData.value.toFixed(2));
+            }
+          }
+
+          const cords = d3.mouse(d3Chart.node());
+          const tipSize = {
+            x: tooltip[0][0].offsetWidth,
+            y: tooltip[0][0].offsetHeight
+          };
+
+          tooltip
+              .style('left', `${cords[0] + (tipSize.x / 2)}px`)
+              .style('top', `${cords[1] + tipSize.y + (tipSize.y / 3)}px`);
+        })
+        .on('mouseout', () => {
+          tooltip.transition()
+            .duration(200)
+            .style('opacity', 0);
+        });
+    });
   }
 
   render() {
     const downloadLink = `${ENDPOINT_SQL}?q=SELECT * FROM ${this.props.data.table_name} WHERE iso='${this.props.iso}'&format=csv`;
     return (
       <div className="c-chart">
-        <a className="icon" href={downloadLink} target="_blank">
-          <svg width="10" height="10" viewBox="0 0 16 16"><title>Download</title><path d="M12.307 16H3.693a1 1 0 0 1-.936-.649L0 8h16l-2.757 7.351a1 1 0 0 1-.936.649zM4 3l4 4 4-4h-2V0H6v3H4z" fillRule="evenodd" /></svg>
-        </a>
+        {!this.state.noData &&
+          <a className="icon" href={downloadLink} target="_blank">
+            <svg width="10" height="10" viewBox="0 0 16 16"><title>Download</title><path d="M12.307 16H3.693a1 1 0 0 1-.936-.649L0 8h16l-2.757 7.351a1 1 0 0 1-.936.649zM4 3l4 4 4-4h-2V0H6v3H4z" fillRule="evenodd" /></svg>
+          </a>
+        }
         <div className="subtitle">{this.props.data.category}</div>
         <div className="title">{this.props.data.indicator}</div>
-        <div className="chart" ref={ref => (this.chart = ref)}></div>
+        {this.state.noData
+          ? <div className="content subtitle">There is no data for this indicator</div>
+          : <div className="chart" ref={ref => (this.chart = ref)}></div>
+        }
       </div>
     );
   }
 }
 
 Chart.propTypes = {
+  scenarios: React.PropTypes.array.isRequired,
   data: React.PropTypes.object.isRequired,
   iso: React.PropTypes.string.isRequired
 };

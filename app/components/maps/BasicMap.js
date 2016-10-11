@@ -1,12 +1,11 @@
 import React from 'react';
 import L from 'leaflet';
-import { BASEMAP_GEOM_TILE, BASEMAP_LABELS_TILE, MAP_MAX_BOUNDS, MAP_MIN_ZOOM } from 'constants/map';
+import { BASEMAP_GEOM_TILE, BASEMAP_LABELS_TILE, MAP_MIN_ZOOM } from 'constants/map';
 
 class Map extends React.Component {
 
   componentDidMount() {
     this.map = L.map('map-base', {
-      maxBounds: MAP_MAX_BOUNDS,
       minZoom: MAP_MIN_ZOOM,
       zoom: this.props.mapConfig.zoom,
       center: [this.props.mapConfig.latLng.lat, this.props.mapConfig.latLng.lng],
