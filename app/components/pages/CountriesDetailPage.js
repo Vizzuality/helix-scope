@@ -40,7 +40,7 @@ class CountriesPage extends Component {
   }
 
   render() {
-    if (!this.props.configLoaded || !this.props.countryData) return  <LoadingSpinner />;
+    if (!this.props.configLoaded || !this.props.countryData) return <LoadingSpinner />;
 
     let countryName = '';
     if (this.props.countriesList.length) {

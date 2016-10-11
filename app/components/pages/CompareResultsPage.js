@@ -102,7 +102,7 @@ class CountriesPage extends Component {
   }
 
   render() {
-    if (!this.props.configLoaded || !this.props.countryData1 || !this.props.countryData2) return  <LoadingSpinner />;
+    if (!this.props.configLoaded || !this.props.countryData1 || !this.props.countryData2) return <LoadingSpinner />;
 
     return (
       <div>
