@@ -100,7 +100,9 @@ class Chart extends React.Component {
         .scale(x)
         .orient('bottom')
         .ticks(4)
+        .innerTickSize(-height)
         .outerTickSize(1)
+        .tickPadding(10)
         .tickFormat((d) => getSeasonTextById(d));
 
     const yAxis = d3.svg.axis()
@@ -135,17 +137,17 @@ class Chart extends React.Component {
       .append('g')
         .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-
+    const minValue = d3.min(this.data, (d) => (d.value));
     const domain = {
       x: d3.extent(this.data, (d) => d.season),
-      y: [0, d3.max(this.data, (d) => d.value)]
+      y: [minValue < 0 ? minValue : 0, d3.max(this.data, (d) => d.value)]
     };
 
     x.domain(domain.x);
     y.domain(domain.y);
 
     // Add extra padding to Y domain
-    y.domain([domain.y[0], d3.max(y.ticks(numTicksY)) + y.ticks(numTicksY)[1]]);
+    y.domain([domain.y[0], d3.max(y.ticks(numTicksY)) + Math.abs(y.ticks(numTicksY)[1])]);
 
     // Nest the entries by scenario
     const dataNest = d3.nest()
@@ -171,16 +173,12 @@ class Chart extends React.Component {
       .call(xAxis)
       .selectAll('text')
         .attr('y', 15)
-        .style('text-anchor', 'start');
+        .style('text-anchor', 'middle');
 
-    const xSvg = svg.select('.x.axis');
-    const labelsSize = xSvg[0][0].getBBox().width;
-    const axisSize = xSvg.select('.domain')[0][0].getBBox().width;
-    const labelsText = xSvg.selectAll('text');
-    const labelLength = labelsText[0].length;
-    labelsText.attr('transform', (d, i) => (
-      `translate(-${(labelsSize - axisSize + margin.right / 2) / labelLength * i}, 0)`
-    ));
+    svg.selectAll('.axis.x .tick text').first()
+      .style('text-anchor', 'start');
+    svg.selectAll('.axis.x .tick text').last()
+      .style('text-anchor', 'end');
 
     // Loop through each scenario / key
     dataNest.forEach((d, i) => {
