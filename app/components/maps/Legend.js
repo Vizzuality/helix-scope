@@ -5,7 +5,7 @@ class Legend extends React.Component {
     const paramsChanged = props.mapData.bucket &&
       props.mapData.bucket.length > 0;
 
-    return paramsChanged;
+    return paramsChanged || true;
   }
 
   render() {
