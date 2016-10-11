@@ -4,7 +4,6 @@ import ExploreScenarios from 'components/common/ExploreScenarios';
 import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
 import NewsCover from 'components/news/NewsCover';
-import Button from 'components/common/Button';
 
 class CountriesPage extends Component {
   constructor(props) {
@@ -40,10 +39,6 @@ class CountriesPage extends Component {
                 title="Improving glacial behaviour for climate modelling, @climateparis2015"
                 content="Response to Matt Ridley by Richard Betts In Monday's Times newspaper, Matt Ridley wrote an article entitled: Now here’s the good news on global warming: Activists may want to shut down debate..."
               />
-            </div>
-          </div>
-          <div className="row">
-            <div className="column">
             </div>
           </div>
         </div>
