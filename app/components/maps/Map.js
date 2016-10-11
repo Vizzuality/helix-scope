@@ -14,7 +14,6 @@ class Map extends React.Component {
 
   componentDidMount() {
     this.map = L.map(`map${this.props.mapData.id}`, {
-      maxBounds: MAP_MAX_BOUNDS,
       minZoom: MAP_MIN_ZOOM,
       zoom: this.props.mapConfig.zoom,
       center: [this.props.mapConfig.latLng.lat, this.props.mapConfig.latLng.lng],
