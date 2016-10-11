@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { useScroll } from 'react-router-scroll';
-import { IndexRoute, IndexRedirect, Router, Route, applyRouterMiddleware } from 'react-router';
+import { IndexRoute, Router, Route, applyRouterMiddleware } from 'react-router';
 import ContainerPage from './containers/pages/ContainerPage';
 import HomePage from './components/pages/HomePage';
 import MapsPage from './containers/pages/MapsPage';
@@ -102,11 +102,10 @@ const Routes = ({ history }) => (
   >
     <Route path="/" component={ContainerPage}>
       <IndexRoute component={HomePage} />
-      <Route path="maps">
-        <IndexRedirect to="global-scenarios" />
-        <Route path="global-scenarios(/:lat)(/:lng)(/:zoom)" component={MapsPage} />
+      <Route path="global-scenarios">
+        <IndexRoute component={MapsPage} />
+        <Route path=":lat/:lng/:zoom" component={MapsPage} />
       </Route>
-      <Route path="global-scenarios(/:lat)(/:lng)(/:zoom)" component={MapsPage} />
       <Route path="countries">
         <IndexRoute component={CountriesPage} />
         <Route path=":iso" component={CountriesDetailPage} />
