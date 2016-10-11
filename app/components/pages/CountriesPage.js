@@ -36,8 +36,8 @@ class CountriesPage extends Component {
           <div className="row">
             <div className="column">
               <NewsCover
-                title=""
-                content=""
+                title="Improving glacial behaviour for climate modelling, @climateparis2015"
+                content="Response to Matt Ridley by Richard Betts In Monday's Times newspaper, Matt Ridley wrote an article entitled: Now here’s the good news on global warming: Activists may want to shut down debate..."
               />
             </div>
           </div>
