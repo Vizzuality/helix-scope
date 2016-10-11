@@ -28,7 +28,7 @@ class ContainerPage extends React.Component {
           title="Share"
           shareModalOpen={this.props.shareModalOpen}
           setShareModal={() => this.props.setShareModal(false)}
-          shareUrl={this.props.location.pathname}
+          shareUrl={window.location.href}
         />
         <MenuModal
           menuModalOpen={this.props.menuModalOpen}
