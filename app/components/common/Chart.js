@@ -164,6 +164,8 @@ class Chart extends React.Component {
       x: d3.extent(this.data, (d) => d.season),
       y: [minValue < 0 ? minValue : 0, d3.max(this.data, (d) => d.value)]
     };
+    const bisectSeason = d3.bisector((d) => (d.season)).left;
+    const bisectValue = d3.bisector((d) => (d.value)).left;
 
     x.domain(domain.x);
     y.domain(domain.y);
@@ -202,12 +204,69 @@ class Chart extends React.Component {
     svg.selectAll('.axis.x .tick text').last()
       .style('text-anchor', 'end');
 
+    const tooltip = d3Chart.append('div')
+      .attr('class', 'tooltip')
+      .style('opacity', 0);
+
     // Loop through each scenario / key
     dataNest.forEach((d, i) => {
       svg.append('path')
         .attr('class', 'multiline')
         .attr('d', line(d.values))
         .attr('stroke', () => bucket[i]);
+    });
+
+    // Add same lines to the mouse events
+    dataNest.forEach((d) => {
+      svg.append('path')
+        .attr('class', 'multiline -events')
+        .attr('d', line(d.values))
+        .attr('stroke', 'transparent')
+        .on('mouseover', () => {
+          tooltip.transition()
+              .duration(100)
+              .style('opacity', 0.9);
+        })
+        .on('mousemove', function () {
+          const x0 = x.invert(d3.mouse(this)[0]);
+          const ds = dataNest.map((e) => {
+            const i = bisectSeason(e.values, x0, 1);
+            const d0 = e.values[i - 1];
+            const d1 = e.values[i];
+            return x0 - d0.season > d1.season - x0 ? d1 : d0;
+          });
+
+          ds.sort((a, b) => a.value > b.value);
+
+          const y0 = y.invert(d3.mouse(this)[1]);
+          const i = bisectValue(ds.sort(), y0, 1);
+
+          const d0 = ds[i - 1];
+          const d1 = ds[i];
+
+          if (d0 && d1) {
+            const currentData = y0 - d0.value > d1.value - y0 ? d1 : d0;
+
+            if (currentData && currentData.value) {
+              tooltip.html(currentData.value.toFixed(2));
+            }
+          }
+
+          const cords = d3.mouse(d3Chart.node());
+          const tipSize = {
+            x: tooltip[0][0].offsetWidth,
+            y: tooltip[0][0].offsetHeight
+          };
+
+          tooltip
+              .style('left', `${cords[0] + (tipSize.x / 2)}px`)
+              .style('top', `${cords[1] + tipSize.y + (tipSize.y / 3)}px`);
+        })
+        .on('mouseout', () => {
+          tooltip.transition()
+            .duration(200)
+            .style('opacity', 0);
+        });
     });
   }
 
