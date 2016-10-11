@@ -83,6 +83,20 @@
     .multiline {
       fill: none;
       stroke-width: 2px;
+
+      &.-events {
+        cursor: pointer;
+        stroke-width: 18px;
+      }
+    }
+
+    > .tooltip {
+      position: absolute;
+      padding: 5px;
+      text-align: center;
+      pointer-events: none;
+      background-color: $color-base;
+      box-shadow: 0 0 4px 0 rgba(81, 81, 83, 0.2);
     }
   }
 }

@@ -202,12 +202,47 @@ class Chart extends React.Component {
     svg.selectAll('.axis.x .tick text').last()
       .style('text-anchor', 'end');
 
+    const tooltip = d3Chart.append('div')
+      .attr('class', 'tooltip')
+      .style('opacity', 0);
+
     // Loop through each scenario / key
     dataNest.forEach((d, i) => {
       svg.append('path')
         .attr('class', 'multiline')
         .attr('d', line(d.values))
         .attr('stroke', () => bucket[i]);
+    });
+
+    // Add same lines to the mouse events
+    dataNest.forEach((d) => {
+      svg.append('path')
+        .data(d.values)
+        .attr('class', 'multiline -events')
+        .attr('d', line(d.values))
+        .attr('stroke', 'transparent')
+        .on('mouseover', () => {
+          tooltip.transition()
+              .duration(100)
+              .style('opacity', 0.9);
+        })
+        .on('mousemove', (data) => {
+          tooltip.html(data.value);
+          const cords = d3.mouse(d3Chart.node());
+          const tipSize = {
+            x: tooltip[0][0].offsetWidth,
+            y: tooltip[0][0].offsetHeight
+          };
+
+          tooltip
+              .style('left', `${cords[0] - (tipSize.x / 2)}px`)
+              .style('top', `${cords[1] + tipSize.y + (tipSize.y / 3)}px`);
+        })
+        .on('mouseout', () => {
+          tooltip.transition()
+            .duration(200)
+            .style('opacity', 0);
+        });
     });
   }
 
