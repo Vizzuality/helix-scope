@@ -215,7 +215,7 @@ class Chart extends React.Component {
         <div className="subtitle">{this.props.data.category}</div>
         <div className="title">{this.props.data.indicator}</div>
         {this.state.noData
-          ? <div className="content subtitle">There is no data for this selector</div>
+          ? <div className="content subtitle">There is no data for this indicator</div>
           : <div className="chart" ref={ref => (this.chart = ref)}></div>
         }
       </div>
