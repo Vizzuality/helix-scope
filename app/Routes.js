@@ -13,6 +13,7 @@ import PartnersPage from './components/pages/PartnersPage';
 import AboutPage from './containers/pages/AboutPage';
 import NewsPage from './components/pages/NewsPage';
 import ContactPage from './components/pages/ContactPage';
+import ReactGA from 'react-ga';
 
 function shouldUpdateScroll(prevRouterProps, { location }) {
   /**
@@ -82,10 +83,22 @@ function shouldUpdateScroll(prevRouterProps, { location }) {
   return true;
 }
 
+function trackPageView() {
+  let currentUrl = window.location.pathname;
+
+  if (window.location.search) {
+    currentUrl += window.location.search;
+  }
+
+  ReactGA.set({ page: currentUrl });
+  ReactGA.pageview(currentUrl);
+}
+
 const Routes = ({ history }) => (
   <Router
     history={history}
     render={applyRouterMiddleware(useScroll(shouldUpdateScroll))}
+    onUpdate={trackPageView}
   >
     <Route path="/" component={ContainerPage}>
       <IndexRoute component={HomePage} />

@@ -12,6 +12,8 @@ import { fetchCountriesList } from 'actions/countries';
 import * as reducers from 'reducers';
 import Routes from './Routes';
 
+import ReactGA from 'react-ga';
+
 import './styles/lib/custom-foundation.css';
 import './styles/main.pcss';
 
@@ -50,6 +52,9 @@ const store = createStore(
  * @type {Object}
  */
 const history = syncHistoryWithStore(browserHistory, store);
+
+// Google Analytics
+ReactGA.initialize('UA-85513755-1');
 
 render(
   <Provider store={store}>
