@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
-import Chart from 'components/common/Chart';
+import Chart from 'containers/common/ChartContainer';
 import CallToAction from 'components/common/CallToAction';
 import ExploreScenarios from 'components/common/ExploreScenarios';
 import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
+import LoadingSpinner from 'components/common/LoadingSpinner';
 
 class CountriesPage extends Component {
   constructor(props) {
@@ -39,7 +40,7 @@ class CountriesPage extends Component {
   }
 
   render() {
-    if (!this.props.countryData) return null;
+    if (!this.props.configLoaded || !this.props.countryData) return <LoadingSpinner />;
 
     let countryName = '';
     if (this.props.countriesList.length) {
@@ -100,6 +101,7 @@ class CountriesPage extends Component {
 }
 
 CountriesPage.propTypes = {
+  configLoaded: React.PropTypes.bool.isRequired,
   getCountryData: React.PropTypes.func,
   countryData: React.PropTypes.any,
   countriesList: React.PropTypes.array,
