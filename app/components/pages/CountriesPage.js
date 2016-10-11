@@ -3,7 +3,7 @@ import SearchBox from 'containers/common/SearchBox';
 import ExploreScenarios from 'components/common/ExploreScenarios';
 import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
-import NewsCover from 'components/news/NewsCover';
+import NewsAndInsights from 'components/news/NewsAndInsights';
 
 class CountriesPage extends Component {
   constructor(props) {
@@ -33,14 +33,7 @@ class CountriesPage extends Component {
               <h2>News and insights</h2>
             </div>
           </div>
-          <div className="row">
-            <div className="column">
-              <NewsCover
-                title="Improving glacial behaviour for climate modelling, @climateparis2015"
-                content="Response to Matt Ridley by Richard Betts In Monday's Times newspaper, Matt Ridley wrote an article entitled: Now here’s the good news on global warming: Activists may want to shut down debate..."
-              />
-            </div>
-          </div>
+          <NewsAndInsights />
         </div>
 
         <div className="l-page-modules">
