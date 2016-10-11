@@ -1,6 +1,6 @@
 import React from 'react';
 import L from 'leaflet';
-import { BASEMAP_GEOM_TILE, BASEMAP_LABELS_TILE, MAP_MAX_BOUNDS, MAP_MIN_ZOOM } from 'constants/map';
+import { BASEMAP_GEOM_TILE, BASEMAP_LABELS_TILE, MAP_MIN_ZOOM } from 'constants/map';
 
 class Map extends React.Component {
 
