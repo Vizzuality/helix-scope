@@ -18,11 +18,21 @@ class Chart extends React.Component {
     window.addEventListener('resize', this.onPageResize);
 
     this.data = this.getParsedData(this.props.data);
+    this.setScenarios();
     this.drawChart();
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.onPageResize);
+  }
+
+  setScenarios() {
+    this.scenariosConfig = {};
+    if (this.props.scenarios.length) {
+      for (let i = 0, sLength = this.props.scenarios.length; i < sLength; i++) {
+        this.scenariosConfig[this.props.scenarios[i].slug] = this.props.scenarios[i].name;
+      }
+    }
   }
 
   getBucketsColor(category) {
@@ -76,7 +86,7 @@ class Chart extends React.Component {
     const bucket = this.getBucketsColor(this.props.data.category);
     const margin = {
       top: 30,
-      right: 30,
+      right: 45,
       bottom: 30,
       left: 30
     };
@@ -115,13 +125,13 @@ class Chart extends React.Component {
 
     const yAxisValues = this.data
       .filter((elem) => (elem.season === 4))
-      .map((elem) => elem.value);
+      .map((elem) => elem);
 
     const yAxis2 = d3.svg.axis()
         .scale(y)
-        .tickValues(yAxisValues)
+        .tickValues(yAxisValues.map((elem) => elem.value))
         .orient('right')
-        .tickFormat(d3.format(',.1f'));
+        .tickFormat((d, i) => this.scenariosConfig[yAxisValues[i].scenario]);
 
     const line = d3.svg.line()
         .x((d) => x(d.season))
@@ -205,6 +215,7 @@ class Chart extends React.Component {
 }
 
 Chart.propTypes = {
+  scenarios: React.PropTypes.array.isRequired,
   data: React.PropTypes.object.isRequired,
   iso: React.PropTypes.string.isRequired
 };

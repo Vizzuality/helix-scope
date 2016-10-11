@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import { StickyContainer, Sticky } from 'react-sticky';
-import Chart from 'components/common/Chart';
+import Chart from 'containers/common/ChartContainer';
 import CallToAction from 'components/common/CallToAction';
 import ExploreScenarios from 'components/common/ExploreScenarios';
 import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
+import LoadingSpinner from 'components/common/LoadingSpinner';
 
 class CountriesPage extends Component {
   constructor(props) {
@@ -101,7 +102,7 @@ class CountriesPage extends Component {
   }
 
   render() {
-    if (!this.props.countryData1 || !this.props.countryData2) return null;
+    if (!this.props.configLoaded || !this.props.countryData1 || !this.props.countryData2) return  <LoadingSpinner />;
 
     return (
       <div>
@@ -173,6 +174,7 @@ class CountriesPage extends Component {
 }
 
 CountriesPage.propTypes = {
+  configLoaded: React.PropTypes.bool.isRequired,
   countriesList: React.PropTypes.array,
   updateCompareUrl: React.PropTypes.func,
   getCountryData: React.PropTypes.func,

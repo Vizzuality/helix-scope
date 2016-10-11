@@ -4,6 +4,7 @@ import CompareResultsPage from 'components/pages/CompareResultsPage';
 import { getCountryData } from 'actions/countries';
 
 const mapStateToProps = (state, { params }) => ({
+  configLoaded: !state.config.loading,
   countriesList: state.countries.countriesList,
   iso1: params.iso1,
   iso2: params.iso2,
