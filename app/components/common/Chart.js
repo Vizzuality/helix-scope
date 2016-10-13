@@ -3,6 +3,33 @@ import d3 from 'd3';
 import { ENDPOINT_SQL } from 'constants/map';
 import { getSeasonTextById } from 'constants/season';
 
+const getBucketsColor = (category) => {
+  switch (category.toLowerCase()) {
+    case 'biodiversity':
+      return ['#DDE133', '#E5CF19', '#A4C504', '#268434'];
+    case 'water':
+      return ['#B3ECDD', '#5FAACF', '#4963B8', '#383E9C'];
+    case 'climate':
+      return ['#FDEB58', '#F5C217', '#EA9315', '#E04B12'];
+    default:
+      return [];
+  }
+};
+
+const getColorByScenario = (category, scenario) => {
+  const categoryColors = getBucketsColor(category);
+  switch (scenario) {
+    case '15':
+      return categoryColors[0];
+    case '2':
+      return categoryColors[1];
+    case '45':
+      return categoryColors[2];
+    default:
+      return '';
+  }
+};
+
 class Chart extends React.Component {
   constructor(props) {
     super(props);
@@ -47,19 +74,6 @@ class Chart extends React.Component {
     });
   }
 
-  getBucketsColor(category) {
-    switch (category.toLowerCase()) {
-      case 'biodiversity':
-        return ['#DDE133', '#E5CF19', '#A4C504', '#268434'];
-      case 'water':
-        return ['#B3ECDD', '#5FAACF', '#4963B8', '#383E9C'];
-      case 'climate':
-        return ['#FDEB58', '#F5C217', '#EA9315', '#E04B12'];
-      default:
-        return [];
-    }
-  }
-
   getParsedData(data) {
     if (!data) return null;
     const values = [];
@@ -67,8 +81,9 @@ class Chart extends React.Component {
       Object.keys(data.data[i].scenarios).forEach((key) => {
         values.push({
           scenario: key,
-          value: data.data[i].scenarios[key].mean,
-          season: data.data[i].season
+          data: data.data[i].scenarios[key],
+          season: data.data[i].season,
+          category: data.category
         });
       });
     }
@@ -95,7 +110,6 @@ class Chart extends React.Component {
     const interpolate = 'linear';
     const numTicksY = 5;
     const unit = this.props.data.units;
-    const bucket = this.getBucketsColor(this.props.data.category);
     const margin = {
       top: 30,
       right: 45,
@@ -141,14 +155,14 @@ class Chart extends React.Component {
 
     const yAxis2 = d3.svg.axis()
         .scale(y)
-        .tickValues(yAxisValues.map((elem) => elem.value))
+        .tickValues(yAxisValues.map((elem) => elem.data.mean))
         .orient('right')
         .tickFormat((d, i) => this.scenariosConfig[yAxisValues[i].scenario]);
 
     const line = d3.svg.line()
         .x((d) => x(d.season))
-        .y((d) => y(d.value))
-        .defined((d) => d.value)
+        .y((d) => y(d.data.mean))
+        .defined((d) => d.data.mean)
         .interpolate(interpolate);
 
     const d3Chart = d3.select(this.chart);
@@ -159,13 +173,13 @@ class Chart extends React.Component {
       .append('g')
         .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-    const minValue = d3.min(this.data, (d) => (d.value));
+    const minValue = d3.min(this.data, (d) => (d.data.mean));
     const domain = {
       x: d3.extent(this.data, (d) => d.season),
-      y: [minValue < 0 ? minValue : 0, d3.max(this.data, (d) => d.value)]
+      y: [minValue < 0 ? minValue : 0, d3.max(this.data, (d) => d.data.mean)]
     };
     const bisectSeason = d3.bisector((d) => (d.season)).left;
-    const bisectValue = d3.bisector((d) => (d.value)).left;
+    const bisectValue = d3.bisector((d) => (d.data.mean)).left;
 
     x.domain(domain.x);
     y.domain(domain.y);
@@ -209,11 +223,11 @@ class Chart extends React.Component {
       .style('opacity', 0);
 
     // Loop through each scenario / key
-    dataNest.forEach((d, i) => {
+    dataNest.forEach((d) => {
       svg.append('path')
         .attr('class', 'multiline')
         .attr('d', line(d.values))
-        .attr('stroke', () => bucket[i]);
+        .attr('stroke', getColorByScenario(this.props.data.category, d.key));
     });
 
     // Add same lines to the mouse events
@@ -236,7 +250,7 @@ class Chart extends React.Component {
             return x0 - d0.season > d1.season - x0 ? d1 : d0;
           });
 
-          ds.sort((a, b) => a.value > b.value);
+          ds.sort((a, b) => a.data.mean > b.data.mean);
 
           const y0 = y.invert(d3.mouse(this)[1]);
           const i = bisectValue(ds.sort(), y0, 1);
@@ -245,22 +259,30 @@ class Chart extends React.Component {
           const d1 = ds[i];
 
           if (d0 && d1) {
-            const currentData = y0 - d0.value > d1.value - y0 ? d1 : d0;
+            const currentData = y0 - d0.data.mean > d1.data.mean - y0 ? d1 : d0;
+            const color = getColorByScenario(currentData.category, currentData.scenario);
 
-            if (currentData && currentData.value) {
-              tooltip.html(currentData.value.toFixed(2));
+            if (currentData && currentData.data) {
+              tooltip.html(
+                `<div class="max" style="color:${color};"><span>maximum: </span><span>${currentData.data.max.toFixed(2)}</span></div>
+                <div class="mean -highlight" style="color:${color};"><span>mean: </span><span>${currentData.data.mean.toFixed(2)}</span></div>
+                <div class="min" style="color:${color};"><span>minimum: </span><span>${currentData.data.min.toFixed(2)}</span></div>
+                <div class="sd" style="color:${color};"><span>SD: </span><span>${currentData.data.sd.toFixed(2)}</span></div>
+                <span class="marker"></span>`
+              );
             }
           }
 
           const cords = d3.mouse(d3Chart.node());
-          const tipSize = {
-            x: tooltip[0][0].offsetWidth,
-            y: tooltip[0][0].offsetHeight
-          };
+          // TODO: center the tooltip dynamically
+          // const tipSize = {
+          //   x: tooltip[0][0].offsetWidth,
+          //   y: tooltip[0][0].offsetHeight
+          // };
 
           tooltip
-              .style('left', `${cords[0] + (tipSize.x / 2)}px`)
-              .style('top', `${cords[1] + tipSize.y + (tipSize.y / 3)}px`);
+              .style('left', `${cords[0] - 33}px`)
+              .style('top', `${cords[1] - 35}px`);
         })
         .on('mouseout', () => {
           tooltip.transition()
