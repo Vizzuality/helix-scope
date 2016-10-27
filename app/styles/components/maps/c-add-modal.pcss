@@ -110,8 +110,13 @@
 }
 
 .c-add-map {
+  display: none;
   position: absolute;
   bottom: 40px;
   right: 30px;
   z-index: 1003;
+
+  @media (--medium-viewport) {
+    display: block;
+  }
 }

@@ -5,10 +5,10 @@ function Footer() {
   return (
     <footer className="l-footer">
       <div className="row align-justify align-middle c-footer">
-        <div className="column">
+        <div className="column small-12 medium-6">
           <img alt="Helix scope" src="/images/helixLogo_negative.png" className="footer-logo" />
         </div>
-        <div className="column">
+        <div className="column small-12 medium-6">
           <ul className="footer-menu">
             <li>
               <NavLink to="/partners">Partners</NavLink>

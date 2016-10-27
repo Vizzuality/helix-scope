@@ -23,7 +23,12 @@
 }
 
 .leaflet-top .leaflet-control {
-  margin-top: 30px;
+  margin-top: 10px;
+  margin-right: 1.3335rem;
+
+  @media (--medium-viewport) {
+    margin-top: 30px;
+  }
 }
 
 .leaflet-top,
@@ -34,7 +39,6 @@
 .leaflet-bar a {
   color: $color-main;
   border-radius: 20px !important;
-  margin-right: 30px;
   margin-top: 10px;
   height: 28px;
   width: 28px;

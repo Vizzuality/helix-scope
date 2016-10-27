@@ -1,5 +1,11 @@
 .c-news-article {
-  margin: $margin-large 0;
+  padding-top: $margin-large;
+  padding-bottom: $margin-large;
+  border-bottom: 1px solid $color-border;
+
+  @media (--medium-viewport) {
+    border-bottom: none;
+  }
 
   > h3 {
     font-family: $font-body;

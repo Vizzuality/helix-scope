@@ -83,6 +83,7 @@ class CompareSelects extends Component {
             icon="arrow"
             style="primary"
             size="large"
+            position={this.props.inline ? 'left' : ''}
             onClick={this.goToCompareDetail}
             text={this.props.inline ? 'Compare' : 'Compare this countries'}
           />
