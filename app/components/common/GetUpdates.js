@@ -59,11 +59,13 @@ class GetUpdates extends React.Component {
                 icon="success"
                 style="success"
                 size="large"
+                position="right"
               />
               : <Button
                 icon="arrow"
                 style="primary"
                 size="large"
+                position="right"
                 onClick={this.subscribe}
               />
             }
