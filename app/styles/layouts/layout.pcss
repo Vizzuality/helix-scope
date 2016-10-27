@@ -88,7 +88,11 @@
 }
 
 .l-page-content {
-  padding: $margin-large 0;
+  padding: $margin-medium 0;
+
+  @media (--medium-viewport) {
+    padding: $margin-large 0;
+  }
 
   &.-no-gutter {
     padding: 0;
@@ -105,8 +109,13 @@
   }
 
   > .row {
-    margin-top: $margin-large;
-    margin-bottom: $margin-large;
+    margin-top: $margin-medium;
+    margin-bottom: $margin-medium;
+
+    @media (--medium-viewport) {
+      margin-top: $margin-large;
+      margin-bottom: $margin-large;
+    }
   }
 }
 
@@ -121,5 +130,11 @@
 
   &.-dark {
     background-color: $color-dark;
+  }
+}
+
+.l-news {
+  .c-news-article:last-of-type {
+    border-bottom: none;
   }
 }

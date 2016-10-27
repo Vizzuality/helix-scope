@@ -40,11 +40,11 @@ class GetUpdates extends React.Component {
   render() {
     return (
       <div className={`l-module ${this.state.subscribed ? '-success' : ''}`}>
-        <div className={`row small-up-1 medium-up-3 align-middle c-get-updates ${this.state.subscribed ? '-success' : ''}`}>
-          <div className="column">
+        <div className={`row align-middle c-get-updates ${this.state.subscribed ? '-success' : ''}`}>
+          <div className="column small-12 medium-4">
             <span>Get Updates</span>
           </div>
-          <div className="column">
+          <div className="column small-8 medium-4">
             <input
               className={`c-input ${this.state.emailEmpty ? '-error' : ''}`}
               type="email"
@@ -53,7 +53,7 @@ class GetUpdates extends React.Component {
               placeholder="Enter email address"
             />
           </div>
-          <div className="column">
+          <div className="column small-4 medium-4">
             {this.state.subscribed
               ? <Button
                 icon="success"
