@@ -34,6 +34,13 @@
       color: $font-main;
     }
   }
+
+  .c-btn.-left {
+    @media screen and (max-width: 40em) {
+      margin: $margin-medium auto 0;
+      justify-content: center;
+    }
+  }
 }
 
 /* Slides */
@@ -65,21 +72,23 @@
 }
 
 .l-split {
-  background-color: $color-base;
-  position: relative;
-  padding-top: $margin-large;
-  padding-bottom: $margin-large;
-  border-top: 1px solid $color-border;
+  @media (--medium-viewport) {
+    background-color: $color-base;
+    position: relative;
+    padding-top: $margin-large;
+    padding-bottom: $margin-large;
+    border-top: 1px solid $color-border;
 
-  &::before {
-    content: "";
-    position: absolute;
-    background-color: $color-base-dark;
-    top: 0;
-    bottom: 0;
-    left: 50%;
-    right: 0;
-    z-index: 0;
+    &::before {
+      content: "";
+      position: absolute;
+      background-color: $color-base-dark;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      right: 0;
+      z-index: 0;
+    }
   }
 
   > .row {
