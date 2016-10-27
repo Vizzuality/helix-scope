@@ -16,15 +16,7 @@
   }
 
   > .column {
-    text-align: center;
-
-    @media (--medium-viewport) {
-      text-align: left;
-
-      &:last-of-type {
-        text-align: right;
-      }
-    }
+    text-align: left;
 
     > span {
       font-family: $font-heading;
@@ -39,22 +31,24 @@
       padding: $margin-small 0;
       width: 100%;
       font-family: $font-body;
-      font-size: $font-size-medium;
+      font-size: $font-size;
       font-style: italic;
       line-height: 1;
-      text-align: center;
-      color: $font-box-grey;
+      text-align: left;
+      color: $font-main;
       background: none;
       box-shadow: none;
 
       @media (--medium-viewport) {
         padding: 0;
         width: auto;
-        font-size: 34px;
+        font-size: $font-size-medium-large;
+        color: $font-box-grey;
         float: right;
         position: relative;
         top: 0;
         right: 0;
+        text-align: center;
       }
 
       &.-error {

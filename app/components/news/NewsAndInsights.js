@@ -18,7 +18,7 @@ function NewsAndInsights() {
     }
   ];
   return (
-    <div>
+    <div className="l-news">
       <div className="row">
         <div className="column">
           <NewsCover

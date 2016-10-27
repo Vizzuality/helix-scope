@@ -1,9 +1,14 @@
 .c-news-cover {
   width: 100%;
-  height: 270px;
+  height: auto;
   background-color: #ff9000;
   box-shadow: 0 0 4px 0 rgba(76, 0, 0, 0.2);
-  padding: 50px;
+  padding: 1rem;
+
+  @media (--medium-viewport) {
+    height: 270px;
+    padding: 50px;
+  }
 
   .title {
     font-family: $font-body;
