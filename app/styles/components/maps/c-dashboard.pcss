@@ -1,9 +1,16 @@
 .c-dashboard {
   position: absolute;
-  width: 261px;
-  background-color: $pale-white;
+  width: 100%;
+  bottom: 0;
   z-index: 1000;
+  background-color: $pale-white;
   padding: 15px 20px;
+
+  @media (--medium-viewport) {
+    top: 0;
+    bottom: auto;
+    width: 261px;
+  }
 
   > .control {
     border-bottom: solid 1px #eee;
