@@ -54,7 +54,7 @@ const store = createStore(
 const history = syncHistoryWithStore(browserHistory, store);
 
 // Google Analytics
-ReactGA.initialize('UA-85513755-1');
+process.env.NODE_ENV === 'production' && ReactGA.initialize(process.env.GA);
 
 render(
   <Provider store={store}>
