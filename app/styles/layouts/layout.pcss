@@ -89,10 +89,25 @@
       right: 0;
       z-index: 0;
     }
+
+    > .row {
+      position: relative;
+    }
+  }
+}
+
+.l-compare {
+  > .column {
+    display: none;
+
+    @media (--medium-viewport) {
+      display: block;
+    }
   }
 
-  > .row {
-    position: relative;
+  &.-index-1 .country-1,
+  &.-index-2 .country-2 {
+    display: block;
   }
 }
 
