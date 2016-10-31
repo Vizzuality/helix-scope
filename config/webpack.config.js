@@ -37,7 +37,8 @@ const webpackConfig = {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+      'process.env.GA': JSON.stringify(process.env.GOOGLE_ANALYTICS)
     }),
     new StyleLintPlugin({
       configFile: path.join(rootPath, '.stylelintrc'),

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import { StickyContainer, Sticky } from 'react-sticky';
+import Switch from 'components/common/Switch';
 import Chart from 'containers/common/ChartContainer';
 import CallToAction from 'components/common/CallToAction';
 import ExploreScenarios from 'components/common/ExploreScenarios';
@@ -14,18 +15,21 @@ class CountriesPage extends Component {
     if (props.countriesList && props.countriesList.length) {
       this.state = {
         selectedCountry1: this.props.countriesList.find(elem => elem.iso === this.props.iso1),
-        selectedCountry2: this.props.countriesList.find(elem => elem.iso === this.props.iso2)
+        selectedCountry2: this.props.countriesList.find(elem => elem.iso === this.props.iso2),
+        indexSelected: 1
       };
     } else {
       this.state = {
         selectedCountry1: { iso: '', name: '' },
-        selectedCountry2: { iso: '', name: '' }
+        selectedCountry2: { iso: '', name: '' },
+        indexSelected: 1
       };
     }
     this.handleCountry1Change = this.handleCountry1Change.bind(this);
     this.handleCountry2Change = this.handleCountry2Change.bind(this);
     this.excludeSelectedOptions1 = this.excludeSelectedOptions1.bind(this);
     this.excludeSelectedOptions2 = this.excludeSelectedOptions2.bind(this);
+    this.handleIndexCountryChange = this.handleIndexCountryChange.bind(this);
   }
 
   componentDidMount() {
@@ -73,6 +77,14 @@ class CountriesPage extends Component {
     return charts;
   }
 
+  handleIndexCountryChange(newIndex) {
+    if (newIndex && newIndex !== this.state.indexSelected) {
+      this.setState({
+        indexSelected: newIndex
+      });
+    }
+  }
+
   handleCountry1Change(newValue) {
     if (newValue) {
       this.setState({
@@ -104,6 +116,8 @@ class CountriesPage extends Component {
   render() {
     if (!this.props.configLoaded || !this.props.countryData1 || !this.props.countryData2) return <LoadingSpinner />;
 
+    const countriesSelected = [this.state.selectedCountry1.name, this.state.selectedCountry2.name];
+
     return (
       <div>
         <div className="l-banner -compare">
@@ -125,7 +139,7 @@ class CountriesPage extends Component {
           </div>
           <StickyContainer>
             <Sticky className="c-sticky">
-              <div className="row">
+              <div className="row -desktop">
                 <div className="column small-12 medium-3 medium-offset-2">
                   <Select
                     className="c-react-select"
@@ -151,9 +165,18 @@ class CountriesPage extends Component {
                   />
                 </div>
               </div>
+              <div className="row -mobile">
+                <div className="column small-12">
+                  <Switch
+                    options={countriesSelected}
+                    indexSelected={this.state.indexSelected}
+                    onSwitch={this.handleIndexCountryChange}
+                  />
+                </div>
+              </div>
             </Sticky>
             <div className="l-split">
-              <div className="row">
+              <div className={`row l-compare -index-${this.state.indexSelected}`}>
                 {this.getCharts()}
               </div>
             </div>

@@ -1,6 +1,10 @@
 .c-search-box {
   .c-react-select {
-    height: 124px;
+    height: 80px;
+
+    @media (--medium-viewport) {
+      height: 124px;
+    }
   }
 
   .Select-value-label,
@@ -8,20 +12,30 @@
   .Select-input > input {
     font-family: $font-body;
     font-style: italic;
-    font-size: $font-size-medium-large;
+    font-size: $font-size;
     line-height: 1;
     color: $font-main;
-    padding-left: 45px;
+    padding-left: 10px;
     margin: 0;
+
+    @media (--medium-viewport) {
+      padding-left: 45px;
+      font-size: $font-size-medium-large;
+    }
   }
 
   .Select-placeholder {
-    padding-left: 50px;
+    padding-left: 15px;
     color: $font-box-grey;
     top: 0;
     left: 0;
     display: flex;
     align-items: center;
+
+    @media (--medium-viewport) {
+      padding-left: 50px;
+      font-size: $font-size-medium-large;
+    }
   }
 
   .Select-input {
@@ -33,6 +47,10 @@
   }
 
   .Select-arrow-zone {
-    padding-right: $margin-extra-large;
+    padding-right: $margin-small;
+
+    @media (--medium-viewport) {
+      padding-right: $margin-extra-large;
+    }
   }
 }

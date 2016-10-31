@@ -1,0 +1,29 @@
+.c-switch {
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+  height: 50px;
+  border-radius: 170px;
+  border: 1px solid $color-border;
+
+  > .option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-basis: 50%;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 170px;
+    color: $font-main;
+    font-family: $font-body;
+    font-size: $font-size;
+    line-height: 1.1;
+    text-align: center;
+    cursor: pointer;
+
+    &.-active {
+      box-shadow: 0 0 7px 0 rgba(81, 81, 83, 0.3);
+      background-color: $color-main;
+    }
+  }
+}

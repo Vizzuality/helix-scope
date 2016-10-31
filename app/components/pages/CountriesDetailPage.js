@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
-import Select from 'react-select';
 import Chart from 'containers/common/ChartContainer';
 import CallToAction from 'components/common/CallToAction';
 import ExploreScenarios from 'components/common/ExploreScenarios';
@@ -9,34 +8,9 @@ import Footer from 'components/common/Footer';
 import LoadingSpinner from 'components/common/LoadingSpinner';
 
 class CountriesPage extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedRegion: {
-        slug: '',
-        name: ''
-      }
-    };
-    this.handleRegionChange = this.handleRegionChange.bind(this);
-  }
 
   componentDidMount() {
     this.props.getCountryData(this.props.iso);
-  }
-
-  handleRegionChange(newValue) {
-    if (newValue) {
-      this.setState({
-        selectedRegion: newValue
-      });
-    } else {
-      this.setState({
-        selectedRegion: {
-          slug: '',
-          name: ''
-        }
-      });
-    }
   }
 
   render() {
@@ -58,20 +32,6 @@ class CountriesPage extends Component {
           </div>
         </div>
         <div className="l-page-content">
-          <div className="row">
-            <div className="column small-12 medium-3">
-              <Select
-                className="c-react-select"
-                options={this.props.countryData.regions}
-                value={this.state.selectedRegion.slug}
-                onChange={this.handleRegionChange}
-                searchable={false}
-                placeholder="All regions"
-                labelKey="name"
-                valueKey="slug"
-              />
-            </div>
-          </div>
           <div className="row">
             <div className="column">
               <h2>Climate Impact & variables</h2>
