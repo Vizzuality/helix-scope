@@ -1,15 +1,55 @@
-
 -- Function prepared to give all information available
 
 DROP FUNCTION get_config();
 
 CREATE OR REPLACE FUNCTION get_config()
-	RETURNS SETOF JSON as $$
-	BEGIN
-		RETURN QUERY EXECUTE 'with x as ( SELECT jsonb_build_object(''name'',indicator,''tableName'',table_name, ''slug'',indicator_slug, ''colorScheme'', color_scheme, ''units'', units) indicator, category, category_slug FROM master_table ),  f as (select  jsonb_agg(jsonb_build_object(''name'', category,''slug'',category_slug, ''indicator'', indicators)) as data from (SELECT jsonb_agg(indicator) indicators, category, category_slug FROM x group by category, category_slug) d) SELECT json_build_object(''categories'',data, ''scenarios'', json_build_array(jsonb_build_object(''name'',''1.5 °C'',''slug'',''15''),jsonb_build_object(''name'',''2 °C'',''slug'',''2''),jsonb_build_object(''name'',''4.5 °C'',''slug'',''45'')), ''measurements'',json_build_array(jsonb_build_object(''name'',''Maximum'',''slug'',''max''),jsonb_build_object(''name'',''Mean'',''slug'',''mean''),jsonb_build_object(''name'',''Minimum'',''slug'',''min''),jsonb_build_object(''name'',''Standard deviation'',''slug'',''sd''))) as data from f';
-	END
-$$ language 'plpgsql';
-
+RETURNS SETOF JSONB as $fn$
+BEGIN
+  RETURN QUERY EXECUTE $q$
+    SELECT JSONB_BUILD_OBJECT(
+      'scenarios', (
+        SELECT JSONB_AGG(
+          JSONB_BUILD_OBJECT(
+            'name', name,
+            'slug', slug
+          )
+        )
+        FROM meta_scenarios ms
+      ),
+      'measurements', (
+        SELECT JSONB_AGG(
+          JSONB_BUILD_OBJECT(
+            'name', name,
+            'slug', slug
+          )
+        )
+        FROM meta_measurements
+      ),
+      'categories', (
+        SELECT JSONB_AGG(sub.json)
+        FROM (
+          SELECT (JSONB_BUILD_OBJECT(
+            'name', mc.name,
+            'slug', mc.slug
+          ) || JSONB_BUILD_OBJECT(
+            'indicators', JSONB_AGG(
+              JSONB_BUILD_OBJECT(
+                'name', mi.name,
+                'slug', mi.slug,
+                'section', mci.section
+              )
+            )
+          )) AS json
+          FROM meta_categories mc
+          INNER JOIN meta_categories_indicators mci ON mc.cartodb_id = mci.category_id
+          INNER JOIN meta_indicators mi ON mi.cartodb_id = mci.indicator_id
+          GROUP BY mc.cartodb_id
+        ) sub
+      )
+    )
+  $q$;
+END
+$fn$ LANGUAGE 'plpgsql';
 
 -- Function prepared to give all information to draw an indicator
 
@@ -17,10 +57,9 @@ DROP FUNCTION get_buckets(variable TEXT, statistic TEXT, scenario NUMERIC)
 
 CREATE OR REPLACE FUNCTION get_buckets(variable TEXT, statistic TEXT, scenario NUMERIC)
 RETURNS TABLE(value NUMERIC) as $fn$
-DECLARE
 BEGIN
   RETURN QUERY EXECUTE $q$
-    WITH DATA AS (
+    WITH data AS (
 		  SELECT $q$||statistic||$q$ AS value
       FROM master_admin0 m
       WHERE m.variable = $1
