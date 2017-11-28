@@ -67,6 +67,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "cli-colors": "^0.0.2",
     "eslint": "^2.9.0",
     "eslint-config-airbnb": "^9.0.1",
     "eslint-plugin-import": "^1.14.0",
@@ -75,6 +76,7 @@
     "husky": "^0.11.7",
     "jsdom": "^9.3.0",
     "mocha": "^2.5.3",
+    "node-fetch": "^1.7.3",
     "react-addons-test-utils": "^15.1.0",
     "stylelint": "^8.2.0",
     "stylelint-config-standard": "^17.0.0",

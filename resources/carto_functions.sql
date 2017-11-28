@@ -1,9 +1,9 @@
 
 -- Function prepared to give all information available
 
-DROP FUNCTION get_config(); 
+DROP FUNCTION get_config();
 
-CREATE OR REPLACE FUNCTION get_config() 
+CREATE OR REPLACE FUNCTION get_config()
 	RETURNS SETOF JSON as $$
 	BEGIN
 		RETURN QUERY EXECUTE 'with x as ( SELECT jsonb_build_object(''name'',indicator,''tableName'',table_name, ''slug'',indicator_slug, ''colorScheme'', color_scheme, ''units'', units) indicator, category, category_slug FROM master_table ),  f as (select  jsonb_agg(jsonb_build_object(''name'', category,''slug'',category_slug, ''indicator'', indicators)) as data from (SELECT jsonb_agg(indicator) indicators, category, category_slug FROM x group by category, category_slug) d) SELECT json_build_object(''categories'',data, ''scenarios'', json_build_array(jsonb_build_object(''name'',''1.5 °C'',''slug'',''15''),jsonb_build_object(''name'',''2 °C'',''slug'',''2''),jsonb_build_object(''name'',''4.5 °C'',''slug'',''45'')), ''measurements'',json_build_array(jsonb_build_object(''name'',''Maximum'',''slug'',''max''),jsonb_build_object(''name'',''Mean'',''slug'',''mean''),jsonb_build_object(''name'',''Minimum'',''slug'',''min''),jsonb_build_object(''name'',''Standard deviation'',''slug'',''sd''))) as data from f';
@@ -13,31 +13,31 @@ $$ language 'plpgsql';
 
 -- Function prepared to give all information to draw an indicator
 
-DROP FUNCTION get_buckets(table_name TEXT, is_raster BOOLEAN, measure TEXT, scenario numeric, season int); 
+DROP FUNCTION get_buckets(variable TEXT, statistic TEXT, scenario NUMERIC)
 
-DROP TYPE buckets;
-
-CREATE TYPE buckets AS (raster_value numeric, raster_min numeric, nodatavalue numeric, value numeric);
-
-CREATE OR REPLACE FUNCTION get_buckets(table_name TEXT, is_raster BOOLEAN, measure TEXT , scenario numeric , season int) 
-	RETURNS SETOF buckets as $$
-	DECLARE
-	measures TEXT;
-  	raster_table_name TEXT;
-	BEGIN
-		raster_table_name=table_name||'_'||measure||'_'||scenario::text||'_'||season::text||' ';
-		IF is_raster IS TRUE then
-			IF measure!='sd' then
-				measures = 'default';
-			else
-				measures = 'sd';
-			END IF;
-			RETURN query EXECUTE 'with raster_min as (select min(unnest) as raster_min from (select unnest(ST_DumpValues(the_raster_webmercator,1, true))::numeric from o_1_'|| raster_table_name ||') r), statistics as (select min(unnest), max(unnest) from (select unnest(ST_DumpValues(the_raster_webmercator,1, true))::numeric from '|| raster_table_name ||') r), stats as ( select * from statistics, raster_min), data_selection as  (select jsonb_array_elements_text(value)::numeric as value from legend_config where table_name like '''|| table_name ||''' and measure like '''|| measures||'''), t as (select value,raster_min, min::numeric, max::numeric from stats, data_selection), nodatavalue as (SELECT (ST_BandMetaData(the_raster_webmercator, 1)).nodatavalue from  o_1_'|| raster_table_name ||' limit 1) select (((value-min)/(max-min))*(255-raster_min)+raster_min)::numeric as raster_value, raster_min::numeric, nodatavalue::numeric, value::numeric from t, nodatavalue';
-		Else
-			RETURN query EXECUTE 'with r as (select value, iso from '|| table_name ||' where measure like ''' || measure || ''' and scenario = '|| scenario ||' and season='|| season ||' ) SELECT null::numeric as raster_value, null::numeric as raster_min, null::numeric as nodatavalue, unnest(CDB_JenksBins(array_agg(distinct((value::numeric))), 6)) as value  from r group by nodatavalue';
-		END IF;
-	END
-$$ language 'plpgsql';
+CREATE OR REPLACE FUNCTION get_buckets(variable TEXT, statistic TEXT, scenario NUMERIC)
+RETURNS TABLE(value NUMERIC) as $fn$
+DECLARE
+BEGIN
+  RETURN QUERY EXECUTE $q$
+    WITH DATA AS (
+		  SELECT $q$||statistic||$q$ AS value
+      FROM master_admin0 m
+      WHERE m.variable = $1
+      AND m.swl_info = $2
+	  )
+    SELECT UNNEST(
+		  CDB_JenksBins(
+			  ARRAY_AGG(
+          DISTINCT(value::numeric)
+        ), 6
+      )
+    ) AS value FROM data
+  $q$
+  USING variable, scenario;
+END
+$fn$ LANGUAGE 'plpgsql';
+-- select * from get_buckets('pr', 'mean', 1.5);
 
 -- Function prepared to give all indicators from a country
 
