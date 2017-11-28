@@ -56,7 +56,7 @@ class MapsPage extends React.Component {
     this.defaultMapConfig = {
       scenario: config.scenarios[0],
       category: config.categories[0],
-      indicator: config.categories[0].indicator[0],
+      indicator: config.categories[0].indicators[0],
       measure: config.measurements[0]
     };
   }
