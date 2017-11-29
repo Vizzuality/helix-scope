@@ -1,7 +1,6 @@
 import React from 'react';
 import d3 from 'd3';
 import { ENDPOINT_SQL } from 'constants/map';
-import { getSeasonTextById } from 'constants/season';
 
 const getBucketsColor = (category) => {
   switch (category.toLowerCase()) {
@@ -82,17 +81,10 @@ class Chart extends React.Component {
         values.push({
           scenario: key,
           data: data.data[i].scenarios[key],
-          season: data.data[i].season,
           category: data.category
         });
       });
     }
-
-    values.sort((a, b) => {
-      if (a.season < b.season) return -1;
-      if (a.season > b.season) return 1;
-      return 0;
-    });
 
     return values;
   }
@@ -139,7 +131,7 @@ class Chart extends React.Component {
         .innerTickSize(-height)
         .outerTickSize(1)
         .tickPadding(10)
-        .tickFormat((d) => getSeasonTextById(d));
+        .tickFormat((d) => `rip seasons ${d}`);
 
     const yAxis = d3.svg.axis()
         .scale(y)
@@ -150,7 +142,6 @@ class Chart extends React.Component {
         .tickPadding(4);
 
     const yAxisValues = this.data
-      .filter((elem) => (elem.season === 4))
       .map((elem) => elem);
 
     const yAxis2 = d3.svg.axis()

@@ -61,8 +61,7 @@ export function initializeMaps() {
           )),
           measure: config.measurements.find((elem) => (
             elem.slug === params[3]
-          )),
-          season: parseInt(params[4], 10)
+          ))
         });
       }
     }
@@ -84,7 +83,7 @@ export function updateURL() {
       query = '?maps=';
 
       maps.mapsList.forEach((map, index) => {
-        query += `${map.scenario.slug},${map.category.slug},${map.indicator.slug},${map.measure.slug},${map.season}`;
+        query += `${map.scenario.slug},${map.category.slug},${map.indicator.slug},${map.measure.slug}`;
 
         if (index < maps.mapsList.length - 1) {
           query += '/';
@@ -177,7 +176,7 @@ export function createLayer(mapData, layerData) {
       dispatch(setMapData(mapData, {
         layer: {
           tileUrl: `${ENDPOINT_TILES}${res.layergroupid}/{z}/{x}/{y}@2x.png32`,
-          slug: `layer_${mapData.indicator.slug}_${mapData.measure.slug}_${mapData.scenario.slug}_${mapData.season}`
+          slug: `layer_${mapData.indicator.slug}_${mapData.measure.slug}_${mapData.scenario.slug}`
         }
       }));
     }).catch((error) => {

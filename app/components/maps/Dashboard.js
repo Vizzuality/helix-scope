@@ -2,7 +2,6 @@ import React from 'react';
 import Button from 'components/common/Button';
 import Legend from './Legend';
 import MeasureSelector from './MeasureSelector';
-import SeasonSelector from './SeasonSelector';
 
 function Dashboard(props) {
   let deleteBtn;
@@ -24,21 +23,13 @@ function Dashboard(props) {
       </div>
       <div className="legend">
         <h4>{props.mapData.category.name}</h4>
-        <span>{props.mapData.indicator.name} ({props.mapData.indicator.units})</span>
-        <Legend
-          mapData={props.mapData}
-        />
+        <span>{props.mapData.indicator.name} ({props.mapData.indicator.unit})</span>
+        <Legend mapData={props.mapData} />
       </div>
       <div className="measure">
         <MeasureSelector
           mapData={props.mapData}
           measurements={props.config.measurements}
-          setMapState={props.setMapState}
-        />
-      </div>
-      <div className="season">
-        <SeasonSelector
-          mapData={props.mapData}
           setMapState={props.setMapState}
         />
       </div>
