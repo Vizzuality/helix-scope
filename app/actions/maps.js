@@ -56,7 +56,7 @@ export function initializeMaps() {
             elem.slug === params[0]
           )),
           category,
-          indicator: category.indicator.find((elem) => (
+          indicator: category.indicators.find((elem) => (
             elem.slug === params[2]
           )),
           measure: config.measurements.find((elem) => (
@@ -192,7 +192,7 @@ export function getMapBuckets(mapData) {
       raster = true;
     }
 
-    const query = `SELECT * FROM get_buckets('${mapData.indicator.tableName}', ${raster}, '${mapData.measure.slug}', ${mapData.scenario.slug}, ${mapData.season})`;
+    const query = `SELECT * FROM get_buckets('${mapData.indicator.slug}', '${mapData.measure.slug}', ${mapData.scenario.slug})`;
 
     $.get({
       url: ENDPOINT_SQL,

@@ -70,9 +70,8 @@ const insertIndicators = function() {
     colorscheme: metadata.indicators_colorschemes[indicator] || DEFAULT_COLORSCHEME,
     buckets: metadata.indicators_buckets[indicator] || DEFAULT_BUCKETS
   }));
-  const values = indicators.map((i) => `('${i.name}', '${i.slug}', '${i.name_long}', '${i.unit}', '${i.label}', ${i.buckets})`);
-  const statement = `INSERT INTO meta_indicators(name, slug, name_long, unit, label, buckets) VALUES ${values.join(',')} RETURNING *`
-
+  const values = indicators.map((i) => `('${i.name}', '${i.slug}', '${i.name_long}', '${i.unit}', '${i.label}', '[${i.colorscheme.map((c) => `"${c}"`)}]', ${i.buckets})`);
+  const statement = `INSERT INTO meta_indicators(name, slug, name_long, unit, label, colorscheme, buckets) VALUES ${values.join(',')} RETURNING *`
   return sql(statement, 'indicators');
 }
 

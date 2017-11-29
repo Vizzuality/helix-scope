@@ -36,6 +36,10 @@ BEGIN
               JSONB_BUILD_OBJECT(
                 'name', mi.name,
                 'slug', mi.slug,
+                'name_long', mi.name_long,
+                'unit', mi.unit,
+                'label', mi.label,
+                'colorscheme', mi.colorscheme,
                 'section', mci.section
               )
             )
@@ -53,14 +57,14 @@ $fn$ LANGUAGE 'plpgsql';
 
 -- Function prepared to give all information to draw an indicator
 
-DROP FUNCTION get_buckets(variable TEXT, statistic TEXT, scenario NUMERIC)
+DROP FUNCTION get_buckets(variable TEXT, measure TEXT, scenario NUMERIC)
 
-CREATE OR REPLACE FUNCTION get_buckets(variable TEXT, statistic TEXT, scenario NUMERIC)
+CREATE OR REPLACE FUNCTION get_buckets(variable TEXT, measure TEXT, scenario NUMERIC)
 RETURNS TABLE(value NUMERIC) as $fn$
 BEGIN
   RETURN QUERY EXECUTE $q$
     WITH data AS (
-		  SELECT $q$||statistic||$q$ AS value
+		  SELECT $q$||measure||$q$ AS value
       FROM master_admin0 m
       WHERE m.variable = $1
       AND m.swl_info = $2
