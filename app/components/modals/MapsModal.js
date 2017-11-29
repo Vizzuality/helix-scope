@@ -93,7 +93,7 @@ class MapsModal extends Component {
             </div>
           </div>
           <div className="row align-center scenarios">
-          {this.props.config.scenarios.sort((s1, s2) => s1.name > s2.name).map((scenario, index) => // @TODO: move sort concern to the data sources
+          {this.props.config.scenarios.map((scenario, index) =>
             <div
               key={index}
               className={`column scenario small-4 medium-3 scenario-${index}`}
@@ -123,7 +123,7 @@ class MapsModal extends Component {
             <div className="column small-12 medium-4">
               <Select
                 className="c-react-select"
-                options={this.props.config.categories.filter((c) => c.indicators.some((i) => i.section === 'map'))} // @TODO: move filter concern to the data sources
+                options={this.props.config.categories.filter((c) => c.indicators.some((i) => i.section === 'map'))}
                 clearable={this.state.clearable}
                 disabled={this.state.disabled}
                 value={this.state.selectedCategory.slug}
@@ -136,7 +136,7 @@ class MapsModal extends Component {
             <div className="column small-12 medium-4">
               <Select
                 className="c-react-select"
-                options={this.state.selectedCategory.indicators.filter((s) => s.section === 'map')} // @TODO: move filter concern to the data sources
+                options={this.state.selectedCategory.indicators.filter((s) => s.section === 'map')}
                 clearable={this.state.clearable}
                 disabled={this.state.disabled}
                 value={this.state.selectedIndicator.slug}
