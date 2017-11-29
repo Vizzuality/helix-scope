@@ -2,7 +2,13 @@ import React from 'react';
 import L from 'leaflet';
 import LoadingSpinner from 'components/common/LoadingSpinner';
 import objectToCSS from 'utils/objectToCSS';
-import { BASEMAP_GEOM_TILE, BASEMAP_LABELS_TILE, MAP_MIN_ZOOM, MAP_LAYER_SPEC, MAP_LAYER_SPEC_RASTER, MAP_VECTOR_CSS, MAP_RASTER_CSS } from 'constants/map';
+import {
+  BASEMAP_GEOM_TILE,
+  BASEMAP_LABELS_TILE,
+  MAP_MIN_ZOOM,
+  MAP_LAYER_SPEC,
+  MAP_VECTOR_CSS
+} from 'constants/map';
 
 class Map extends React.Component {
   constructor(props) {
@@ -143,13 +149,13 @@ class Map extends React.Component {
     return params;
   }
 
-  getLayerTypeSpec(isRaster) {
+  getLayerTypeSpec() {
     const spec = Object.assign({}, MAP_LAYER_SPEC);
     return spec;
   }
 
   getLayerData(data) {
-    const spec = Object.assign({}, this.getLayerTypeSpec(data.raster));
+    const spec = Object.assign({}, this.getLayerTypeSpec());
     const layerOptions = spec.layers[0].options;
 
     layerOptions.sql = data.sql;
@@ -163,28 +169,26 @@ class Map extends React.Component {
     this.generateCartoCSS(mapData);
     const layer = this.getLayerData({
       sql: this.getQuery(mapData),
-      cartocss: this.cartoCSS,
-      raster: mapData.raster
+      cartocss: this.cartoCSS
     });
 
     this.props.createLayer(mapData, layer);
   }
 
   getQuery(mapData) {
+    const indicator = mapData.indicator.slug;
     const scenario = mapData.scenario.slug;
-    const season = 2;
     const measure = mapData.measure.slug;
-    const tableName = mapData.indicator.tableName;
 
-    let query = `
+    const query = `
       WITH data AS (
-        SELECT shape_id, AVG(${mapData.measure.slug}) AS ${mapData.measure.slug}
+        SELECT shape_id, AVG(${measure}) AS ${measure}
         FROM master_5x5
-        WHERE variable = '${mapData.indicator.slug}'
-        AND swl_info = ${mapData.scenario.slug}
+        WHERE variable = '${indicator}'
+        AND swl_info = ${scenario}
         GROUP BY shape_id
       )
-      SELECT good_five_grid.id_val, good_five_grid.the_geom_webmercator, good_five_grid.cartodb_id, data.${mapData.measure.slug}
+      SELECT good_five_grid.id_val, good_five_grid.the_geom_webmercator, good_five_grid.cartodb_id, data.${measure}
       FROM good_five_grid INNER JOIN data ON good_five_grid.id_val = data.shape_id
     `;
 

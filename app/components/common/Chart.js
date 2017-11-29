@@ -117,11 +117,11 @@ class Chart extends React.Component {
       left: 30
     };
 
-    d3.selection.prototype.first = function () {
+    d3.selection.prototype.first = function d3SelectionPrototypeFirst() {
       return d3.select(this[0][0]);
     };
 
-    d3.selection.prototype.last = function () {
+    d3.selection.prototype.last = function d3SelectionPrototypeLast() {
       const last = this.size() - 1;
       return d3.select(this[0][last]);
     };
@@ -241,7 +241,7 @@ class Chart extends React.Component {
               .duration(100)
               .style('opacity', 0.9);
         })
-        .on('mousemove', function () {
+        .on('mousemove', function chartMouseMoveEvent() {
           const x0 = x.invert(d3.mouse(this)[0]);
           const ds = dataNest.map((e) => {
             const i = bisectSeason(e.values, x0, 1);
@@ -263,6 +263,7 @@ class Chart extends React.Component {
             const color = getColorByScenario(currentData.category, currentData.scenario);
 
             if (currentData && currentData.data) {
+              /* eslint-disable max-len*/
               tooltip.html(
                 `<div class="max" style="color:${color};"><span>maximum: </span><span>${currentData.data.max.toFixed(2)}</span></div>
                 <div class="mean -highlight" style="color:${color};"><span>mean: </span><span>${currentData.data.mean.toFixed(2)}</span></div>
@@ -270,6 +271,7 @@ class Chart extends React.Component {
                 <div class="sd" style="color:${color};"><span>SD: </span><span>${currentData.data.sd.toFixed(2)}</span></div>
                 <span class="marker"></span>`
               );
+              /* eslint-enable max-len*/
             }
           }
 
@@ -298,7 +300,13 @@ class Chart extends React.Component {
       <div className="c-chart">
         {!this.state.noData &&
           <a className="icon" href={downloadLink} target="_blank">
-            <svg width="10" height="10" viewBox="0 0 16 16"><title>Download</title><path d="M12.307 16H3.693a1 1 0 0 1-.936-.649L0 8h16l-2.757 7.351a1 1 0 0 1-.936.649zM4 3l4 4 4-4h-2V0H6v3H4z" fillRule="evenodd" /></svg>
+            <svg width="10" height="10" viewBox="0 0 16 16">
+              <title>Download</title>
+              <path
+                d="M12.307 16H3.693a1 1 0 0 1-.936-.649L0 8h16l-2.757 7.351a1 1 0 0 1-.936.649zM4 3l4 4 4-4h-2V0H6v3H4z"
+                fillRule="evenodd"
+              />
+            </svg>
           </a>
         }
         <div className="subtitle">{this.props.data.category}</div>

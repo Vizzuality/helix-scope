@@ -1,3 +1,5 @@
+/* eslint-disable quote-props,camelcase,max-len */
+
 const scenarios = {
   '1.5': '1.5°C warming',
   '2': '2°C warming',
@@ -246,12 +248,11 @@ const indicators_units = {
 };
 
 const indicators_colorschemes = {
-  'pr': ["#D6ECFC", "#BCECDC", "#70A9D2", "#5381D2", "#525FBD", "#3E39A1"]
-}
+  'pr': ['#D6ECFC', '#BCECDC', '#70A9D2', '#5381D2', '#525FBD', '#3E39A1']
+};
 
 const indicators_buckets = {};
 
-/* eslint-enable quote-props */
 module.exports = {
   scenarios,
   measurements,
@@ -264,4 +265,6 @@ module.exports = {
   categories_indicators_map,
   indicators_colorschemes,
   indicators_buckets
-}
+};
+
+/* eslint-enable quote-props,camelcase,max-len */

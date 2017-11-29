@@ -188,12 +188,6 @@ export function createLayer(mapData, layerData) {
 
 export function getMapBuckets(mapData) {
   return (dispatch) => {
-    let raster = false;
-
-    if (!mapData.raster) {
-      raster = true;
-    }
-
     const query = `SELECT * FROM get_buckets('${mapData.indicator.slug}', '${mapData.measure.slug}', ${mapData.scenario.slug})`;
 
     $.get({
