@@ -90,8 +90,10 @@ function trackPageView() {
     currentUrl += window.location.search;
   }
 
-  ReactGA.set({ page: currentUrl });
-  ReactGA.pageview(currentUrl);
+  if (process.env.NODE_ENV === 'production') {
+    ReactGA.set({ page: currentUrl });
+    ReactGA.pageview(currentUrl);
+  }
 }
 
 const Routes = ({ history }) => (
