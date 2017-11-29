@@ -71,6 +71,7 @@ const webpackConfig = {
       components: 'app/components',
       containers: 'app/containers',
       constants: 'app/constants',
+      utils: 'app/utils',
       fonts: 'app/fonts'
     },
     extensions: ['', '.js', '.jsx']

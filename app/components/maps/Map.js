@@ -1,6 +1,7 @@
 import React from 'react';
 import L from 'leaflet';
 import LoadingSpinner from 'components/common/LoadingSpinner';
+import objectToCSS from 'utils/objectToCSS';
 import { BASEMAP_GEOM_TILE, BASEMAP_LABELS_TILE, MAP_MIN_ZOOM, MAP_LAYER_SPEC, MAP_LAYER_SPEC_RASTER, MAP_VECTOR_CSS, MAP_RASTER_CSS } from 'constants/map';
 
 class Map extends React.Component {
@@ -144,11 +145,6 @@ class Map extends React.Component {
 
   getLayerTypeSpec(isRaster) {
     const spec = Object.assign({}, MAP_LAYER_SPEC);
-
-    if (!isRaster) {
-      let layerSpecOptions = spec.layers[0].options;
-      layerSpecOptions = Object.assign(layerSpecOptions, MAP_LAYER_SPEC_RASTER);
-    }
     return spec;
   }
 
@@ -180,11 +176,17 @@ class Map extends React.Component {
     const measure = mapData.measure.slug;
     const tableName = mapData.indicator.tableName;
 
-    let query = `with r as (select value, iso from ${tableName} where measure like '${measure}' and scenario = ${scenario} and season = ${season} ) select r.iso, value, the_geom_webmercator from r inner join country_geoms s on r.iso=s.iso`;
-
-    if (!mapData.raster) {
-      query = `SELECT * FROM ${mapData.indicator.tableName}_${mapData.measure.slug}_${mapData.scenario.slug}_1`;
-    }
+    let query = `
+      WITH data AS (
+        SELECT shape_id, AVG(${mapData.measure.slug}) AS ${mapData.measure.slug}
+        FROM master_5x5
+        WHERE variable = '${mapData.indicator.slug}'
+        AND swl_info = ${mapData.scenario.slug}
+        GROUP BY shape_id
+      )
+      SELECT good_five_grid.id_val, good_five_grid.the_geom_webmercator, good_five_grid.cartodb_id, data.${mapData.measure.slug}
+      FROM good_five_grid INNER JOIN data ON good_five_grid.id_val = data.shape_id
+    `;
 
     return query;
   }
@@ -205,58 +207,21 @@ class Map extends React.Component {
   }
 
   generateCartoCSS(mapData) {
-    if (!mapData.raster) {
-      this.generateCartoRaster(mapData);
-    } else {
-      this.generateCartoVector(mapData);
-    }
-  }
+    const colorscheme = mapData.indicator.colorscheme;
 
-  generateCartoRaster(mapData) {
-    const colorsBucket = mapData.indicator.colorScheme;
-    let stops = '';
-    let isPositiveNumber = false;
-
-    this.bucket.forEach((bucket, index) => {
-      if (bucket.raster_value > 0 && !isPositiveNumber) {
-        isPositiveNumber = true;
-        // No data and min value
-        stops += `stop(${bucket.nodatavalue}, transparent, exact) `;
-        stops += `stop(${bucket.raster_min}, ${colorsBucket[index]}, discrete) `;
-      }
-
-      stops += `stop(${bucket.raster_value}, ${colorsBucket[index]}) `;
-    });
-
-    this.cartoCSS = Object.assign({}, MAP_RASTER_CSS);
-    this.cartoCSS['raster-colorizer-stops'] = stops;
-    this.cartoCSS = `#null ${JSON.stringify(this.cartoCSS)} `;
-    this.cartoCSS = this.formatCartoCSS(this.cartoCSS);
-  }
-
-
-  generateCartoVector(mapData) {
-    const colorsBucket = mapData.indicator.colorScheme;
-
-    const bucketList = Object.assign([], this.bucket);
+    const bucketList = [...this.bucket];
     bucketList.reverse();
 
-    this.cartoCSS = Object.assign({}, MAP_VECTOR_CSS);
-    this.cartoCSS = `#null ${JSON.stringify(this.cartoCSS)} `;
+    const cssProps = {
+      '#null': { ...MAP_VECTOR_CSS }
+    };
 
     bucketList.forEach((bucket, index) => {
-      this.cartoCSS += `#null [value <= ${bucket.value}] { polygon-fill: ${colorsBucket[index]}}`;
+      const key = `#null[${mapData.measure.slug} <= ${bucket.value}]`;
+      cssProps[key] = { 'polygon-fill': colorscheme[index] };
     });
 
-    this.cartoCSS = this.formatCartoCSS(this.cartoCSS);
-  }
-
-  formatCartoCSS(carto) {
-    let cartoCSS = carto;
-    cartoCSS = cartoCSS.replace(/",/g, ';');
-    cartoCSS = cartoCSS.replace(/"/g, '');
-    cartoCSS = cartoCSS.replace(/\}/g, ';}');
-    return cartoCSS;
+    this.cartoCSS = objectToCSS(cssProps);
   }
 
   invalidateSize() {

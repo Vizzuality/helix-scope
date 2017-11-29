@@ -180,6 +180,8 @@ export function createLayer(mapData, layerData) {
           slug: `layer_${mapData.indicator.slug}_${mapData.measure.slug}_${mapData.scenario.slug}_${mapData.season}`
         }
       }));
+    }).catch((error) => {
+      console.error(error);
     });
   };
 }
@@ -203,6 +205,8 @@ export function getMapBuckets(mapData) {
       dispatch(setMapData(mapData, {
         bucket: res.rows
       }));
+    }).catch((error) => {
+      console.error(error);
     });
   };
 }
