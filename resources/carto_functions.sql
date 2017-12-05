@@ -1,5 +1,3 @@
--- Function prepared to give all information available
-
 DROP FUNCTION get_config();
 
 CREATE OR REPLACE FUNCTION get_config()
@@ -55,8 +53,6 @@ BEGIN
 END
 $fn$ LANGUAGE 'plpgsql';
 
--- Function prepared to give all information to draw an indicator
-
 DROP FUNCTION get_buckets(variable TEXT, measure TEXT, scenario NUMERIC)
 
 CREATE OR REPLACE FUNCTION get_buckets(variable TEXT, measure TEXT, scenario NUMERIC)
@@ -80,22 +76,48 @@ BEGIN
   USING variable, scenario;
 END
 $fn$ LANGUAGE 'plpgsql';
--- select * from get_buckets('pr', 'mean', 1.5);
-
--- Function prepared to give all indicators from a country
 
 DROP FUNCTION get_country(iso text);
-DROP TYPE indicators;
-CREATE TYPE indicators AS (category text, indicator text, table_name text, units text, data json);
 
-CREATE OR REPLACE FUNCTION get_country(iso text)
-	RETURNS SETOF indicators as $$
-	DECLARE
-	x text;
-	BEGIN
-		FOR x in select table_name from master_table where active is true
-		LOOP
-		RETURN query EXECUTE 'with r as (SELECT season, scenario, jsonb_object_agg(measure, value) measures FROM '||x||' where iso like '''||iso||''' group by scenario, season order by season, scenario), s as (select jsonb_object_agg(scenario, measures) as scenarios, season from r  group by season), data as ( select json_agg(jsonb_build_object(''scenarios'',scenarios, ''season'',season)) as data from s), result  as (select *, '''||x||'''::text as table_name from data) SELECT category::text, indicator::text, s.table_name::text, units::text, data FROM master_table s inner join result on result.table_name=s.table_name';
-		END LOOP;
-	END
-$$ language 'plpgsql';
+CREATE OR REPLACE FUNCTION get_country(iso TEXT)
+RETURNS SETOF JSONB as $fn$
+BEGIN
+  RETURN QUERY EXECUTE $q$
+    WITH step1 AS (
+      SELECT m.swl_info AS scenario,
+             m.variable AS variable,
+             JSONB_BUILD_OBJECT(
+               'model', m.model_taxonomy,
+               'run', m.run,
+               'max', m.max,
+               'min', m.min,
+               'mean', m.mean,
+               'std', m.std
+             ) AS measures
+      FROM master_admin0 m
+      WHERE m.iso = $1
+    ), step2 AS (
+      SELECT s1.variable, JSONB_BUILD_OBJECT(
+        'scenario', s1.scenario,
+        'measures', JSONB_AGG(s1.measures)
+      ) AS data
+      FROM step1 s1
+      GROUP BY s1.scenario, s1.variable
+    ), step3 AS (
+      SELECT s2.variable, JSONB_AGG(s2.data) AS scenarios
+      FROM step2 s2
+      GROUP BY s2.variable
+    ), step4 AS (
+      SELECT JSONB_BUILD_OBJECT(
+        'variable', s3.variable,
+        'unit', mi.unit,
+        'scenarios', s3.scenarios
+      ) AS result
+      FROM step3 s3
+      INNER JOIN meta_indicators mi ON s3.variable = mi.slug
+    )
+    SELECT JSONB_AGG(result) FROM step4
+  $q$
+  USING iso;
+END
+$fn$ LANGUAGE 'plpgsql';
