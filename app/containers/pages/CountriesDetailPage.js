@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import CountriesDetailPage from 'components/pages/CountriesDetailPage';
-import { getCountryData } from 'actions/countries';
+import { fetchCountryDetail } from 'actions/countries';
 
 const mapStateToProps = (state, { params }) => ({
   configLoaded: !state.config.loading,
@@ -10,7 +10,7 @@ const mapStateToProps = (state, { params }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  getCountryData: (iso) => dispatch(getCountryData(iso))
+  fetchCountryData: (iso) => dispatch(fetchCountryDetail(iso))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CountriesDetailPage);

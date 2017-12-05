@@ -6,18 +6,22 @@ const initialState = {
   categories: [],
   measurements: []
 };
+
 export default function (state = initialState, action) {
   switch (action.type) {
-    case LOAD_CONFIG: {
-      return Object.assign({}, state, {
+    case LOAD_CONFIG:
+      return {
+        ...state,
         loading: true
-      });
-    }
-    case RECEIVE_CONFIG: {
-      const config = action.payload;
-      config.loading = false;
-      return Object.assign({}, state, config);
-    }
+      };
+
+    case RECEIVE_CONFIG:
+      return {
+        ...state,
+        ...action.payload,
+        loading: false
+      };
+
     default:
       return state;
   }

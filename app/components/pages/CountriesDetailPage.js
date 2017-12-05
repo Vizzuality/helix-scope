@@ -7,10 +7,10 @@ import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
 import LoadingSpinner from 'components/common/LoadingSpinner';
 
-class CountriesPage extends Component {
+class CountriesDetailPage extends Component {
 
   componentDidMount() {
-    this.props.getCountryData(this.props.iso);
+    this.props.fetchCountryData(this.props.iso);
   }
 
   render() {
@@ -60,12 +60,12 @@ class CountriesPage extends Component {
   }
 }
 
-CountriesPage.propTypes = {
+CountriesDetailPage.propTypes = {
   configLoaded: React.PropTypes.bool.isRequired,
-  getCountryData: React.PropTypes.func,
+  fetchCountryData: React.PropTypes.func,
   countryData: React.PropTypes.any,
   countriesList: React.PropTypes.array,
   iso: React.PropTypes.string
 };
 
-export default CountriesPage;
+export default CountriesDetailPage;

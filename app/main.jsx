@@ -1,4 +1,3 @@
-'use strict';
 import React from 'react';
 import { render } from 'react-dom';
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
@@ -8,7 +7,7 @@ import thunk from 'redux-thunk';
 import { syncHistoryWithStore, routerReducer, routerMiddleware } from 'react-router-redux';
 
 import { fetchConfig } from 'actions/config';
-import { fetchCountriesList } from 'actions/countries';
+import { fetchCountryList } from 'actions/countries';
 import * as reducers from 'reducers';
 import Routes from './Routes';
 
@@ -54,15 +53,17 @@ const store = createStore(
 const history = syncHistoryWithStore(browserHistory, store);
 
 // Google Analytics
-process.env.NODE_ENV === 'production' && ReactGA.initialize(process.env.GA);
+if (process.env.NODE_ENV === 'production') {
+  ReactGA.initialize(process.env.GA);
+}
 
 render(
   <Provider store={store}>
     {/* Tell the Router to use our enhanced history */}
-    <Routes history={history}/>
+    <Routes history={history} />
   </Provider>,
   document.getElementById('app')
 );
 
 store.dispatch(fetchConfig());
-store.dispatch(fetchCountriesList());
+store.dispatch(fetchCountryList());

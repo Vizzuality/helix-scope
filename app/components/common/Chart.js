@@ -2,55 +2,24 @@ import React from 'react';
 import d3 from 'd3';
 import { ENDPOINT_SQL } from 'constants/map';
 
-const getBucketsColor = (category) => {
-  switch (category.toLowerCase()) {
-    case 'biodiversity':
-      return ['#DDE133', '#E5CF19', '#A4C504', '#268434'];
-    case 'water':
-      return ['#B3ECDD', '#5FAACF', '#4963B8', '#383E9C'];
-    case 'climate':
-      return ['#FDEB58', '#F5C217', '#EA9315', '#E04B12'];
-    default:
-      return [];
-  }
-};
-
-const getColorByScenario = (category, scenario) => {
-  const categoryColors = getBucketsColor(category);
-  switch (scenario) {
-    case '15':
-      return categoryColors[0];
-    case '2':
-      return categoryColors[1];
-    case '45':
-      return categoryColors[2];
-    default:
-      return '';
-  }
-};
-
 class Chart extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      noData: false
-    };
-    this.data = {};
+    this.state = { noData: false };
     this.timer = null;
   }
 
   componentDidMount() {
-    if (this.props.data.data && this.props.data.data.length) {
+    if (this.props.data.scenarios && this.props.data.scenarios.length) {
       this.onPageResize = () => {
         this.debounceDraw();
       };
       window.addEventListener('resize', this.onPageResize);
 
-      this.data = this.getParsedData(this.props.data);
       this.setScenarios();
       this.drawChart();
     } else {
-      this.setnoDataState(true);
+      this.setState({ noData: true });
     }
   }
 
@@ -67,28 +36,6 @@ class Chart extends React.Component {
     }
   }
 
-  setnoDataState(state) {
-    this.setState({
-      noData: state
-    });
-  }
-
-  getParsedData(data) {
-    if (!data) return null;
-    const values = [];
-    for (let i = 0, dataLength = data.data.length; i < dataLength; i++) {
-      Object.keys(data.data[i].scenarios).forEach((key) => {
-        values.push({
-          scenario: key,
-          data: data.data[i].scenarios[key],
-          category: data.category
-        });
-      });
-    }
-
-    return values;
-  }
-
   debounceDraw() {
     if (this.timer) clearTimeout(this.timer);
     this.timer = setTimeout(() => {
@@ -97,192 +44,7 @@ class Chart extends React.Component {
   }
 
   drawChart() {
-    let width = this.chart.offsetWidth;
-    let height = this.chart.offsetHeight;
-    const interpolate = 'linear';
-    const numTicksY = 5;
-    const unit = this.props.data.units;
-    const margin = {
-      top: 30,
-      right: 45,
-      bottom: 30,
-      left: 30
-    };
 
-    d3.selection.prototype.first = function d3SelectionPrototypeFirst() {
-      return d3.select(this[0][0]);
-    };
-
-    d3.selection.prototype.last = function d3SelectionPrototypeLast() {
-      const last = this.size() - 1;
-      return d3.select(this[0][last]);
-    };
-
-    width = width - margin.left - margin.right;
-    height = height - margin.top - margin.bottom;
-
-    const x = d3.scale.linear().range([0, width]);
-    const y = d3.scale.linear().range([height, 0]).nice();
-
-    const xAxis = d3.svg.axis()
-        .scale(x)
-        .orient('bottom')
-        .ticks(4)
-        .innerTickSize(-height)
-        .outerTickSize(1)
-        .tickPadding(10)
-        .tickFormat((d) => `rip seasons ${d}`);
-
-    const yAxis = d3.svg.axis()
-        .scale(y)
-        .orient('left')
-        .ticks(numTicksY)
-        .innerTickSize(-width)
-        .outerTickSize(1)
-        .tickPadding(4);
-
-    const yAxisValues = this.data
-      .map((elem) => elem);
-
-    const yAxis2 = d3.svg.axis()
-        .scale(y)
-        .tickValues(yAxisValues.map((elem) => elem.data.mean))
-        .orient('right')
-        .tickFormat((d, i) => this.scenariosConfig[yAxisValues[i].scenario]);
-
-    const line = d3.svg.line()
-        .x((d) => x(d.season))
-        .y((d) => y(d.data.mean))
-        .defined((d) => d.data.mean)
-        .interpolate(interpolate);
-
-    const d3Chart = d3.select(this.chart);
-    d3Chart.select('svg').remove();
-    const svg = d3Chart.append('svg')
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
-      .append('g')
-        .attr('transform', `translate(${margin.left}, ${margin.top})`);
-
-    const minValue = d3.min(this.data, (d) => (d.data.mean));
-    const domain = {
-      x: d3.extent(this.data, (d) => d.season),
-      y: [minValue < 0 ? minValue : 0, d3.max(this.data, (d) => d.data.mean)]
-    };
-    const bisectSeason = d3.bisector((d) => (d.season)).left;
-    const bisectValue = d3.bisector((d) => (d.data.mean)).left;
-
-    x.domain(domain.x);
-    y.domain(domain.y);
-
-    // Add extra padding to Y domain
-    y.domain([domain.y[0], d3.max(y.ticks(numTicksY)) + Math.abs(y.ticks(numTicksY)[1])]);
-
-    // Nest the entries by scenario
-    const dataNest = d3.nest()
-      .key((d) => d.scenario)
-      .entries(this.data);
-
-    svg.append('g')
-      .attr('class', 'y axis -no-line')
-      .attr('transform', `translate(${width}, 0)`)
-      .call(yAxis2);
-
-    svg.append('g')
-      .attr('class', 'y axis')
-      .call(yAxis);
-
-    svg.selectAll('.axis.y .tick text').last()
-      .append('tspan')
-      .text(unit);
-
-    svg.append('g')
-      .attr('class', 'x axis')
-      .attr('transform', `translate(0, ${height})`)
-      .call(xAxis)
-      .selectAll('text')
-        .attr('y', 15)
-        .style('text-anchor', 'middle');
-
-    svg.selectAll('.axis.x .tick text').first()
-      .style('text-anchor', 'start');
-    svg.selectAll('.axis.x .tick text').last()
-      .style('text-anchor', 'end');
-
-    const tooltip = d3Chart.append('div')
-      .attr('class', 'tooltip')
-      .style('opacity', 0);
-
-    // Loop through each scenario / key
-    dataNest.forEach((d) => {
-      svg.append('path')
-        .attr('class', 'multiline')
-        .attr('d', line(d.values))
-        .attr('stroke', getColorByScenario(this.props.data.category, d.key));
-    });
-
-    // Add same lines to the mouse events
-    dataNest.forEach((d) => {
-      svg.append('path')
-        .attr('class', 'multiline -events')
-        .attr('d', line(d.values))
-        .attr('stroke', 'transparent')
-        .on('mouseover', () => {
-          tooltip.transition()
-              .duration(100)
-              .style('opacity', 0.9);
-        })
-        .on('mousemove', function chartMouseMoveEvent() {
-          const x0 = x.invert(d3.mouse(this)[0]);
-          const ds = dataNest.map((e) => {
-            const i = bisectSeason(e.values, x0, 1);
-            const d0 = e.values[i - 1];
-            const d1 = e.values[i];
-            return x0 - d0.season > d1.season - x0 ? d1 : d0;
-          });
-
-          ds.sort((a, b) => a.data.mean > b.data.mean);
-
-          const y0 = y.invert(d3.mouse(this)[1]);
-          const i = bisectValue(ds.sort(), y0, 1);
-
-          const d0 = ds[i - 1];
-          const d1 = ds[i];
-
-          if (d0 && d1) {
-            const currentData = y0 - d0.data.mean > d1.data.mean - y0 ? d1 : d0;
-            const color = getColorByScenario(currentData.category, currentData.scenario);
-
-            if (currentData && currentData.data) {
-              /* eslint-disable max-len*/
-              tooltip.html(
-                `<div class="max" style="color:${color};"><span>maximum: </span><span>${currentData.data.max.toFixed(2)}</span></div>
-                <div class="mean -highlight" style="color:${color};"><span>mean: </span><span>${currentData.data.mean.toFixed(2)}</span></div>
-                <div class="min" style="color:${color};"><span>minimum: </span><span>${currentData.data.min.toFixed(2)}</span></div>
-                <div class="sd" style="color:${color};"><span>SD: </span><span>${currentData.data.sd.toFixed(2)}</span></div>
-                <span class="marker"></span>`
-              );
-              /* eslint-enable max-len*/
-            }
-          }
-
-          const cords = d3.mouse(d3Chart.node());
-          // TODO: center the tooltip dynamically
-          // const tipSize = {
-          //   x: tooltip[0][0].offsetWidth,
-          //   y: tooltip[0][0].offsetHeight
-          // };
-
-          tooltip
-              .style('left', `${cords[0] - 33}px`)
-              .style('top', `${cords[1] - 35}px`);
-        })
-        .on('mouseout', () => {
-          tooltip.transition()
-            .duration(200)
-            .style('opacity', 0);
-        });
-    });
   }
 
   render() {

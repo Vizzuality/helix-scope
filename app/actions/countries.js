@@ -1,37 +1,46 @@
 import { push } from 'react-router-redux';
-import { ENDPOINT_SQL } from 'constants/map';
+import cartoQuery from 'utils/cartoQuery';
 
-export const GET_COUNTRY_DATA = 'GET_COUNTRY_DATA';
-export const GET_COUNTRIES_LIST = 'GET_COUNTRIES_LIST';
+export const LOAD_COUNTRY_LIST = 'LOAD_COUNTRY_LIST';
+export const RECEIVE_COUNTRY_LIST = 'RECEIVE_COUNTRY_LIST';
 
-export function fetchCountriesList() {
-  const url = `${ENDPOINT_SQL}?q=SELECT%20name_engli%20as%20name,%20iso%20FROM%20country_geoms%20ORDER%20BY%20name%20ASC`;
+export const LOAD_COUNTRY_DETAIL = 'LOAD_COUNTRY_DETAIL';
+export const RECEIVE_COUNTRY_DETAIL = 'RECEIVE_COUNTRY_DETAIL';
+
+
+export function fetchCountryList() {
+  const sql = 'SELECT name_engli AS name, iso FROM country_geoms ORDER BY name ASC';
   return dispatch => {
-    fetch(url)
+    dispatch({
+      type: LOAD_COUNTRY_LIST
+    });
+
+    cartoQuery(sql)
       .then(response => response.json())
-      .then(data => {
-        dispatch({
-          type: GET_COUNTRIES_LIST,
-          payload: data.rows
-        });
-      });
+      .then(data => dispatch({
+        type: RECEIVE_COUNTRY_LIST,
+        payload: data.rows
+      }));
   };
 }
 
-export function getCountryData(iso) {
-  const url = `${ENDPOINT_SQL}?q=select * from get_country('${iso}')`;
+export function fetchCountryDetail(iso) {
+  const sql = `SELECT * FROM get_country('${iso}')`;
   return dispatch => {
-    fetch(url)
+    dispatch({
+      type: LOAD_COUNTRY_DETAIL
+    });
+
+    cartoQuery(sql)
       .then(response => response.json())
-      .then(data => {
-        const countryData = {};
-        countryData.indicators = data.rows;
-        countryData.iso = iso;
-        dispatch({
-          type: GET_COUNTRY_DATA,
-          payload: countryData
-        });
-      });
+      .then(data => ({
+        indicators: data.rows[0].get_country,
+        iso
+      }))
+      .then(data => dispatch({
+        type: RECEIVE_COUNTRY_DETAIL,
+        payload: data
+      }));
   };
 }
 
