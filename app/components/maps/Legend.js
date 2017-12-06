@@ -17,15 +17,14 @@ class Legend extends React.Component {
     }
 
     const gradient = `linear-gradient(to right, ${percentages.map((p, n) => `${colors[n]} ${p}`).join(', ')})`;
-
     return (
       <div className="c-legend">
         <ul className="labels">
           <div className="range" style={{ background: gradient }}></div>
           {this.props.mapData.bucket.map((bucket, index) =>
-            <li key={`legend-item-${index}`}>
+            bucket.value && (<li key={`legend-item-${index}`}>
               {parseFloat(bucket.value.toFixed(2))}
-            </li>
+            </li>)
           )}
         </ul>
       </div>

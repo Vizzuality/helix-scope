@@ -53,9 +53,9 @@ BEGIN
 END
 $fn$ LANGUAGE 'plpgsql';
 
-DROP FUNCTION get_buckets(variable TEXT, measure TEXT, scenario NUMERIC)
+DROP FUNCTION get_buckets(variable TEXT, measure TEXT, scenario NUMERIC, buckets INTEGER)
 
-CREATE OR REPLACE FUNCTION get_buckets(variable TEXT, measure TEXT, scenario NUMERIC)
+CREATE OR REPLACE FUNCTION get_buckets(variable TEXT, measure TEXT, scenario NUMERIC, buckets INTEGER DEFAULT 6)
 RETURNS TABLE(value NUMERIC) as $fn$
 BEGIN
   RETURN QUERY EXECUTE $q$
@@ -64,16 +64,17 @@ BEGIN
       FROM master_admin0 m
       WHERE m.variable = $1
       AND m.swl_info = $2
+      AND $q$||measure||$q$ IS NOT NULL
 	  )
     SELECT UNNEST(
 		  CDB_JenksBins(
 			  ARRAY_AGG(
           DISTINCT(value::numeric)
-        ), 6
+        ), $3
       )
     ) AS value FROM data
   $q$
-  USING variable, scenario;
+  USING variable, scenario, buckets;
 END
 $fn$ LANGUAGE 'plpgsql';
 
