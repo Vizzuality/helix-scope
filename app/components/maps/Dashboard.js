@@ -4,10 +4,12 @@ import Legend from './Legend';
 import MeasureSelector from './MeasureSelector';
 
 function Dashboard(props) {
-  let deleteBtn;
-  if (props.maps.length > 1) {
-    deleteBtn = <Button onClick={() => props.deleteMap(props.mapData.id)} icon="close" style="light" size="small" />;
-  }
+  let deleteBtn = props.maps.length > 1 ?
+    <Button onClick={() => props.deleteMap(props.mapData.id)} icon="close" style="light" size="small" /> :
+    null;
+
+  let measurements = props.mapData.indicator.measurements
+    .map((measurement) => props.config.measurements.find((m) => m.slug === measurement));
 
   return (
     <div className="c-dashboard">
@@ -29,7 +31,7 @@ function Dashboard(props) {
       <div className="measure">
         <MeasureSelector
           mapData={props.mapData}
-          measurements={props.config.measurements}
+          measurements={measurements}
           setMapState={props.setMapState}
         />
       </div>
