@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Select from 'react-select';
 import { StickyContainer, Sticky } from 'react-sticky';
 import Switch from 'components/common/Switch';
-import Chart from 'containers/common/ChartContainer';
 import CallToAction from 'components/common/CallToAction';
 import ExploreScenarios from 'components/common/ExploreScenarios';
 import GetUpdates from 'components/common/GetUpdates';
@@ -60,7 +59,7 @@ class CountriesPage extends Component {
       charts.push(
         <div className="column small-12 medium-6 country-1" key={`chart-${Math.floor(Math.random() * 1000)}`}>
           {indicator1
-            ? <Chart data={indicator1} iso={this.props.iso1} />
+            ? null
             : null
           }
         </div>
@@ -68,7 +67,7 @@ class CountriesPage extends Component {
       charts.push(
         <div className="column small-12 medium-6 country-2" key={`chart-${Math.floor(Math.random() * 1000)}`}>
           {indicator2
-            ? <Chart data={indicator2} iso={this.props.iso2} />
+            ? null
             : null
           }
         </div>
