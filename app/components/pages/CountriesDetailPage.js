@@ -6,6 +6,7 @@ import ExploreScenarios from 'components/common/ExploreScenarios';
 import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
 import LoadingSpinner from 'components/common/LoadingSpinner';
+import YieldChange from 'components/common/charts/YieldChange';
 
 class CountriesDetailPage extends Component {
 
@@ -38,11 +39,9 @@ class CountriesDetailPage extends Component {
             </div>
           </div>
           <div className="row">
-            {this.props.countryData.indicators.map((indicator, index) => (
-              <div className="column small-12 medium-6" key={`chart-${index}`}>
-                <Chart data={indicator} iso={this.props.iso} />
-              </div>
-            ))}
+            <div className="column small-12 medium-6">
+              <YieldChange iso={this.props.iso} data={this.props.countryData} />
+            </div>
           </div>
         </div>
         <CallToAction
