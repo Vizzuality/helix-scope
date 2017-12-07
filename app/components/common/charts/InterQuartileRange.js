@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import d3 from 'd3';
 import cartoQuery from 'utils/cartoQuery';
+import debounce from 'debounce';
 
-class YieldChange extends Component {
+class InterQuartileRange extends Component {
 
   constructor(props) {
     super(props);
@@ -13,22 +14,7 @@ class YieldChange extends Component {
   }
 
   componentDidMount() {
-    const sql = `
-      SELECT swl, variable,
-        PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY value) AS median,
-        PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY value) - PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY value)  AS iqr,
-        ARRAY_AGG(value ORDER BY value ASC) AS values
-      FROM (
-        SELECT mean as value, swl_info as swl, variable
-        FROM master_admin0
-        WHERE variable like '%yield%'
-        AND iso = '${this.props.iso}'
-        AND swl_info < 6
-      ) data
-      GROUP BY swl, variable
-    `;
-
-    cartoQuery(sql)
+    cartoQuery(this.props.sql)
       .then((response) => response.json())
       .then((data) => data.rows)
       .then((data) => {
@@ -37,29 +23,43 @@ class YieldChange extends Component {
           data
         });
       });
+
+    window.addEventListener('resize', this.onPageResize.bind(this));
   }
 
   componentDidUpdate() {
     this.drawChart();
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onPageResize.bind(this));
+  }
+
+  onPageResize() {
+    debounce(this.drawChart.bind(this), 200)();
+  }
+
   drawChart() {
-    window.data = this.state.data;
+    const colorFor = (variable) => (this.props.colors)[variable] || 'black';
+    const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
+
     const margin = {
-      left: 32,
-      right: 63,
-      top: 10,
-      bottom: 10
+      left: 30,
+      right: 30,
+      top: 30,
+      bottom: 30
     };
+
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
-    const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
+
     const scale = {
       x: d3.scale.ordinal()
         .domain(this.state.data.map((d) => d.swl).filter(uniq))
-        .rangePoints([0, width]),
+        .rangePoints([0, width], 1),
       y: d3.scale.linear()
         .domain(d3.extent(this.state.data, (d) => d.median))
+        .nice()
         .range([height, 0])
     };
 
@@ -75,7 +75,9 @@ class YieldChange extends Component {
     const svg = d3.select(this.chart)
       .append('svg')
       .attr('width', width + (margin.left + margin.right))
-      .attr('height', height + (margin.top + margin.bottom));
+      .attr('height', height + (margin.top + margin.bottom))
+      .append('g')
+      .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
     svg.append('g')
       .attr('class', 'x axis')
@@ -90,15 +92,27 @@ class YieldChange extends Component {
       .data(this.state.data)
       .enter()
       .append('circle')
-      .attr('r', 3.5)
+      .attr('r', 3)
+      .attr('fill', (d) => colorFor(d.variable))
       .attr('cx', (d) => scale.x(d.swl))
       .attr('cy', (d) => scale.y(d.median));
+
+    svg.selectAll('.dot')
+      .data(this.state.data)
+      .enter()
+      .append('line')
+      .attr('stroke', (d) => colorFor(d.variable))
+      .attr('stroke-width', 2)
+      .attr('x1', (d) => scale.x(d.swl))
+      .attr('y1', (d) => scale.y(d.median - d.iqr))
+      .attr('x2', (d) => scale.x(d.swl))
+      .attr('y2', (d) => scale.y(d.median + d.iqr));
   }
 
   render() {
     return (
       <div className="c-chart">
-        <div className="title">Average monthly maxiumum temperature</div>
+        <div className="title">{this.props.title}</div>
         {!this.state.loading ?
           (<div className="chart" ref={(ref) => { this.chart = ref; }}></div>) :
           (<div className="content subtitle">Loading</div>)}
@@ -107,8 +121,14 @@ class YieldChange extends Component {
   }
 }
 
-YieldChange.propTypes = {
-  iso: React.PropTypes.string
+InterQuartileRange.propTypes = {
+  title: React.PropTypes.string.isRequired,
+  sql: React.PropTypes.string.isRequired,
+  colors: React.PropTypes.object
 };
 
-export default YieldChange;
+InterQuartileRange.defaultProps = {
+  colors: {}
+};
+
+export default InterQuartileRange;
