@@ -5,7 +5,7 @@ import ExploreScenarios from 'components/common/ExploreScenarios';
 import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
 import LoadingSpinner from 'components/common/LoadingSpinner';
-import InterQuartileRangeChart from 'components/common/charts/InterQuartileRange';
+import CropYieldChange from 'components/charts/CropYieldChange';
 
 class CountriesDetailPage extends Component {
 
@@ -20,30 +20,6 @@ class CountriesDetailPage extends Component {
     if (this.props.countriesList.length) {
       countryName = this.props.countriesList.find((elem) => (elem.iso === this.props.iso)).name;
     }
-
-    const sql = `
-      SELECT swl, variable,
-        PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY value) AS median,
-        PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY value) - PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY value)  AS iqr,
-        ARRAY_AGG(value ORDER BY value ASC) AS values
-      FROM (
-        SELECT mean as value, swl_info as swl, variable
-        FROM master_admin0
-        WHERE variable like '%yield%'
-        AND iso = '${this.props.iso}'
-        AND swl_info < 6
-      ) data
-      GROUP BY swl, variable
-    `;
-
-    /* eslint-disable quote-props */
-    const colors = {
-      'Maize_yield_perc_change': '#5faacf',
-      'Rice_yield_perc_change': '#c75fcf',
-      'Wheat_yield_perc_change': '#5fcfa6',
-      'Soybeans_yield_perc_change': '#6d5fcf'
-    };
-    /* eslint-enable quote-props */
 
     return (
       <div>
@@ -63,10 +39,9 @@ class CountriesDetailPage extends Component {
           </div>
           <div className="row">
             <div className="column small-12 medium-6">
-              <InterQuartileRangeChart
-                title={`Projected changes in crop yields relative to 1981–2010 base-level for ${countryName}`}
-                sql={sql}
-                colors={colors}
+              <CropYieldChange
+                iso={this.props.iso}
+                countryName={countryName}
               />
             </div>
           </div>
