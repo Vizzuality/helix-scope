@@ -14,7 +14,7 @@ class CountriesDetailPage extends Component {
   }
 
   render() {
-    if (!this.props.configLoaded || !this.props.countryData) return <LoadingSpinner />;
+    if (this.props.config.loading || !this.props.countryData) return <LoadingSpinner />;
 
     let countryName = '';
     if (this.props.countriesList.length) {
@@ -42,6 +42,7 @@ class CountriesDetailPage extends Component {
               <CropYieldChange
                 iso={this.props.iso}
                 countryName={countryName}
+                scenarios={this.props.config.scenarios}
               />
             </div>
           </div>
@@ -62,7 +63,7 @@ class CountriesDetailPage extends Component {
 }
 
 CountriesDetailPage.propTypes = {
-  configLoaded: React.PropTypes.bool.isRequired,
+  config: React.PropTypes.object.isRequired,
   fetchCountryData: React.PropTypes.func,
   countryData: React.PropTypes.any,
   countriesList: React.PropTypes.array,

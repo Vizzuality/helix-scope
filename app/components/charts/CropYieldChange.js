@@ -26,18 +26,25 @@ const CropYieldChange = function CropYieldChange(props) {
   };
   /* eslint-enable quote-props */
 
+  const xLabels = props.scenarios.reduce((acc, current) => {
+    acc[current.slug] = current.name; // eslint-disable-line no-param-reassign
+    return acc;
+  }, {});
+
   return (
     <InterQuartileRangeChart
       title={`Projected changes in crop yields relative to 1981–2010 base-level for ${props.countryName}`}
       sql={sql}
       colors={colors}
+      xLabels={xLabels}
     />
   );
 };
 
 CropYieldChange.propTypes = {
   iso: React.PropTypes.string.isRequired,
-  countryName: React.PropTypes.string.isRequired
+  countryName: React.PropTypes.string.isRequired,
+  scenarios: React.PropTypes.array.isRequired
 };
 
 export default CropYieldChange;

@@ -53,12 +53,18 @@ class InterQuartileRange extends Component {
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
 
+    const domain = {
+      x: this.state.data.map((d) => d.swl).filter(uniq),
+      y: d3.extent(this.state.data, (d) => d.median)
+    };
+
+    const tickFormat = (val) => this.props.xLabels[val] || val;
     const scale = {
       x: d3.scale.ordinal()
-        .domain(this.state.data.map((d) => d.swl).filter(uniq))
+        .domain(domain.x)
         .rangePoints([0, width], 1),
       y: d3.scale.linear()
-        .domain(d3.extent(this.state.data, (d) => d.median))
+        .domain(domain.y)
         .nice()
         .range([height, 0])
     };
@@ -66,6 +72,7 @@ class InterQuartileRange extends Component {
     const axes = {
       x: d3.svg.axis()
         .scale(scale.x)
+        .tickFormat(tickFormat)
         .orient('bottom'),
       y: d3.svg.axis()
         .scale(scale.y)
@@ -124,11 +131,13 @@ class InterQuartileRange extends Component {
 InterQuartileRange.propTypes = {
   title: React.PropTypes.string.isRequired,
   sql: React.PropTypes.string.isRequired,
-  colors: React.PropTypes.object
+  colors: React.PropTypes.object,
+  xLabels: React.PropTypes.object
 };
 
 InterQuartileRange.defaultProps = {
-  colors: {}
+  colors: {},
+  xLabels: {}
 };
 
 export default InterQuartileRange;
