@@ -5,7 +5,7 @@ import ExploreScenarios from 'components/common/ExploreScenarios';
 import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
 import LoadingSpinner from 'components/common/LoadingSpinner';
-import CropYieldChange from 'components/charts/CropYieldChange';
+import CropYieldChangeRelativeBaseline from 'components/charts/CropYieldChangeRelativeBaseline';
 
 class CountriesDetailPage extends Component {
 
@@ -39,7 +39,7 @@ class CountriesDetailPage extends Component {
           </div>
           <div className="row">
             <div className="column small-12 medium-6">
-              <CropYieldChange
+              <CropYieldChangeRelativeBaseline
                 iso={this.props.iso}
                 countryName={countryName}
                 scenarios={this.props.config.scenarios}

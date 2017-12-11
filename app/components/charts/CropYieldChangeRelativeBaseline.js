@@ -1,7 +1,7 @@
 import React from 'react';
 import InterQuartileRangeChart from 'components/common/charts/InterQuartileRange';
 
-const CropYieldChange = function CropYieldChange(props) {
+const CropYieldChangeRelativeBaseline = function CropYieldChangeRelativeBaseline(props) {
   const sql = `
     SELECT swl, variable,
       PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY value) AS median,
@@ -41,10 +41,10 @@ const CropYieldChange = function CropYieldChange(props) {
   );
 };
 
-CropYieldChange.propTypes = {
+CropYieldChangeRelativeBaseline.propTypes = {
   iso: React.PropTypes.string.isRequired,
   countryName: React.PropTypes.string.isRequired,
   scenarios: React.PropTypes.array.isRequired
 };
 
-export default CropYieldChange;
+export default CropYieldChangeRelativeBaseline;
