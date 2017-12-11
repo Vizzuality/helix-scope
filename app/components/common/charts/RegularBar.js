@@ -40,8 +40,8 @@ class RegularBar extends Component {
   }
 
   drawChart() {
-    const findScenario = (slug) => (this.props.scenarios.find((s) => slug.toString() === s.slug) || {});
     const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
+    const findScenario = (slug) => (this.props.scenarios.find((s) => slug.toString() === s.slug) || {});
     const tickFormat = (slug) => findScenario(slug).label;
     const colorFor = (slug) => findScenario(slug).color;
 
@@ -73,12 +73,15 @@ class RegularBar extends Component {
       x: d3.svg.axis()
         .scale(scale.x)
         .tickFormat(tickFormat)
+        .outerTickSize(0)
         .orient('bottom'),
       y: d3.svg.axis()
         .scale(scale.y)
         .orient('left')
         .ticks(this.props.yTicks)
         .innerTickSize(-width)
+        .outerTickSize(0)
+        .tickPadding(20)
     };
 
     const barWidth = 50;

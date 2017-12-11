@@ -40,9 +40,10 @@ class InterQuartileRange extends Component {
   }
 
   drawChart() {
-    const colorFor = (variable) => (this.props.variables.find((v) => v.variable === variable) || { color: 'black' }).color;
     const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
-    const tickFormat = (val) => this.props.xLabels[val] || val;
+    const colorFor = (variable) => (this.props.variables.find((v) => v.variable === variable) || { color: 'black' }).color;
+    const findScenario = (slug) => (this.props.scenarios.find((s) => slug.toString() === s.slug) || {});
+    const tickFormat = (val) => (findScenario(val).name);
 
     const margin = {
       left: 30,
@@ -73,12 +74,15 @@ class InterQuartileRange extends Component {
       x: d3.svg.axis()
         .scale(scale.x)
         .tickFormat(tickFormat)
+        .outerTickSize(0)
         .orient('bottom'),
       y: d3.svg.axis()
         .scale(scale.y)
         .orient('left')
         .ticks(this.props.yTicks)
         .innerTickSize(-width)
+        .outerTickSize(0)
+        .tickPadding(10)
     };
 
     const svg = d3.select(this.chart)
@@ -129,7 +133,7 @@ class InterQuartileRange extends Component {
       .append('circle')
       .attr('r', 5)
       .attr('cx', (d, i) => i * 60)
-      .attr('cy', (d) => height + 50)
+      .attr('cy', height + 50)
       .attr('fill', (d) => d.color);
 
     legend.selectAll('text')
@@ -137,7 +141,7 @@ class InterQuartileRange extends Component {
       .enter()
       .append('text')
       .attr('x', (d, i) => (i * 60) + 8)
-      .attr('y', (d) => height + 55)
+      .attr('y', height + 55)
       .text((d) => d.label);
   }
 
@@ -157,14 +161,14 @@ InterQuartileRange.propTypes = {
   title: React.PropTypes.string.isRequired,
   sql: React.PropTypes.string.isRequired,
   variables: React.PropTypes.array,
-  xLabels: React.PropTypes.object,
+  scenarios: React.PropTypes.array,
   yTicks: React.PropTypes.number
 };
 
 InterQuartileRange.defaultProps = {
   meta: {},
-  variables: {},
-  xLabels: {},
+  variables: [],
+  scenarios: [],
   yTicks: 5
 };
 

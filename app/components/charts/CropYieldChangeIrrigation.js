@@ -40,19 +40,13 @@ const CropYieldChangeIrrigation = function CropYieldChangeIrrigation(props) {
       label: 'Soybeans'
     }
   ];
-  /* eslint-enable quote-props */
-
-  const xLabels = props.scenarios.reduce((acc, current) => {
-    acc[current.slug] = current.name; // eslint-disable-line no-param-reassign
-    return acc;
-  }, {});
 
   return (
     <InterQuartileRangeChart
       title={`Change in crop yields (relative to 1981-2010 base levels) avoided under different warming scenarios due to Irrigation for ${props.countryName}`}
       sql={sql}
       variables={variables}
-      xLabels={xLabels}
+      scenarios={props.scenarios}
     />
   );
 };
