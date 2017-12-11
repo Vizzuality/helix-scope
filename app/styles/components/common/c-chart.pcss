@@ -6,25 +6,6 @@
   box-shadow: 0 0 4px 0 rgba(81, 81, 83, 0.2);
   overflow: hidden;
 
-  > .icon {
-    position: absolute;
-    right: 1rem;
-    top: 1rem;
-    width: 27px;
-    height: 27px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background-color: $color-base-dark;
-    box-shadow: 0 0 3px 0 rgba(29, 30, 30, 0.2);
-    cursor: pointer;
-
-    svg {
-      fill: $color-main;
-    }
-  }
-
   > .subtitle {
     font-family: $font-heading;
     font-size: $font-size-x-small;
@@ -107,79 +88,38 @@
         stroke-width: 6px;
       }
     }
+  }
+}
 
-    > .tooltip {
-      position: absolute;
-      padding: $margin-small;
-      pointer-events: none;
-      background-color: $color-base;
-      box-shadow: 0 0 4px 0 rgba(81, 81, 83, 0.2);
+.c-info {
+  > .icon {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    width: 27px;
+    height: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: $color-base-dark;
+    box-shadow: 0 0 3px 0 rgba(29, 30, 30, 0.2);
+    cursor: pointer;
 
-      &:empty {
-        display: none;
-      }
-
-      > div {
-        padding-left: 25px;
-        position: relative;
-
-        > span {
-          font-family: $font-body;
-          font-size: $font-size-x-small;
-          line-height: 1.5;
-          color: $font-grey;
-        }
-
-        &::before {
-          content: '';
-          position: absolute;
-          left: 0;
-          bottom: 8px;
-          height: 2px;
-          width: 20px;
-        }
-
-        &.max::before,
-        &.min::before {
-          border-bottom: 2px dashed;
-        }
-
-        &.mean::before {
-          border-bottom: 2px solid;
-        }
-
-        &.sd::before {
-          bottom: 5px;
-          height: 10px;
-          border-bottom: 10px solid;
-        }
-
-        &.-highlight {
-          > span {
-            font-weight: 700;
-          }
-        }
-      }
-
-      > .marker {
-        position: absolute;
-        bottom: -10px;
-        width: 10px;
-        height: 10px;
-        overflow: hidden;
-        left: calc(50% - 5px);
-
-        &::before {
-          content: '';
-          position: absolute;
-          width: 10px;
-          height: 10px;
-          background: $color-base;
-          transform: rotate(45deg);
-          top: -5px;
-          box-shadow: 0 0 4px 0 rgba(81, 81, 83, 0.2);
-        }
-      }
+    svg {
+      fill: $color-main;
     }
+  }
+
+  .infobox {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: $color-base;
+    box-shadow: 0 0 4px 0 rgba(81, 81, 83, 0.2);
+    font-family: $font-body;
+    color: $font-grey;
+    font-size: $font-size-x-small;
+    margin: $margin-small;
   }
 }

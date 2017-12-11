@@ -22,6 +22,7 @@ const FloodDamagePeople = function FloodDamagePeople(props) {
       title="Annual expected flood damages relative to 1976–2005 levels"
       sql={sql}
       scenarios={scenarios}
+      infoText="placeholder text"
     />
   );
 };

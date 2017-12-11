@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import InfoButton from 'components/common/charts/InfoButton';
 import d3 from 'd3';
 import cartoQuery from 'utils/cartoQuery';
 import debounce from 'debounce';
@@ -81,7 +82,7 @@ class RegularBar extends Component {
         .ticks(this.props.yTicks)
         .innerTickSize(-width)
         .outerTickSize(0)
-        .tickPadding(20)
+        .tickPadding(10)
     };
 
     const barWidth = 50;
@@ -116,6 +117,7 @@ class RegularBar extends Component {
   render() {
     return (
       <div className="c-chart">
+        <InfoButton text={this.props.infoText} />
         <div className="title">{this.props.title}</div>
         {!this.state.loading ?
           (<div className="chart" ref={(ref) => { this.chart = ref; }}></div>) :
@@ -128,6 +130,7 @@ class RegularBar extends Component {
 RegularBar.propTypes = {
   title: React.PropTypes.string.isRequired,
   sql: React.PropTypes.string.isRequired,
+  infoText: React.PropTypes.string.isRequired,
   scenarios: React.PropTypes.array,
   yTicks: React.PropTypes.number
 };
