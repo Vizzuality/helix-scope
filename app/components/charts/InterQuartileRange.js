@@ -1,29 +1,13 @@
 import React, { Component } from 'react';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 import d3 from 'd3';
-import cartoQuery from 'utils/cartoQuery';
 import debounce from 'debounce';
 
 class InterQuartileRange extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: true,
-      data: []
-    };
-  }
-
   componentDidMount() {
-    cartoQuery(this.props.sql)
-      .then((response) => response.json())
-      .then((data) => data.rows)
-      .then((data) => {
-        this.setState({
-          loading: false,
-          data
-        });
-      });
-
+    this.drawChart();
     window.addEventListener('resize', this.onPageResize.bind(this));
   }
 
@@ -56,8 +40,8 @@ class InterQuartileRange extends Component {
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
 
     const domain = {
-      x: this.state.data.map((d) => d.swl).filter(uniq),
-      y: d3.extent(this.state.data, (d) => d.median)
+      x: this.props.remote.data.map((d) => d.swl).filter(uniq),
+      y: d3.extent(this.props.remote.data, (d) => d.median)
     };
 
     const scale = {
@@ -102,7 +86,7 @@ class InterQuartileRange extends Component {
       .call(axes.y);
 
     svg.selectAll('.dot')
-      .data(this.state.data)
+      .data(this.props.remote.data)
       .enter()
       .append('circle')
       .attr('r', 5)
@@ -111,7 +95,7 @@ class InterQuartileRange extends Component {
       .attr('cy', (d) => scale.y(d.median));
 
     svg.selectAll('.dot')
-      .data(this.state.data)
+      .data(this.props.remote.data)
       .enter()
       .append('line')
       .attr('stroke', (d) => colorFor(d.variable))
@@ -149,7 +133,7 @@ class InterQuartileRange extends Component {
     return (
       <div className="c-chart">
         <div className="title">{this.props.title}</div>
-        {!this.state.loading ?
+        {!this.props.remote.loading ?
           (<div className="chart" ref={(ref) => { this.chart = ref; }}></div>) :
           (<div className="content subtitle">Loading</div>)}
       </div>
@@ -159,10 +143,14 @@ class InterQuartileRange extends Component {
 
 InterQuartileRange.propTypes = {
   title: React.PropTypes.string.isRequired,
-  sql: React.PropTypes.string.isRequired,
   variables: React.PropTypes.array,
   scenarios: React.PropTypes.array,
-  yTicks: React.PropTypes.number
+  yTicks: React.PropTypes.number,
+  chart: React.PropTypes.string.isRequired,
+  remote: React.PropTypes.shape({
+    loading: React.PropTypes.bool.isRequired,
+    data: React.PropTypes.array.isRequired
+  }).isRequired
 };
 
 InterQuartileRange.defaultProps = {
@@ -172,4 +160,9 @@ InterQuartileRange.defaultProps = {
   yTicks: 5
 };
 
-export default InterQuartileRange;
+export default compose(
+  connect((state, props) => ({
+    remote: state.charts[props.chart],
+    scenarios: state.config.scenarios
+  }))
+)(InterQuartileRange);

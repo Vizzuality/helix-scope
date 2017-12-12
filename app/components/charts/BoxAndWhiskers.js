@@ -1,30 +1,14 @@
 import React, { Component } from 'react';
-import InfoButton from 'components/common/charts/InfoButton';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
+import InfoButton from './InfoButton';
 import d3 from 'd3';
-import cartoQuery from 'utils/cartoQuery';
 import debounce from 'debounce';
 
-class ErrorBar extends Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: true,
-      data: []
-    };
-  }
+class BoxAndWhiskers extends Component {
 
   componentDidMount() {
-    cartoQuery(this.props.sql)
-      .then((response) => response.json())
-      .then((data) => data.rows)
-      .then((data) => {
-        this.setState({
-          loading: false,
-          data
-        });
-      });
-
+    this.drawChart();
     window.addEventListener('resize', this.onPageResize.bind(this));
   }
 
@@ -56,10 +40,10 @@ class ErrorBar extends Component {
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
     const domain = {
-      x: this.state.data.map((d) => d.swl).filter(uniq),
+      x: this.props.remote.data.map((d) => d.swl).filter(uniq),
       y: [
-        Math.min.apply(null, this.state.data.map((d) => d.minimum)),
-        Math.max.apply(null, this.state.data.map((d) => d.maximum))
+        Math.min.apply(null, this.props.remote.data.map((d) => d.minimum)),
+        Math.max.apply(null, this.props.remote.data.map((d) => d.maximum))
       ]
     };
 
@@ -107,7 +91,7 @@ class ErrorBar extends Component {
 
     // each bar with whiskers (visualization element)
     const bars = svg.selectAll('.dot')
-      .data(this.state.data)
+      .data(this.props.remote.data)
       .enter()
       .append('g');
 
@@ -166,7 +150,7 @@ class ErrorBar extends Component {
       <div className="c-chart">
         <InfoButton text={this.props.infoText} />
         <div className="title">{this.props.title}</div>
-        {!this.state.loading ?
+        {!this.props.remote.loading ?
           (<div className="chart" ref={(ref) => { this.chart = ref; }}></div>) :
           (<div className="content subtitle">Loading</div>)}
       </div>
@@ -174,18 +158,33 @@ class ErrorBar extends Component {
   }
 }
 
-ErrorBar.propTypes = {
+BoxAndWhiskers.propTypes = {
   title: React.PropTypes.string.isRequired,
-  sql: React.PropTypes.string.isRequired,
-  infoText: React.PropTypes.string.isRequired,
+  infoText: React.PropTypes.string,
   scenarios: React.PropTypes.array,
-  yTicks: React.PropTypes.number
+  yTicks: React.PropTypes.number,
+  chart: React.PropTypes.string.isRequired,
+  remote: React.PropTypes.shape({
+    loading: React.PropTypes.bool.isRequired,
+    data: React.PropTypes.array.isRequired
+  }).isRequired
 };
 
-ErrorBar.defaultProps = {
+BoxAndWhiskers.defaultProps = {
   meta: {},
   scenarios: [],
   yTicks: 5
 };
 
-export default ErrorBar;
+const colors = ['#a4c504', '#c4bb00', '#ff9000'];
+
+export default compose(
+  connect((state, props) => ({
+    remote: state.charts[props.chart],
+    scenarios: state.config.scenarios.map((scenario, idx) => ({
+      slug: scenario.slug,
+      label: scenario.name,
+      color: colors[idx]
+    }))
+  }))
+)(BoxAndWhiskers);

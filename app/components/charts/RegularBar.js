@@ -1,30 +1,14 @@
 import React, { Component } from 'react';
-import InfoButton from 'components/common/charts/InfoButton';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
+import InfoButton from './InfoButton';
 import d3 from 'd3';
-import cartoQuery from 'utils/cartoQuery';
 import debounce from 'debounce';
 
 class RegularBar extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: true,
-      data: []
-    };
-  }
-
   componentDidMount() {
-    cartoQuery(this.props.sql)
-      .then((response) => response.json())
-      .then((data) => data.rows)
-      .then((data) => {
-        this.setState({
-          loading: false,
-          data
-        });
-      });
-
+    this.drawChart();
     window.addEventListener('resize', this.onPageResize.bind(this));
   }
 
@@ -56,8 +40,8 @@ class RegularBar extends Component {
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
     const domain = {
-      x: this.state.data.map((d) => d.swl).filter(uniq),
-      y: d3.extent(this.state.data, (d) => d.value)
+      x: this.props.remote.data.map((d) => d.swl).filter(uniq),
+      y: d3.extent(this.props.remote.data, (d) => d.value)
     };
 
     const scale = {
@@ -104,7 +88,7 @@ class RegularBar extends Component {
       .call(axes.y);
 
     svg.selectAll('.dot')
-      .data(this.state.data)
+      .data(this.props.remote.data)
       .enter()
       .append('rect')
       .attr('fill', (d) => colorFor(d.swl))
@@ -117,9 +101,9 @@ class RegularBar extends Component {
   render() {
     return (
       <div className="c-chart">
-        <InfoButton text={this.props.infoText} />
+        <InfoButton text="herp" />
         <div className="title">{this.props.title}</div>
-        {!this.state.loading ?
+        {!this.props.remote.loading ?
           (<div className="chart" ref={(ref) => { this.chart = ref; }}></div>) :
           (<div className="content subtitle">Loading</div>)}
       </div>
@@ -129,10 +113,13 @@ class RegularBar extends Component {
 
 RegularBar.propTypes = {
   title: React.PropTypes.string.isRequired,
-  sql: React.PropTypes.string.isRequired,
-  infoText: React.PropTypes.string.isRequired,
   scenarios: React.PropTypes.array,
-  yTicks: React.PropTypes.number
+  yTicks: React.PropTypes.number,
+  chart: React.PropTypes.string.isRequired,
+  remote: React.PropTypes.shape({
+    loading: React.PropTypes.bool.isRequired,
+    data: React.PropTypes.array.isRequired
+  }).isRequired
 };
 
 RegularBar.defaultProps = {
@@ -141,4 +128,15 @@ RegularBar.defaultProps = {
   yTicks: 5
 };
 
-export default RegularBar;
+const colors = ['#a4c504', '#c4bb00', '#ff9000'];
+
+export default compose(
+  connect((state, props) => ({
+    remote: state.charts[props.chart],
+    scenarios: state.config.scenarios.map((scenario, idx) => ({
+      slug: scenario.slug,
+      label: scenario.name,
+      color: colors[idx]
+    }))
+  }))
+)(RegularBar);
