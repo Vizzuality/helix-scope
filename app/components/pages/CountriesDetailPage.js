@@ -8,6 +8,7 @@ import LoadingSpinner from 'components/common/LoadingSpinner';
 import CropYieldChangeBaseline from 'components/charts/CropYieldChangeBaseline';
 import CropYieldChangeIrrigation from 'components/charts/CropYieldChangeIrrigation';
 import FloodDamagePeople from 'components/charts/FloodDamagePeople';
+import CountryWideAverageMonthlyMaxTemperature from 'components/charts/CountryWideAverageMonthlyMaxTemperature';
 
 class CountriesDetailPage extends Component {
 
@@ -58,6 +59,13 @@ class CountriesDetailPage extends Component {
           <div className="row">
             <div className="column small-12 medium-6">
               <FloodDamagePeople
+                iso={this.props.iso}
+                countryName={countryName}
+                scenarios={this.props.config.scenarios}
+              />
+            </div>
+            <div className="column small-12 medium-6">
+              <CountryWideAverageMonthlyMaxTemperature
                 iso={this.props.iso}
                 countryName={countryName}
                 scenarios={this.props.config.scenarios}
