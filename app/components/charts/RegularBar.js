@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import InfoButton from './InfoButton';
 import d3 from 'd3';
 import debounce from 'debounce';
+
+import InfoButton from './InfoButton';
 
 class RegularBar extends Component {
 
@@ -25,6 +26,10 @@ class RegularBar extends Component {
   }
 
   drawChart() {
+    if (!this.chart) {
+      return;
+    }
+
     const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
     const findScenario = (slug) => (this.props.scenarios.find((s) => slug.toString() === s.slug) || {});
     const tickFormat = (slug) => findScenario(slug).label;
@@ -101,7 +106,7 @@ class RegularBar extends Component {
   render() {
     return (
       <div className="c-chart">
-        <InfoButton text="herp" />
+        <InfoButton text={this.props.info(this.props.remote.data)} />
         <div className="title">{this.props.title}</div>
         {!this.props.remote.loading ?
           (<div className="chart" ref={(ref) => { this.chart = ref; }}></div>) :
@@ -113,6 +118,7 @@ class RegularBar extends Component {
 
 RegularBar.propTypes = {
   title: React.PropTypes.string.isRequired,
+  info: React.PropTypes.func.isRequired,
   scenarios: React.PropTypes.array,
   yTicks: React.PropTypes.number,
   chart: React.PropTypes.string.isRequired,

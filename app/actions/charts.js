@@ -8,9 +8,11 @@ export function fetchInterQuartileRange(chart, iso, variable) {
     SELECT swl, variable,
       PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY value) AS median,
       PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY value) - PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY value) AS iqr,
-      ARRAY_AGG(value ORDER BY value ASC) AS values
+      ARRAY_AGG(value ORDER BY value ASC) AS values,
+      ARRAY_AGG(DISTINCT model_short_name) AS models,
+      ARRAY_AGG(DISTINCT institution) AS institutions
     FROM (
-      SELECT mean as value, swl_info as swl, variable
+      SELECT mean as value, swl_info as swl, variable, model_short_name, institution
       FROM master_admin0
       WHERE variable like '%${variable}%'
       AND iso = '${iso}'
@@ -41,7 +43,7 @@ export function fetchInterQuartileRange(chart, iso, variable) {
 
 export function fetchRegularBar(chart, iso, variable) {
   const sql = `
-    SELECT mean / 10e6 as value, swl_info as swl, variable, institution, model_short_name
+    SELECT mean / 10e6 as value, swl_info as swl, variable, institution, model_short_name AS model
     FROM master_admin0
     WHERE variable = '${variable}'
     AND iso = '${iso}'

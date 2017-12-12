@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import d3 from 'd3';
 import debounce from 'debounce';
 
+import InfoButton from './InfoButton';
+
 class InterQuartileRange extends Component {
 
   componentDidMount() {
@@ -24,6 +26,10 @@ class InterQuartileRange extends Component {
   }
 
   drawChart() {
+    if (!this.chart) {
+      return;
+    }
+
     const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
     const colorFor = (variable) => (this.props.variables.find((v) => v.variable === variable) || { color: 'black' }).color;
     const findScenario = (slug) => (this.props.scenarios.find((s) => slug.toString() === s.slug) || {});
@@ -132,6 +138,7 @@ class InterQuartileRange extends Component {
   render() {
     return (
       <div className="c-chart">
+        <InfoButton text={this.props.info(this.props.remote.data)} />
         <div className="title">{this.props.title}</div>
         {!this.props.remote.loading ?
           (<div className="chart" ref={(ref) => { this.chart = ref; }}></div>) :
@@ -143,6 +150,7 @@ class InterQuartileRange extends Component {
 
 InterQuartileRange.propTypes = {
   title: React.PropTypes.string.isRequired,
+  info: React.PropTypes.func.isRequired,
   variables: React.PropTypes.array,
   scenarios: React.PropTypes.array,
   yTicks: React.PropTypes.number,

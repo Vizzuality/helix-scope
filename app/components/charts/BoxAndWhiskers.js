@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import InfoButton from './InfoButton';
 import d3 from 'd3';
 import debounce from 'debounce';
+
+import InfoButton from './InfoButton';
 
 class BoxAndWhiskers extends Component {
 
@@ -25,6 +26,10 @@ class BoxAndWhiskers extends Component {
   }
 
   drawChart() {
+    if (!this.chart) {
+      return;
+    }
+
     const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
     const findScenario = (slug) => (this.props.scenarios.find((s) => slug.toString() === s.slug) || {});
     const tickFormat = (slug) => findScenario(slug).label;
@@ -148,7 +153,7 @@ class BoxAndWhiskers extends Component {
   render() {
     return (
       <div className="c-chart">
-        <InfoButton text={this.props.infoText} />
+        <InfoButton text={this.props.info} />
         <div className="title">{this.props.title}</div>
         {!this.props.remote.loading ?
           (<div className="chart" ref={(ref) => { this.chart = ref; }}></div>) :
@@ -160,7 +165,7 @@ class BoxAndWhiskers extends Component {
 
 BoxAndWhiskers.propTypes = {
   title: React.PropTypes.string.isRequired,
-  infoText: React.PropTypes.string,
+  info: React.PropTypes.string,
   scenarios: React.PropTypes.array,
   yTicks: React.PropTypes.number,
   chart: React.PropTypes.string.isRequired,
