@@ -77,8 +77,10 @@ class InterQuartileRange extends Component {
         .tickPadding(10)
     };
 
-    const svg = d3.select(this.chart)
-      .append('svg')
+    const chart = d3.select(this.chart);
+    chart.selectAll('svg').remove();
+
+    const svg = chart.append('svg')
       .attr('width', width + (margin.left + margin.right))
       .attr('height', height + (margin.top + margin.bottom))
       .append('g')

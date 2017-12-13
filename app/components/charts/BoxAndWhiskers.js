@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import d3 from 'd3';
 import debounce from 'debounce';
 import flatMap from 'lodash/flatMap';
+import uniqBy from 'lodash/uniqBy';
 
 import InfoButton from './InfoButton';
 import { scenarioColors } from 'constants/country';
@@ -79,8 +80,10 @@ class BoxAndWhiskers extends Component {
         .tickPadding(10)
     };
 
-    const svg = d3.select(this.chart)
-      .append('svg')
+    const chart = d3.select(this.chart);
+    chart.selectAll('svg').remove();
+
+    const svg = chart.append('svg')
         .attr('width', width + (margin.left + margin.right))
         .attr('height', height + (margin.top + margin.bottom))
       .append('g')
@@ -153,10 +156,25 @@ class BoxAndWhiskers extends Component {
   }
 
   render() {
-    const titleText = this.props.title(this.props.indicatorName, this.props.measurementName);
+    const titleText = this.props.title(
+      this.props.indicatorName,
+      this.props.measurementName
+    );
+
+    const models = uniqBy(flatMap(this.props.remote.data, (d) => d.models)).join(', ');
+    const institutions = uniqBy(flatMap(this.props.remote.data, (d) => d.institutions)).join(', ');
+
+    const infoText = this.props.info(
+      this.props.indicatorName,
+      this.props.measurementName,
+      this.props.indicatorLongName,
+      models,
+      institutions
+    );
+
     return (
       <div className="c-chart">
-        <InfoButton text={this.props.info} />
+        <InfoButton text={infoText} />
         <div className="title">{titleText}</div>
         {!this.props.remote.loading ?
           (<div className="chart" ref={(ref) => { this.chart = ref; }}></div>) :
@@ -168,9 +186,10 @@ class BoxAndWhiskers extends Component {
 
 BoxAndWhiskers.propTypes = {
   title: React.PropTypes.func.isRequired,
-  info: React.PropTypes.string,
+  info: React.PropTypes.func.isRequired,
   scenarios: React.PropTypes.array,
   indicatorName: React.PropTypes.string,
+  indicatorLongName: React.PropTypes.string,
   measurementName: React.PropTypes.string,
   yTicks: React.PropTypes.number,
   chart: React.PropTypes.string,
@@ -195,6 +214,8 @@ export default compose(
       data: charts[chart].data.filter((d) => d.variable === variable).map((d) => ({
         swl: d.swl,
         variable: d.variable,
+        models: d.models,
+        institutions: d.institutions,
         minimum: d[`${value}_minimum`],
         maximum: d[`${value}_maximum`],
         median: d[`${value}_median`],
@@ -208,6 +229,7 @@ export default compose(
       color: scenarioColors[idx]
     })),
     indicatorName: flatMap(config.categories, (c) => c.indicators).find((i) => i.slug === variable).name,
+    indicatorLongName: flatMap(config.categories, (c) => c.indicators).find((i) => i.slug === variable).name_long,
     measurementName: config.measurements.find((i) => i.slug === value).name
   }))
 )(BoxAndWhiskers);

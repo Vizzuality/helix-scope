@@ -73,6 +73,8 @@ export function fetchRegularBar(chart, iso, variable) {
 export function fetchBoxAndWhiskers(chart, iso) {
   const sql = `
     SELECT swl, variable,
+      ARRAY_AGG(model_short_name) as models,
+      ARRAY_AGG(institution) as institutions,
       PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY min) AS min_q1,
       PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY min) AS min_median,
       PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY min) AS min_q3,
