@@ -18,7 +18,7 @@ class InfoButton extends Component {
   render() {
     return (
       <div className="c-info">
-        <div className={cx("icon", {"active": this.state.open})} onClick={() => this.onClick()}>
+        <div className={cx('icon', { active: this.state.open })} onClick={() => this.onClick()}>
           <svg width="10" height="10" viewBox="0 0 16 16">
             <title>Info</title>
           </svg>
