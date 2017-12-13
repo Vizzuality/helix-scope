@@ -22,7 +22,7 @@ class CountriesDetailPage extends Component {
     this.props.fetchInterQuartileRange('crop_yield_change_baseline', this.props.iso, 'yield');
     this.props.fetchInterQuartileRange('crop_yield_change_irrigation', this.props.iso, 'Irrigation');
     this.props.fetchRegularBar('annual_expected_flood_damage', this.props.iso, 'river_floods_ExpDam');
-    this.props.fetchBoxAndWhiskers('climatological_ecological', this.props.iso, 'tx', 'std');
+    this.props.fetchBoxAndWhiskers('climatological_ecological', this.props.iso);
   }
 
   render() {
