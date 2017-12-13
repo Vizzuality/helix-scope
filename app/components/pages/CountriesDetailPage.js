@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
-import flatMap from 'lodash/flatMap';
-import uniqBy from 'lodash/uniqBy';
 
 import CallToAction from 'components/common/CallToAction';
 import InterQuartileRangeChart from 'components/charts/InterQuartileRange';
@@ -75,20 +73,6 @@ class CountriesDetailPage extends Component {
       }
     ];
 
-    const info1 = (data) => {
-      const models = uniqBy(flatMap(data, (d) => d.models)).join(', ');
-      const institutions = uniqBy(flatMap(data, (d) => d.institutions)).join(', ');
-
-      return `These data were created using the ${models} models of the ${institutions}. All yield values are relative to average yields over a baseline period of 1981–2010.`;
-    };
-
-    const info2 = (data) => {
-      const models = uniqBy(data.map((d) => d.model)).join(', ');
-      const institutions = uniqBy(data.map((d) => d.institution)).join(', ');
-
-      return `These data were produced by the ${models} model, of the ${institutions}. Values are relative to avearges over the 1976–2005 period. Expected damages are annual estimated cost of flooding, estimated in millions of € (relative to 2010 value).`;
-    };
-
     return (
       <div>
         <div className="l-banner -country">
@@ -109,15 +93,15 @@ class CountriesDetailPage extends Component {
             <div className="column small-12 medium-6">
               <InterQuartileRangeChart
                 chart="crop_yield_change_baseline"
-                info={info1}
                 title={`Projected changes in crop yields relative to 1981–2010 base-level for ${countryName}`}
+                info={(m, i) => `These data were created using the ${m} models of the ${i}. All yield values are relative to average yields over a baseline period of 1981–2010.`}
                 variables={maizeVariables}
               />
             </div>
             <div className="column small-12 medium-6">
               <InterQuartileRangeChart
                 chart="crop_yield_change_irrigation"
-                info={info1}
+                info={(m, i) => `These data were created using the ${m} models of the ${i}. All yield values are relative to average yields over a baseline period of 1981–2010.`}
                 title={`Change in crop yields (relative to 1981-2010 base levels) avoided under different warming scenarios due to Irrigation for ${countryName}`}
                 variables={irrigationVariables}
               />
@@ -127,7 +111,7 @@ class CountriesDetailPage extends Component {
             <div className="column small-12 medium-6">
               <RegularBarChart
                 chart="annual_expected_flood_damage"
-                info={info2}
+                info={(m, i) => `These data were produced by the ${m} model, of the ${i}. Values are relative to avearges over the 1976–2005 period. Expected damages are annual estimated cost of flooding, estimated in millions of € (relative to 2010 value).`}
                 title="Annual expected flood damages relative to 1976–2005 levels"
               />
             </div>

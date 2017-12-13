@@ -3,6 +3,8 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import d3 from 'd3';
 import debounce from 'debounce';
+import flatMap from 'lodash/flatMap';
+import uniqBy from 'lodash/uniqBy';
 
 import InfoButton from './InfoButton';
 
@@ -136,9 +138,13 @@ class InterQuartileRange extends Component {
   }
 
   render() {
+    const models = uniqBy(flatMap(this.props.remote.data, (d) => d.models)).join(', ');
+    const institutions = uniqBy(flatMap(this.props.remote.data, (d) => d.institutions)).join(', ');
+    const infoText = this.props.info(models, institutions);
+
     return (
       <div className="c-chart">
-        <InfoButton text={this.props.info(this.props.remote.data)} />
+        <InfoButton text={infoText} />
         <div className="title">{this.props.title}</div>
         {!this.props.remote.loading ?
           (<div className="chart" ref={(ref) => { this.chart = ref; }}></div>) :

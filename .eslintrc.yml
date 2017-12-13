@@ -17,7 +17,7 @@ parserOptions:
 plugins: [react]
 
 rules:
-  max-len: [1, 140, 2, {"ignoreUrls": true, "ignoreComments": true}]
+  max-len: [1, 140, 2, {"ignoreUrls": true, "ignoreComments": true, "ignoreStrings": true}]
   comma-dangle: [error, never]
   no-console: [error, allow: [warn, error, info]]
 settings:
