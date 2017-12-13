@@ -9,6 +9,12 @@ import ExploreScenarios from 'components/common/ExploreScenarios';
 import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
 import LoadingSpinner from 'components/common/LoadingSpinner';
+import {
+  maizeVariables,
+  irrigationVariables,
+  climatologicalEcologicalVariables,
+  statisticValues
+} from 'constants/country';
 
 class CountriesDetailPage extends Component {
 
@@ -26,79 +32,6 @@ class CountriesDetailPage extends Component {
     if (this.props.countriesList.length) {
       countryName = this.props.countriesList.find((elem) => (elem.iso === this.props.iso)).name;
     }
-
-    const maizeVariables = [
-      {
-        variable: 'Maize_yield_perc_change',
-        color: '#5faacf',
-        label: 'Maize'
-      },
-      {
-        variable: 'Rice_yield_perc_change',
-        color: '#c75fcf',
-        label: 'Rice'
-      },
-      {
-        variable: 'Wheat_yield_perc_change',
-        color: '#5fcfa6',
-        label: 'Wheat'
-      },
-      {
-        variable: 'Soybeans_yield_perc_change',
-        color: '#6d5fcf',
-        label: 'Soybeans'
-      }
-    ];
-
-    const irrigationVariables = [
-      {
-        variable: 'Maize_Irrigation_avoided_perc_change',
-        color: '#5faacf',
-        label: 'Maize'
-      },
-      {
-        variable: 'Rice_Irrigation_avoided_perc_change',
-        color: '#c75fcf',
-        label: 'Rice'
-      },
-      {
-        variable: 'Wheat_Irrigation_avoided_perc_change',
-        color: '#5fcfa6',
-        label: 'Wheat'
-      },
-      {
-        variable: 'Soybeans_Irrigation_avoided_perc_change',
-        color: '#6d5fcf',
-        label: 'Soybeans'
-      }
-    ];
-
-    const variables = [
-      'ts',
-      'tx',
-      'tn',
-      'pr',
-      'nbp',
-      'evap',
-      'gpp',
-      'cVeg',
-      'cSoil',
-      'amphibianobiodiversity',
-      'amphibiarealbiodiversity',
-      'birdnobiodiversity',
-      'birdrealbiodiversity',
-      'mammalnobiodiversity',
-      'mammalrealbiodiversity',
-      'reptilenobiodiversity',
-      'reptilerealbiodiversity'
-    ];
-
-    const values = [
-      'max',
-      'min',
-      'mean',
-      'std'
-    ];
 
     return (
       <div>
@@ -143,9 +76,9 @@ class CountriesDetailPage extends Component {
               />
             </div>
           </div>
-          {variables.map((variable) => (
+          {climatologicalEcologicalVariables.map((variable) => (
             <div className="row" key={variable}>
-              {values.map((value) => (
+              {statisticValues.map((value) => (
                 <div className="column small-3 medium-3" key={`${variable}_${value}`}>
                   <BoxAndWhiskersChart
                     chart="climatological_ecological"

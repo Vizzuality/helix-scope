@@ -5,6 +5,7 @@ import d3 from 'd3';
 import debounce from 'debounce';
 
 import InfoButton from './InfoButton';
+import { scenarioColors } from 'constants/country';
 
 class BoxAndWhiskers extends Component {
 
@@ -183,8 +184,6 @@ BoxAndWhiskers.defaultProps = {
   yTicks: 5
 };
 
-const colors = ['#a4c504', '#c4bb00', '#ff9000'];
-
 export default compose(
   connect(({ charts, config }, { chart, variable, value }) => ({
     remote: {
@@ -202,7 +201,7 @@ export default compose(
     scenarios: config.scenarios.map((scenario, idx) => ({
       slug: scenario.slug,
       label: scenario.name,
-      color: colors[idx]
+      color: scenarioColors[idx]
     }))
   }))
 )(BoxAndWhiskers);
