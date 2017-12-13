@@ -3,6 +3,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import d3 from 'd3';
 import debounce from 'debounce';
+import flatMap from 'lodash/flatMap';
 
 import InfoButton from './InfoButton';
 import { scenarioColors } from 'constants/country';
@@ -152,10 +153,11 @@ class BoxAndWhiskers extends Component {
   }
 
   render() {
+    const titleText = this.props.title(this.props.indicatorName, this.props.measurementName);
     return (
       <div className="c-chart">
         <InfoButton text={this.props.info} />
-        <div className="title">{this.props.title}</div>
+        <div className="title">{titleText}</div>
         {!this.props.remote.loading ?
           (<div className="chart" ref={(ref) => { this.chart = ref; }}></div>) :
           (<div className="content subtitle">Loading</div>)}
@@ -165,9 +167,11 @@ class BoxAndWhiskers extends Component {
 }
 
 BoxAndWhiskers.propTypes = {
-  title: React.PropTypes.string.isRequired,
+  title: React.PropTypes.func.isRequired,
   info: React.PropTypes.string,
   scenarios: React.PropTypes.array,
+  indicatorName: React.PropTypes.string,
+  measurementName: React.PropTypes.string,
   yTicks: React.PropTypes.number,
   chart: React.PropTypes.string,
   variable: React.PropTypes.string.isRequired,
@@ -200,8 +204,10 @@ export default compose(
     },
     scenarios: config.scenarios.map((scenario, idx) => ({
       slug: scenario.slug,
-      label: scenario.name,
+      label: scenario.short_name,
       color: scenarioColors[idx]
-    }))
+    })),
+    indicatorName: flatMap(config.categories, (c) => c.indicators).find((i) => i.slug === variable).name,
+    measurementName: config.measurements.find((i) => i.slug === value).name
   }))
 )(BoxAndWhiskers);

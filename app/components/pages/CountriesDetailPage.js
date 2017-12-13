@@ -82,8 +82,8 @@ class CountriesDetailPage extends Component {
                 <div className="column small-3 medium-3" key={`${variable}_${value}`}>
                   <BoxAndWhiskersChart
                     chart="climatological_ecological"
-                    info="herp derp durr derp lorem ipsum top lel wat"
-                    title={`${value} of ${variable}`}
+                    info="lorem ipsum placeholderum"
+                    title={(v, i) => `${v} country-wide ${i} value`}
                     variable={variable}
                     value={value}
                   />

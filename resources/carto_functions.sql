@@ -32,6 +32,7 @@ BEGIN
         SELECT JSONB_AGG(
           JSONB_BUILD_OBJECT(
             'name', name,
+            'short_name', short_name,
             'slug', slug
           )
         )
