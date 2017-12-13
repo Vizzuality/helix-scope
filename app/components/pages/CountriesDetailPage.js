@@ -73,6 +73,33 @@ class CountriesDetailPage extends Component {
       }
     ];
 
+    const variables = [
+      'ts',
+      'tx',
+      'tn',
+      'pr',
+      'nbp',
+      'evap',
+      'gpp',
+      'cVeg',
+      'cSoil',
+      'amphibianobiodiversity',
+      'amphibiarealbiodiversity',
+      'birdnobiodiversity',
+      'birdrealbiodiversity',
+      'mammalnobiodiversity',
+      'mammalrealbiodiversity',
+      'reptilenobiodiversity',
+      'reptilerealbiodiversity'
+    ];
+
+    const values = [
+      'max',
+      'min',
+      'mean',
+      'std'
+    ];
+
     return (
       <div>
         <div className="l-banner -country">
@@ -115,14 +142,22 @@ class CountriesDetailPage extends Component {
                 title="Annual expected flood damages relative to 1976–2005 levels"
               />
             </div>
-            <div className="column small-12 medium-6">
-              <BoxAndWhiskersChart
-                chart="climatological_ecological"
-                info="herp derp durr derp lorem ipsum top lel"
-                title="herp"
-              />
-            </div>
           </div>
+          {variables.map((variable) => (
+            <div className="row" key={variable}>
+              {values.map((value) => (
+                <div className="column small-3 medium-3" key={`${variable}_${value}`}>
+                  <BoxAndWhiskersChart
+                    chart="climatological_ecological"
+                    info="herp derp durr derp lorem ipsum top lel wat"
+                    title={`${value} of ${variable}`}
+                    variable={variable}
+                    value={value}
+                  />
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
         <CallToAction
           type="about"

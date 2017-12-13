@@ -168,7 +168,9 @@ BoxAndWhiskers.propTypes = {
   info: React.PropTypes.string,
   scenarios: React.PropTypes.array,
   yTicks: React.PropTypes.number,
-  chart: React.PropTypes.string.isRequired,
+  chart: React.PropTypes.string,
+  variable: React.PropTypes.string.isRequired,
+  value: React.PropTypes.string.isRequired,
   remote: React.PropTypes.shape({
     loading: React.PropTypes.bool.isRequired,
     data: React.PropTypes.array.isRequired
@@ -184,9 +186,20 @@ BoxAndWhiskers.defaultProps = {
 const colors = ['#a4c504', '#c4bb00', '#ff9000'];
 
 export default compose(
-  connect((state, props) => ({
-    remote: state.charts[props.chart],
-    scenarios: state.config.scenarios.map((scenario, idx) => ({
+  connect(({ charts, config }, { chart, variable, value }) => ({
+    remote: {
+      ...charts[chart],
+      data: charts[chart].data.filter((d) => d.variable === variable).map((d) => ({
+        swl: d.swl,
+        variable: d.variable,
+        minimum: d[`${value}_minimum`],
+        maximum: d[`${value}_maximum`],
+        median: d[`${value}_median`],
+        q1: d[`${value}_q1`],
+        q3: d[`${value}_q3`]
+      }))
+    },
+    scenarios: config.scenarios.map((scenario, idx) => ({
       slug: scenario.slug,
       label: scenario.name,
       color: colors[idx]

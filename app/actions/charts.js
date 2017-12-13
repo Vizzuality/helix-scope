@@ -70,34 +70,45 @@ export function fetchRegularBar(chart, iso, variable) {
   };
 }
 
-export function fetchBoxAndWhiskers(chart, iso, variable, value) {
-  const biodiversityVariables = [
-    'amphibianobiodiversity',
-    'amphibiarealbiodiversity',
-    'birdnobiodiversity',
-    'birdrealbiodiversity',
-    'mammalnobiodiversity',
-    'mammalrealbiodiversity',
-    'reptilenobiodiversity',
-    'reptilerealbiodiversity'
-  ];
-
-  const valueFactor = biodiversityVariables.indexOf(variable) > -1 ? 100 : 1;
-
+export function fetchBoxAndWhiskers(chart, iso) {
   const sql = `
     SELECT swl, variable,
-      PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY value) AS q1,
-      PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY value) AS median,
-      PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY value) AS q3,
-      MAX(value) AS maximum,
-      MIN(value) AS minimum,
-      ARRAY_AGG(value ORDER BY value ASC) AS values
+      PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY min) AS min_q1,
+      PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY min) AS min_median,
+      PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY min) AS min_q3,
+      MAX(min) AS min_maximum,
+      MIN(min) AS min_minimum,
+      ARRAY_AGG(min ORDER BY min ASC) AS min_values,
+      PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY max) AS max_q1,
+      PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY max) AS max_median,
+      PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY max) AS max_q3,
+      MAX(max) AS max_maximum,
+      MIN(max) AS max_minimum,
+      ARRAY_AGG(max ORDER BY max ASC) AS max_values,
+      PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY mean) AS mean_q1,
+      PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY mean) AS mean_median,
+      PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY mean) AS mean_q3,
+      MAX(mean) AS mean_maximum,
+      MIN(mean) AS mean_minimum,
+      ARRAY_AGG(mean ORDER BY mean ASC) AS mean_values,
+      PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY std) AS std_q1,
+      PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY std) AS std_median,
+      PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY std) AS std_q3,
+      MAX(std) AS std_maximum,
+      MIN(std) AS std_minimum,
+      ARRAY_AGG(std ORDER BY std ASC) AS std_values
     FROM (
-      SELECT model_short_name, swl_info AS swl, run, model_long_name, institution,
-        ${value} / ${valueFactor} as value, variable
+      SELECT swl_info AS swl,
+             run,
+             model_short_name,
+             institution,
+             variable,
+      		 CASE WHEN variable LIKE '%biodiversity' THEN min*100 ELSE min END AS min,
+      		 CASE WHEN variable LIKE '%biodiversity' THEN max*100 ELSE max END AS max,
+      		 CASE WHEN variable LIKE '%biodiversity' THEN mean*100 ELSE mean END AS mean,
+      		 CASE WHEN variable LIKE '%biodiversity' THEN std*100 ELSE std END AS std
       FROM master_admin0
-      WHERE variable = '${variable}'
-      AND iso = '${iso}'
+      WHERE iso = '${iso}'
       AND swl_info < 6
       ORDER BY swl
     ) data
