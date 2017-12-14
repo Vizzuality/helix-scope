@@ -125,10 +125,11 @@ class Map extends React.Component {
 
   getLatLng() {
     const latLng = this.map.getCenter();
-    latLng.lat = latLng.lat.toFixed(2);
-    latLng.lng = latLng.lng.toFixed(2);
 
-    return latLng;
+    return {
+      lat: latLng.lat.toFixed(2),
+      lng: latLng.lng.toFixed(2)
+    };
   }
 
   getZoom() {
