@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { compose } from 'redux';
 import { connect } from 'react-redux';
 import d3 from 'd3';
 import debounce from 'debounce';
@@ -140,16 +139,15 @@ RegularBar.propTypes = {
 RegularBar.defaultProps = {
   meta: {},
   scenarios: [],
-  yTicks: 5
+  yTicks: 5,
+  remote: { loading: true, data: [] }
 };
 
-export default compose(
-  connect((state, props) => ({
-    remote: state.charts[props.chart],
-    scenarios: state.config.scenarios.map((scenario, idx) => ({
-      slug: scenario.slug,
-      label: scenario.name,
-      color: scenarioColors[idx]
-    }))
+export default connect((state, props) => ({
+  remote: state.charts[props.chart],
+  scenarios: state.config.scenarios.map((scenario, idx) => ({
+    slug: scenario.slug,
+    label: scenario.name,
+    color: scenarioColors[idx]
   }))
-)(RegularBar);
+}))(RegularBar);

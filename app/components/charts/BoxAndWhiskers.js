@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { compose } from 'redux';
 import { connect } from 'react-redux';
 import d3 from 'd3';
 import debounce from 'debounce';
@@ -204,32 +203,44 @@ BoxAndWhiskers.propTypes = {
 BoxAndWhiskers.defaultProps = {
   meta: {},
   scenarios: [],
-  yTicks: 5
+  yTicks: 5,
+  remote: { loading: true, data: [] }
 };
 
-export default compose(
-  connect(({ charts, config }, { chart, variable, value }) => ({
+export default connect(({ charts, config }, { chart, variable, value }) => {
+  if (!charts[chart]) {
+    return {};
+  }
+
+  return {
     remote: {
       ...charts[chart],
-      data: charts[chart].data.filter((d) => d.variable === variable).map((d) => ({
-        swl: d.swl,
-        variable: d.variable,
-        models: d.models,
-        institutions: d.institutions,
-        minimum: d[`${value}_minimum`],
-        maximum: d[`${value}_maximum`],
-        median: d[`${value}_median`],
-        q1: d[`${value}_q1`],
-        q3: d[`${value}_q3`]
-      }))
+      data: charts[chart].data
+        .filter((d) => d.variable === variable)
+        .map((d) => ({
+          swl: d.swl,
+          variable: d.variable,
+          models: d.models,
+          institutions: d.institutions,
+          minimum: d[`${value}_minimum`],
+          maximum: d[`${value}_maximum`],
+          median: d[`${value}_median`],
+          q1: d[`${value}_q1`],
+          q3: d[`${value}_q3`]
+        }))
     },
     scenarios: config.scenarios.map((scenario, idx) => ({
       slug: scenario.slug,
       label: scenario.short_name,
       color: scenarioColors[idx]
     })),
-    indicatorName: flatMap(config.categories, (c) => c.indicators).find((i) => i.slug === variable).name,
-    indicatorLongName: flatMap(config.categories, (c) => c.indicators).find((i) => i.slug === variable).name_long,
-    measurementName: config.measurements.find((i) => i.slug === value).name
-  }))
-)(BoxAndWhiskers);
+    indicatorName: flatMap(config.categories, (c) => c.indicators)
+      .find((i) => i.slug === variable)
+      .name,
+    indicatorLongName: flatMap(config.categories, (c) => c.indicators)
+      .find((i) => i.slug === variable)
+      .name_long,
+    measurementName: config.measurements.find((i) => i.slug === value)
+      .name
+  };
+})(BoxAndWhiskers);
