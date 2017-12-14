@@ -125,6 +125,7 @@ class RegularBar extends Component {
 }
 
 RegularBar.propTypes = {
+  iso: React.PropTypes.string.isRequired,
   title: React.PropTypes.string.isRequired,
   info: React.PropTypes.func.isRequired,
   scenarios: React.PropTypes.array,
@@ -143,11 +144,17 @@ RegularBar.defaultProps = {
   remote: { loading: true, data: [] }
 };
 
-export default connect((state, props) => ({
-  remote: state.charts[props.chart],
-  scenarios: state.config.scenarios.map((scenario, idx) => ({
-    slug: scenario.slug,
-    label: scenario.name,
-    color: scenarioColors[idx]
-  }))
-}))(RegularBar);
+export default connect(({ charts, config }, { chart, iso }) => {
+  if (!charts[chart]) {
+    return {};
+  }
+
+  return {
+    remote: charts[chart][iso],
+    scenarios: config.scenarios.map((scenario, idx) => ({
+      slug: scenario.slug,
+      label: scenario.name,
+      color: scenarioColors[idx]
+    }))
+  };
+})(RegularBar);

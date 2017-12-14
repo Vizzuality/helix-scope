@@ -156,6 +156,7 @@ class InterQuartileRange extends Component {
 }
 
 InterQuartileRange.propTypes = {
+  iso: React.PropTypes.string.isRequired,
   title: React.PropTypes.string.isRequired,
   info: React.PropTypes.func.isRequired,
   variables: React.PropTypes.array,
@@ -176,7 +177,13 @@ InterQuartileRange.defaultProps = {
   remote: { loading: true, data: [] }
 };
 
-export default connect((state, props) => ({
-  remote: state.charts[props.chart],
-  scenarios: state.config.scenarios
-}))(InterQuartileRange);
+export default connect(({ charts, config }, { chart, iso }) => {
+  if (!charts[chart]) {
+    return {};
+  }
+
+  return {
+    remote: charts[chart][iso],
+    scenarios: config.scenarios
+  };
+})(InterQuartileRange);

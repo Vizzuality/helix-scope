@@ -184,6 +184,7 @@ class BoxAndWhiskers extends Component {
 }
 
 BoxAndWhiskers.propTypes = {
+  iso: React.PropTypes.string.isRequired,
   title: React.PropTypes.func.isRequired,
   info: React.PropTypes.func.isRequired,
   scenarios: React.PropTypes.array,
@@ -207,15 +208,15 @@ BoxAndWhiskers.defaultProps = {
   remote: { loading: true, data: [] }
 };
 
-export default connect(({ charts, config }, { chart, variable, value }) => {
+export default connect(({ charts, config }, { chart, iso, variable, value }) => {
   if (!charts[chart]) {
     return {};
   }
 
   return {
     remote: {
-      ...charts[chart],
-      data: charts[chart].data
+      ...charts[chart][iso],
+      data: charts[chart][iso].data
         .filter((d) => d.variable === variable)
         .map((d) => ({
           swl: d.swl,

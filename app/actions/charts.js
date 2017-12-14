@@ -25,7 +25,8 @@ export function fetchInterQuartileRange(chart, iso, variable) {
     dispatch({
       type: LOAD_CHART,
       payload: {
-        chart
+        chart,
+        iso
       }
     });
 
@@ -35,6 +36,7 @@ export function fetchInterQuartileRange(chart, iso, variable) {
         type: RECEIVE_CHART,
         payload: {
           chart,
+          iso,
           data: response.rows
         }
       }));
@@ -54,7 +56,8 @@ export function fetchRegularBar(chart, iso, variable) {
     dispatch({
       type: LOAD_CHART,
       payload: {
-        chart
+        chart,
+        iso
       }
     });
 
@@ -64,6 +67,7 @@ export function fetchRegularBar(chart, iso, variable) {
         type: RECEIVE_CHART,
         payload: {
           chart,
+          iso,
           data: response.rows
         }
       }));
@@ -121,7 +125,8 @@ export function fetchBoxAndWhiskers(chart, iso) {
     dispatch({
       type: LOAD_CHART,
       payload: {
-        chart
+        chart,
+        iso
       }
     });
 
@@ -131,6 +136,7 @@ export function fetchBoxAndWhiskers(chart, iso) {
         type: RECEIVE_CHART,
         payload: {
           chart,
+          iso,
           data: response.rows
         }
       }));

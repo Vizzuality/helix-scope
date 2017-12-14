@@ -9,8 +9,11 @@ export default function (state = initialState, action) {
         ...state,
         ...{
           [action.payload.chart]: {
-            loading: true,
-            data: []
+            ...state[action.payload.chart],
+            [action.payload.iso]: {
+              loading: true,
+              data: []
+            }
           }
         }
       };
@@ -20,8 +23,11 @@ export default function (state = initialState, action) {
         ...state,
         ...{
           [action.payload.chart]: {
-            loading: false,
-            data: action.payload.data
+            ...state[action.payload.chart],
+            [action.payload.iso]: {
+              loading: false,
+              data: action.payload.data
+            }
           }
         }
       };

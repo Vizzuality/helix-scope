@@ -28,6 +28,8 @@ class CountriesDetailPage extends Component {
   render() {
     if (this.props.config.loading) return <LoadingSpinner />;
 
+    if (this.props.config.loading) return <LoadingSpinner />;
+
     let countryName = '';
     if (this.props.countriesList.length) {
       countryName = this.props.countriesList.find((elem) => (elem.iso === this.props.iso)).name;
@@ -52,6 +54,7 @@ class CountriesDetailPage extends Component {
           <div className="row">
             <div className="column small-12 medium-6">
               <InterQuartileRangeChart
+                iso={this.props.iso}
                 chart="crop_yield_change_baseline"
                 title={`Projected changes in crop yields relative to 1981–2010 base-level for ${countryName}`}
                 info={(m, i) => `These data were created using the ${m} models of the ${i}. All yield values are relative to average yields over a baseline period of 1981–2010.`}
@@ -60,6 +63,7 @@ class CountriesDetailPage extends Component {
             </div>
             <div className="column small-12 medium-6">
               <InterQuartileRangeChart
+                iso={this.props.iso}
                 chart="crop_yield_change_irrigation"
                 info={(m, i) => `These data were created using the ${m} models of the ${i}. All yield values are relative to average yields over a baseline period of 1981–2010.`}
                 title={`Change in crop yields (relative to 1981-2010 base levels) avoided under different warming scenarios due to Irrigation for ${countryName}`}
@@ -70,6 +74,7 @@ class CountriesDetailPage extends Component {
           <div className="row">
             <div className="column small-12 medium-6">
               <RegularBarChart
+                iso={this.props.iso}
                 chart="annual_expected_flood_damage"
                 info={(m, i) => `These data were produced by the ${m} model, of the ${i}. Values are relative to avearges over the 1976–2005 period. Expected damages are annual estimated cost of flooding, estimated in millions of € (relative to 2010 value).`}
                 title="Annual expected flood damages relative to 1976–2005 levels"
@@ -81,6 +86,7 @@ class CountriesDetailPage extends Component {
               {statisticValues.map((value) => (
                 <div className="column small-3 medium-3" key={`${variable}_${value}`}>
                   <BoxAndWhiskersChart
+                    iso={this.props.iso}
                     chart="climatological_ecological"
                     info={(a, b, c, d, e) => `${a} of ${b} over the country wide area: ${c}. These data are obtained from ${d} models, processed by ${e}.`}
                     title={(v, i) => `${v} country-wide ${i} value`}
