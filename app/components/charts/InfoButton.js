@@ -24,7 +24,7 @@ class InfoButton extends Component {
           </svg>
         </div>
         {this.state.open && <div className="infobox">
-          {this.props.text}
+          <p>{this.props.text}</p>
         </div>}
       </div>
     );
