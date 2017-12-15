@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import d3 from 'd3';
 import debounce from 'debounce';
-import flatMap from 'lodash/flatMap';
 import uniqBy from 'lodash/uniqBy';
 
 import InfoButton from './InfoButton';
-import { scenarioColors } from 'constants/country';
 
 class RegularBar extends Component {
 
@@ -108,8 +105,8 @@ class RegularBar extends Component {
   }
 
   render() {
-    const models = uniqBy(flatMap(this.props.remote.data, (d) => d.models)).join(', ');
-    const institutions = uniqBy(flatMap(this.props.remote.data, (d) => d.institutions)).join(', ');
+    const models = uniqBy(this.props.remote.data, (d) => d.model).join(', ');
+    const institutions = uniqBy(this.props.remote.data, (d) => d.institution).join(', ');
     const infoText = this.props.info(models, institutions);
 
     return (
@@ -144,17 +141,4 @@ RegularBar.defaultProps = {
   remote: { loading: true, data: [] }
 };
 
-export default connect(({ charts, config }, { chart, iso }) => {
-  if (!charts[chart]) {
-    return {};
-  }
-
-  return {
-    remote: charts[chart][iso],
-    scenarios: config.scenarios.map((scenario, idx) => ({
-      slug: scenario.slug,
-      label: scenario.name,
-      color: scenarioColors[idx]
-    }))
-  };
-})(RegularBar);
+export default RegularBar;

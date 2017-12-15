@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import d3 from 'd3';
 import debounce from 'debounce';
 import flatMap from 'lodash/flatMap';
@@ -177,13 +176,4 @@ InterQuartileRange.defaultProps = {
   remote: { loading: true, data: [] }
 };
 
-export default connect(({ charts, config }, { chart, iso }) => {
-  if (!charts[chart]) {
-    return {};
-  }
-
-  return {
-    remote: charts[chart][iso],
-    scenarios: config.scenarios
-  };
-})(InterQuartileRange);
+export default InterQuartileRange;

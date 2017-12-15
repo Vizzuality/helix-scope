@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 
+import InterQuartileRangeChart from 'containers/charts/InterQuartileRange';
+import RegularBarChart from 'containers/charts/RegularBar';
+import BoxAndWhiskersChart from 'containers/charts/BoxAndWhiskers';
 import CallToAction from 'components/common/CallToAction';
-import InterQuartileRangeChart from 'components/charts/InterQuartileRange';
-import RegularBarChart from 'components/charts/RegularBar';
-import BoxAndWhiskersChart from 'components/charts/BoxAndWhiskers';
 import ExploreScenarios from 'components/common/ExploreScenarios';
 import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
@@ -26,8 +26,6 @@ class CountriesDetailPage extends Component {
   }
 
   render() {
-    if (this.props.config.loading) return <LoadingSpinner />;
-
     if (this.props.config.loading) return <LoadingSpinner />;
 
     let countryName = '';
