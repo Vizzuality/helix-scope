@@ -17,7 +17,7 @@ function Dashboard(props) {
         <div className="scenario">
           {props.mapData.scenario.name}
           <Button
-            icon="settings" style="none" size="small"
+            icon="settings" style="none" size="small" position="right"
             onClick={() => props.handleMapConfig(props.mapData.id)}
           />
         </div>
