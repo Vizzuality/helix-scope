@@ -16,7 +16,7 @@ class Legend extends React.Component {
       return <div></div>;
     }
 
-    const gradient = `linear-gradient(to right, ${percentages.map((p, n) => `${colors[n]} ${p}`).join(', ')})`;
+    const gradient = `linear-gradient(to left, ${percentages.map((p, n) => `${colors[n]} ${p}`).join(', ')})`;
     return (
       <div className="c-legend">
         <ul className="labels">
