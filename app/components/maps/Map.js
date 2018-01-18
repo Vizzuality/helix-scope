@@ -202,7 +202,6 @@ class Map extends React.Component {
       this.currentLayer = layer.slug;
     } else {
       this.layer = L.tileLayer(layer.tileUrl, {
-        noWrap: true,
         attribution: 'CARTO <a href="https://carto.com/attributions" target="_blank">attribution</a>'
       }).setZIndex(2);
       this.layer.on('load', this.onTileLoaded);
