@@ -187,7 +187,7 @@ export function createLayer(mapData, layerData) {
 
 export function getMapBuckets(mapData) {
   return (dispatch) => {
-    const query = `SELECT * FROM get_buckets('${mapData.indicator.slug}', '${mapData.measure.slug}', ${mapData.scenario.slug})`;
+    const query = `SELECT * FROM get_buckets('${mapData.indicator.slug}', '${mapData.measure.slug}', ${mapData.scenario.slug}, 7)`;
 
     $.get({
       url: ENDPOINT_SQL,
