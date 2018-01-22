@@ -217,7 +217,7 @@ class Map extends React.Component {
     bucketList.reverse();
 
     const cssProps = {
-      '#null': { ...MAP_VECTOR_CSS },
+      '#null': { ...MAP_VECTOR_CSS }
     };
 
     bucketList.forEach((bucket, index) => {
