@@ -1,4 +1,3 @@
-import { ckmeans } from 'simple-statistics';
 import { MAP_SAVE_PARAMS, MAP_UPDATE_DATA, MAP_UPDATE_PAN, LOADING_MAP } from 'actions/maps';
 
 const initialState = {
