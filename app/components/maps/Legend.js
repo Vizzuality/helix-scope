@@ -1,4 +1,5 @@
 import React from 'react';
+import { categoryColorScheme } from 'constants/colors';
 
 class Legend extends React.Component {
   shouldComponentUpdate(props) {
@@ -9,14 +10,13 @@ class Legend extends React.Component {
   }
 
   render() {
-    const colors = this.props.mapData.indicator.colorscheme;
-    const percentages = ['', '20%', '39%', '59%', '79%', ''];
+    const colors = categoryColorScheme[this.props.mapData.category.slug];
 
     if (this.props.mapData && !this.props.mapData.bucket) {
       return <div></div>;
     }
 
-    const gradient = `linear-gradient(to left, ${percentages.map((p, n) => `${colors[n]} ${p}`).join(', ')})`;
+    const gradient = `linear-gradient(to right, ${colors.map((c, index) => `${c} ${(100 / (colors.length - 1)) * index}%`).join(', ')})`;
     return (
       <div className="c-legend">
         <ul className="labels">
@@ -35,6 +35,7 @@ class Legend extends React.Component {
 Legend.propTypes = {
   mapData: React.PropTypes.shape({
     indicator: React.PropTypes.object,
+    category: React.PropTypes.object,
     bucket: React.PropTypes.array
   }).isRequired
 };

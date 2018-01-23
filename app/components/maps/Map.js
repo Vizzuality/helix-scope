@@ -9,6 +9,7 @@ import {
   MAP_LAYER_SPEC,
   MAP_VECTOR_CSS
 } from 'constants/map';
+import { categoryColorScheme } from 'constants/colors';
 
 class Map extends React.Component {
   constructor(props) {
@@ -189,8 +190,8 @@ class Map extends React.Component {
         AND swl_info = ${scenario}
         GROUP BY shape_id
       )
-      SELECT good_five_grid.id_val, good_five_grid.the_geom_webmercator, good_five_grid.cartodb_id, data.${measure}
-      FROM good_five_grid INNER JOIN data ON good_five_grid.id_val = data.shape_id
+      SELECT five_grid_shapefiles.id_val, five_grid_shapefiles.the_geom_webmercator, five_grid_shapefiles.cartodb_id, data.${measure}
+      FROM five_grid_shapefiles INNER JOIN data ON five_grid_shapefiles.id_val = data.shape_id
     `;
 
     return query;
@@ -211,10 +212,8 @@ class Map extends React.Component {
   }
 
   generateCartoCSS(mapData) {
-    const colorscheme = mapData.indicator.colorscheme;
-
-    const bucketList = [...this.bucket];
-    bucketList.reverse();
+    const colorscheme = [...categoryColorScheme[mapData.category.slug]].reverse();
+    const bucketList = [...this.bucket].reverse();
 
     const cssProps = {
       '#null': { ...MAP_VECTOR_CSS }

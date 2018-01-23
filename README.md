@@ -37,7 +37,7 @@ maintained by this application.
 
 * master_admin0 - Holds information at the Admin-0 (countries) level, used to render charts mostly
 * master_5x5 - Holds information at the grid level, used to display the map
-* good_five_grid - The 5x5 grid geometry used to display the map
+* five_grid_shapefiles - The 5x5 grid geometry used to display the map
 
 The files `resources/carto_functions.sql` and `carto_meta_tables.sql` contain the DDL statements
 used on cartodb to build the application backend (tables and pgplsql functions)
