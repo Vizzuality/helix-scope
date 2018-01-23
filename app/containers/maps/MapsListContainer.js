@@ -21,10 +21,10 @@ const mapStateToProps = state => {
           const oneBucket = buckets
                 .reduce((acc, b) => acc.concat(b), [])
                 .map((b) => b.value);
-          return ckmeans(oneBucket, 6).map((c) => ({ value: c.slice(-1)[0] }));
+          return ckmeans(oneBucket, 7).map((c) => ({ value: c.slice(-1)[0] }));
         };
 
-        return bucket && mapsToCompare.length
+        return bucket && bucket.length && mapsToCompare.length
           ? combineBuckets(mapsToCompare.map((m) => m.bucket).filter((m) => m).concat([bucket]))
           : bucket;
       };

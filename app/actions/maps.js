@@ -107,8 +107,7 @@ export function setMap(map) {
         elem.id === map.id
       ));
       if (selectedMap) {
-        selectedMap.bucket = [];
-        selectedMap = Object.assign(selectedMap, map);
+        selectedMap = Object.assign(selectedMap, map, { bucket: [] });
       } else {
         const newMap = map;
         newMap.id = getRandomId();
