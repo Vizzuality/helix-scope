@@ -9,6 +9,7 @@ import {
   MAP_LAYER_SPEC,
   MAP_VECTOR_CSS
 } from 'constants/map';
+import { categoryColorScheme } from 'constants/colors';
 
 class Map extends React.Component {
   constructor(props) {
@@ -211,10 +212,8 @@ class Map extends React.Component {
   }
 
   generateCartoCSS(mapData) {
-    const colorscheme = mapData.indicator.colorscheme;
-
-    const bucketList = [...this.bucket];
-    bucketList.reverse();
+    const colorscheme = [...categoryColorScheme[mapData.category.slug]].reverse();
+    const bucketList = [...this.bucket].reverse();
 
     const cssProps = {
       '#null': { ...MAP_VECTOR_CSS }

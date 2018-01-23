@@ -40,10 +40,7 @@ export const MAP_LAYER_SPEC_RASTER = {
 export const MAP_VECTOR_CSS = {
   'polygon-opacity': 1,
   'polygon-fill': 'transparent',
-  'line-width': 0.5,
-  'line-color': '#FFFFFF',
-  'line-opacity': 1,
-  'line-rasterizer': 'fast'
+  'polygon-gamma': 0
 };
 
 export const MAP_RASTER_CSS = {
