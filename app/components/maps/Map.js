@@ -1,6 +1,8 @@
 import React from 'react';
+import { render } from 'react-dom';
 import L from 'leaflet';
 import LoadingSpinner from 'components/common/LoadingSpinner';
+import Popup from 'components/common/Popup';
 import objectToCSS from 'utils/objectToCSS';
 import {
   BASEMAP_GEOM_TILE,
@@ -113,15 +115,28 @@ class Map extends React.Component {
   }
 
   setListeners() {
-    function zoomend() {
+    this.map.on('zoomend', () => {
       this.props.onMapDrag(this.getMapParams());
-    }
-    function drag() {
+    });
+    this.map.on('drag', () => {
       this.props.onMapDrag(this.getMapParams());
-    }
+    });
+    this.map.on('click', (e) => {
+      this.props.onMapClick(e);
+      L.popup({
+        closeButton: false,
+        className: 'details-popup'
+      })
+        .setLatLng(e.latlng)
+        .openOn(this.map);
 
-    this.map.on('zoomend', zoomend.bind(this));
-    this.map.on('drag', drag.bind(this));
+      render(
+        <Popup title="popupTitle">
+          Popup content
+        </Popup>,
+        document.querySelector('.details-popup .leaflet-popup-content')
+      );
+    });
   }
 
   getLatLng() {
@@ -262,6 +277,7 @@ Map.propTypes = {
     latLng: React.PropTypes.object,
     zoom: React.PropTypes.number
   }).isRequired,
+  onMapClick: React.PropTypes.func,
   onMapDrag: React.PropTypes.func,
   createLayer: React.PropTypes.func,
   getMapBuckets: React.PropTypes.func,

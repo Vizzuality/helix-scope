@@ -203,3 +203,31 @@ export function getMapBuckets(mapData) {
     });
   };
 }
+
+export function getMapBoxData(e) {
+  return (dispatch) => {
+    const {
+      lng,
+      lat
+    } = e.latlng;
+
+    const query = `
+      SELECT id_val FROM five_grid_shapefiles
+      WHERE ST_WITHIN(
+        ST_GeomFromText('POINT(${lng} ${lat})', 4326),
+        the_geom
+      )
+    `;
+
+    $.get({
+      url: ENDPOINT_SQL,
+      data: {
+        q: query
+      }
+    }).then((res) => {
+      console.log('mapBoxData', res);
+    }).catch((error) => {
+      console.error(error);
+    });
+  };
+}
