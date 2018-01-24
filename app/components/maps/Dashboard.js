@@ -4,7 +4,7 @@ import Legend from './Legend';
 import MeasureSelector from './MeasureSelector';
 
 function Dashboard(props) {
-  let deleteBtn = props.maps.length > 1 ?
+  let deleteBtn = props.showDeleteBtn ?
     <Button onClick={() => props.deleteMap(props.mapData.id)} icon="close" style="light" size="small" /> :
     null;
 
@@ -50,7 +50,7 @@ Dashboard.propTypes = {
   deleteMap: React.PropTypes.func,
   setMapState: React.PropTypes.func,
   handleMapConfig: React.PropTypes.func,
-  maps: React.PropTypes.array,
+  showDeleteBtn: React.PropTypes.bool,
   config: React.PropTypes.shape({
     measurements: React.PropTypes.array
   }).isRequired

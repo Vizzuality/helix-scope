@@ -57,6 +57,8 @@ class Map extends React.Component {
       props.mapConfig.latLng.lat !== this.props.mapConfig.latLng.lat ||
       props.mapConfig.latLng.lng !== this.props.mapConfig.latLng.lng ||
       props.mapConfig.zoom !== this.props.mapConfig.zoom);
+    const bucketChanged = JSON.stringify(props.mapData.bucket) !== JSON.stringify(this.bucket);
+    const bucketEmpty = props.mapData.bucket && !props.mapData.bucket.length;
 
     if (paramsChanged) {
       this.map.panTo([props.mapConfig.latLng.lat, props.mapConfig.latLng.lng], {
@@ -67,19 +69,19 @@ class Map extends React.Component {
       this.invalidateSize();
     }
 
-    if (props.mapData.bucket && !props.mapData.bucket.length) {
+    if (bucketChanged && bucketEmpty) {
       this.bucket = props.mapData.bucket;
       this.setLoadingStatus(true);
       props.getMapBuckets(this.props.mapData);
     }
 
     if (this.bucket && props.mapData.layer &&
-      (this.currentLayer !== props.mapData.layer.slug)) {
+        (this.currentLayer !== props.mapData.layer.slug)) {
       this.updateLayer(props.mapData.layer);
     }
 
     if ((!this.bucket && props.mapData.bucket) ||
-      (this.bucket !== props.mapData.bucket)) {
+        (bucketChanged && !bucketEmpty)) {
       this.getLayer(props.mapData);
     }
 

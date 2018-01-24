@@ -3,7 +3,7 @@ import Dashboard from 'components/maps/Dashboard';
 import { deleteMap, setMap } from 'actions/maps';
 
 const mapStateToProps = state => ({
-  maps: state.maps.mapsList,
+  showDeleteBtn: state.maps.mapsList.length > 1,
   config: state.config
 });
 
