@@ -2,7 +2,6 @@ import { connect } from 'react-redux';
 import Map from 'components/maps/Map';
 import {
   createLayer,
-  getMapBoxData,
   getMapBuckets,
   panMaps,
   updateURL
@@ -21,9 +20,6 @@ const mapDispatchToProps = dispatch => ({
   onMapDrag: params => {
     dispatch(panMaps(params));
     dispatch(updateURL());
-  },
-  onMapClick: params => {
-    dispatch(getMapBoxData(params));
   },
   createLayer: (mapData, layer) => {
     dispatch(createLayer(mapData, layer));

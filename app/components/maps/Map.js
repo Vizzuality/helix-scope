@@ -352,7 +352,6 @@ Map.propTypes = {
     latLng: React.PropTypes.object,
     zoom: React.PropTypes.number
   }).isRequired,
-  onMapClick: React.PropTypes.func,
   onMapDrag: React.PropTypes.func,
   createLayer: React.PropTypes.func,
   getMapBuckets: React.PropTypes.func,
