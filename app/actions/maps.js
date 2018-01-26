@@ -1,15 +1,12 @@
 import axios from 'axios';
 import { push } from 'react-router-redux';
+import uuid from 'uuid/v4';
 import { ENDPOINT_TILES, ENDPOINT_SQL, MAX_MAPS } from 'constants/map';
 
 export const MAP_UPDATE_DATA = 'MAP_UPDATE_DATA';
 export const MAP_UPDATE_PAN = 'MAP_UPDATE_PAN';
 export const MAP_SAVE_PARAMS = 'MAP_SAVE_PARAMS';
 export const LOADING_MAP = 'LOADING_MAP';
-
-function getRandomId() {
-  return Math.floor(Math.random() * 100).toString();
-}
 
 export function saveParamsFromURL(queryParam, mapConfig) {
   return dispatch => {
@@ -51,7 +48,7 @@ export function initializeMaps() {
           elem.slug === params[1]
         ));
         mapsList.push({
-          id: getRandomId(),
+          id: uuid(),
           scenario: config.scenarios.find((elem) => (
             elem.slug === params[0]
           )),
@@ -107,11 +104,10 @@ export function setMap(map) {
         elem.id === map.id
       ));
       if (selectedMap) {
-        selectedMap.bucket = [];
-        selectedMap = Object.assign(selectedMap, map);
+        selectedMap = Object.assign(selectedMap, map, { bucket: [] });
       } else {
         const newMap = map;
-        newMap.id = getRandomId();
+        newMap.id = uuid();
         mapsList.push(newMap);
       }
 
@@ -175,7 +171,7 @@ export function createLayer(mapData, layerData) {
       dispatch(setMapData(mapData, {
         layer: {
           tileUrl: `${ENDPOINT_TILES}${data.layergroupid}/{z}/{x}/{y}@2x.png32`,
-          slug: `layer_${mapData.indicator.slug}_${mapData.measure.slug}_${mapData.scenario.slug}`
+          slug: `layer_${mapData.indicator.slug}_${mapData.measure.slug}_${mapData.scenario.slug}_${uuid()}`
         }
       }));
     }).catch((error) => {

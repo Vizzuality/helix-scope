@@ -61,11 +61,13 @@
     "react-sticky": "^5.0.5",
     "redux": "^3.5.2",
     "redux-thunk": "^2.1.0",
+    "simple-statistics": "^5.2.1",
     "slick-carousel": "^1.6.0",
     "style-loader": "^0.13.1",
     "stylelint-config-standard": "^17.0.0",
     "stylelint-webpack-plugin": "^0.9.0",
     "url-loader": "^0.5.7",
+    "uuid": "^3.2.1",
     "webpack": "^1.13.0"
   },
   "devDependencies": {

@@ -8,7 +8,6 @@ import {
 } from 'actions/maps';
 
 const mapStateToProps = state => ({
-  maps: state.maps.mapsList,
   mapConfig: {
     latLng: state.maps.latLng,
     zoom: state.maps.zoom,

@@ -105,7 +105,7 @@ class MapsModal extends Component {
                 onChange={() => this.handleScenarioChange(scenario)}
               />
               <label htmlFor={`scenario-${index}`}>
-                {scenario.name}
+                {scenario.short_name.replace('+', '')}
               </label>
             </div>
           )}
