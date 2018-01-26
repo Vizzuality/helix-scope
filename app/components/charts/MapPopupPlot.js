@@ -13,7 +13,8 @@ class MapPopupPlot extends BaseChart {
 
     const {
       margin,
-      data
+      data,
+      unit
     } = this.props;
 
     const getBoxQuartiles = (d) => ([
@@ -36,18 +37,20 @@ class MapPopupPlot extends BaseChart {
 
     const scale = {
       x: d3.scaleLinear()
-        .domain(domain.x)
         .range([0, width])
+        .domain(domain.x)
+        .nice()
     };
 
     const axes = {
       x: d3.axisBottom()
         .scale(scale.x)
-        .ticks(4)
-        .tickSizeOuter(10)
+        .ticks(data.length / 2)
+        .tickFormat((d, idx, arr) => (idx === (arr.length - 1) ? `${d} ${unit}` : d))
+        .tickSizeOuter(0)
         .tickSizeInner(10)
     };
-    const y = height - 30;
+    const y = height - 20;
 
     const chart = d3.select(this.chart);
     chart.selectAll('svg').remove();
@@ -65,10 +68,11 @@ class MapPopupPlot extends BaseChart {
       .call(axes.x);
 
     const bar = svg.append('g');
+    const barColor = '#515253';
 
-    // // main range line
+    // main range line
     bar.append('line')
-      .attr('stroke', 'black')
+      .attr('stroke', barColor)
       .attr('stroke-width', 1)
       .attr('x1', scale.x(minValue))
       .attr('y1', y)
@@ -79,7 +83,7 @@ class MapPopupPlot extends BaseChart {
     const qboxHeight = 30;
     bar.append('rect')
       .attr('stroke-width', 0)
-      .attr('fill', '#515253')
+      .attr('fill', barColor)
       .attr('opacity', 0.3)
       .attr('x', scale.x(quartiles[0]))
       .attr('y', y - (qboxHeight / 2))
@@ -88,7 +92,7 @@ class MapPopupPlot extends BaseChart {
 
     // median
     bar.append('line')
-      .attr('stroke', 'black')
+      .attr('stroke', barColor)
       .attr('stroke-width', 1)
       .attr('x1', scale.x(quartiles[1]))
       .attr('y1', y - (qboxHeight / 2))
@@ -98,7 +102,7 @@ class MapPopupPlot extends BaseChart {
     // left whisker
     const whiskerWidth = 20;
     bar.append('line')
-      .attr('stroke', 'black')
+      .attr('stroke', barColor)
       .attr('stroke-width', 1)
       .attr('x1', scale.x(minValue))
       .attr('y1', y - (whiskerWidth / 2))
@@ -107,7 +111,7 @@ class MapPopupPlot extends BaseChart {
 
     // right whisker
     bar.append('line')
-      .attr('stroke', 'black')
+      .attr('stroke', barColor)
       .attr('stroke-width', 1)
       .attr('x1', scale.x(maxValue))
       .attr('y1', y - (whiskerWidth / 2))
@@ -158,15 +162,16 @@ class MapPopupPlot extends BaseChart {
 
 MapPopupPlot.propTypes = {
   ...BaseChart.propTypes,
-  data: React.PropTypes.array.isRequired
+  data: React.PropTypes.array.isRequired,
+  unit: React.PropTypes.string.isRequired
 };
 
 MapPopupPlot.defaultProps = {
   ...BaseChart.defaultProps,
   margin: {
-    left: 10,
-    right: 10,
-    top: 10,
+    left: 20,
+    right: 20,
+    top: 20,
     bottom: 60
   }
 };

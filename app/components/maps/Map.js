@@ -185,7 +185,7 @@ class Map extends React.Component {
 
         render(
           <Popup title={title} onCloseClick={() => this.map.closePopup(popup)}>
-            <MapPopupPlot data={data} />
+            <MapPopupPlot data={data} unit={indicator.unit} />
             <div>
               {dynamicText}
             </div>
