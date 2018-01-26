@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import debounce from 'debounce';
+import { debounce } from 'lodash';
 
 class BaseChart extends Component {
   constructor() {
@@ -24,9 +24,7 @@ class BaseChart extends Component {
     debounce(this.drawChart.bind(this), 200)();
   }
 
-  drawChart() {
-
-  }
+  drawChart() {}
 }
 
 BaseChart.defaultProps = {
