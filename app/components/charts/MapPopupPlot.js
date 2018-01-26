@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import d3 from 'd3';
+import * as d3 from 'd3';
 import debounce from 'debounce';
 import flatMap from 'lodash/flatMap';
 import uniqBy from 'lodash/uniqBy';
@@ -54,18 +54,17 @@ class MapPopupPlot extends Component {
     };
 
     const scale = {
-      x: d3.scale.linear()
+      x: d3.scaleLinear()
         .domain(domain.x)
         .range([0, width])
     };
 
     const axes = {
-      x: d3.svg.axis()
+      x: d3.axisBottom()
         .scale(scale.x)
-        .orient('bottom')
         .ticks(4)
-        .outerTickSize(10)
-        .innerTickSize(10)
+        .tickSizeOuter(10)
+        .tickSizeInner(10)
     };
     const y = height - 30;
 

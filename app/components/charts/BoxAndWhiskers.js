@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import d3 from 'd3';
+import * as d3 from 'd3';
 import debounce from 'debounce';
 import flatMap from 'lodash/flatMap';
 import uniqBy from 'lodash/uniqBy';
@@ -53,27 +53,26 @@ class BoxAndWhiskers extends Component {
     };
 
     const scale = {
-      x: d3.scale.ordinal()
+      x: d3.scalePoint()
         .domain(domain.x)
-        .rangePoints([0, width], 1),
-      y: d3.scale.linear()
+        .range([0, width])
+        .padding(1),
+      y: d3.scaleLinear()
         .domain(domain.y)
         .nice()
         .range([height, 0])
     };
 
     const axes = {
-      x: d3.svg.axis()
+      x: d3.axisBottom()
         .scale(scale.x)
         .tickFormat(tickFormat)
-        .outerTickSize(0)
-        .orient('bottom'),
-      y: d3.svg.axis()
+        .tickSizeOuter(0),
+      y: d3.axisLeft()
         .scale(scale.y)
-        .orient('left')
         .ticks(this.props.yTicks)
-        .innerTickSize(-width)
-        .outerTickSize(0)
+        .tickSizeInner(-width)
+        .tickSizeOuter(0)
         .tickPadding(10)
     };
 
