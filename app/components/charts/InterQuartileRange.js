@@ -1,57 +1,36 @@
-import React, { Component } from 'react';
+import React from 'react';
 import * as d3 from 'd3';
-import debounce from 'debounce';
 import flatMap from 'lodash/flatMap';
 import uniqBy from 'lodash/uniqBy';
 
 import InfoButton from './InfoButton';
+import BaseChart from './BaseChart';
 
-class InterQuartileRange extends Component {
-  constructor() {
-    super();
-    this.onPageResize = this.onPageResize.bind(this);
-  }
-
-  componentDidMount() {
-    this.drawChart();
-    window.addEventListener('resize', this.onPageResize);
-  }
-
-  componentDidUpdate() {
-    this.drawChart();
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.onPageResize);
-  }
-
-  onPageResize() {
-    debounce(this.drawChart.bind(this), 200)();
-  }
-
+class InterQuartileRange extends BaseChart {
   drawChart() {
     if (!this.chart) {
       return;
     }
 
-    const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
-    const colorFor = (variable) => (this.props.variables.find((v) => v.variable === variable) || { color: 'black' }).color;
-    const findScenario = (slug) => (this.props.scenarios.find((s) => slug.toString() === s.slug) || {});
-    const tickFormat = (val) => (findScenario(val).name);
+    const {
+      margin,
+      scenarios,
+      remote,
+      yTicks,
+      variables
+    } = this.props;
 
-    const margin = {
-      left: 30,
-      right: 30,
-      top: 30,
-      bottom: 60
-    };
+    const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
+    const colorFor = (variable) => (variables.find((v) => v.variable === variable) || { color: 'black' }).color;
+    const findScenario = (slug) => (scenarios.find((s) => slug.toString() === s.slug) || {});
+    const tickFormat = (val) => (findScenario(val).name);
 
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
 
     const domain = {
-      x: this.props.remote.data.map((d) => d.swl).filter(uniq),
-      y: d3.extent(this.props.remote.data, (d) => d.median)
+      x: remote.data.map((d) => d.swl).filter(uniq),
+      y: d3.extent(remote.data, (d) => d.median)
     };
 
     const scale = {
@@ -72,7 +51,7 @@ class InterQuartileRange extends Component {
         .tickSizeOuter(0),
       y: d3.axisLeft()
         .scale(scale.y)
-        .ticks(this.props.yTicks)
+        .ticks(yTicks)
         .tickSizeInner(-width)
         .tickSizeOuter(0)
         .tickPadding(10)
@@ -97,7 +76,7 @@ class InterQuartileRange extends Component {
       .call(axes.y);
 
     svg.selectAll('.dot')
-      .data(this.props.remote.data)
+      .data(remote.data)
       .enter()
       .append('circle')
       .attr('r', 5)
@@ -106,7 +85,7 @@ class InterQuartileRange extends Component {
       .attr('cy', (d) => scale.y(d.median));
 
     svg.selectAll('.dot')
-      .data(this.props.remote.data)
+      .data(remote.data)
       .enter()
       .append('line')
       .attr('stroke', (d) => colorFor(d.variable))
@@ -123,7 +102,7 @@ class InterQuartileRange extends Component {
       .attr('transform', 'translate(0, 0)');
 
     legend.selectAll('circle')
-      .data(this.props.variables)
+      .data(variables)
       .enter()
       .append('circle')
       .attr('r', 5)
@@ -132,7 +111,7 @@ class InterQuartileRange extends Component {
       .attr('fill', (d) => d.color);
 
     legend.selectAll('text')
-      .data(this.props.variables)
+      .data(variables)
       .enter()
       .append('text')
       .attr('x', (d, i) => (i * 60) + 8)
@@ -158,6 +137,7 @@ class InterQuartileRange extends Component {
 }
 
 InterQuartileRange.propTypes = {
+  ...BaseChart.propTypes,
   iso: React.PropTypes.string.isRequired,
   title: React.PropTypes.string.isRequired,
   info: React.PropTypes.func.isRequired,
@@ -172,6 +152,13 @@ InterQuartileRange.propTypes = {
 };
 
 InterQuartileRange.defaultProps = {
+  ...BaseChart.defaultProps,
+  margin: {
+    left: 30,
+    right: 30,
+    top: 30,
+    bottom: 60
+  },
   meta: {},
   variables: [],
   scenarios: [],

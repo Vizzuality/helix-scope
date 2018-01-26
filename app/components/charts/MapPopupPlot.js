@@ -1,56 +1,32 @@
-import React, { Component } from 'react';
+import React from 'react';
 import * as d3 from 'd3';
-import debounce from 'debounce';
 import flatMap from 'lodash/flatMap';
 import uniqBy from 'lodash/uniqBy';
+import BaseChart from './BaseChart';
 import { modelColors } from 'constants/colors';
 
-class MapPopupPlot extends Component {
-  constructor() {
-    super();
-    this.onPageResize = this.onPageResize.bind(this);
-  }
-
-  componentDidMount() {
-    this.drawChart();
-    window.addEventListener('resize', this.onPageResize);
-  }
-
-  componentDidUpdate() {
-    this.drawChart();
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.onPageResize);
-  }
-
-  onPageResize() {
-    debounce(this.drawChart.bind(this), 200)();
-  }
-
+class MapPopupPlot extends BaseChart {
   drawChart() {
     if (!this.chart) {
       return;
     }
 
-    const getBoxQuartiles = (data) => ([
-      d3.quantile(data, 0.25),
-      d3.quantile(data, 0.5),
-      d3.quantile(data, 0.75)
+    const {
+      margin,
+      data
+    } = this.props;
+
+    const getBoxQuartiles = (d) => ([
+      d3.quantile(d, 0.25),
+      d3.quantile(d, 0.5),
+      d3.quantile(d, 0.75)
     ]);
-    const values = this.props.data.map((d) => d.value).sort();
+    const values = data.map((d) => d.value).sort();
     const quartiles = getBoxQuartiles(values);
     const minValue = Math.min(...values);
     const maxValue = Math.max(...values);
-    const models = uniqBy(flatMap(this.props.data, (d) => d.model_short_name));
+    const models = uniqBy(flatMap(data, (d) => d.model_short_name));
     const colorFor = (model) => modelColors[models.indexOf(model)];
-
-    const margin = {
-      left: 10,
-      right: 10,
-      top: 10,
-      bottom: 60
-    };
 
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
@@ -139,7 +115,7 @@ class MapPopupPlot extends Component {
       .attr('y2', y + (whiskerWidth / 2));
 
     svg.selectAll('.dot')
-      .data(this.props.data)
+      .data(data)
       .enter()
       .append('circle')
       .attr('r', 5)
@@ -181,10 +157,18 @@ class MapPopupPlot extends Component {
 }
 
 MapPopupPlot.propTypes = {
+  ...BaseChart.propTypes,
   data: React.PropTypes.array.isRequired
 };
 
 MapPopupPlot.defaultProps = {
+  ...BaseChart.defaultProps,
+  margin: {
+    left: 10,
+    right: 10,
+    top: 10,
+    bottom: 60
+  }
 };
 
 export default MapPopupPlot;

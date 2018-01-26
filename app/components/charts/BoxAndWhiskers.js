@@ -1,58 +1,36 @@
-import React, { Component } from 'react';
+import React from 'react';
 import * as d3 from 'd3';
-import debounce from 'debounce';
 import flatMap from 'lodash/flatMap';
 import uniqBy from 'lodash/uniqBy';
 
 import InfoButton from './InfoButton';
+import BaseChart from './BaseChart';
 
-class BoxAndWhiskers extends Component {
-  constructor() {
-    super();
-    this.onPageResize = this.onPageResize.bind(this);
-  }
-
-  componentDidMount() {
-    this.drawChart();
-    window.addEventListener('resize', this.onPageResize);
-  }
-
-  componentDidUpdate() {
-    this.drawChart();
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.onPageResize);
-  }
-
-  onPageResize() {
-    debounce(this.drawChart.bind(this), 200)();
-  }
-
+class BoxAndWhiskers extends BaseChart {
   drawChart() {
     if (!this.chart) {
       return;
     }
 
+    const {
+      margin,
+      scenarios,
+      remote,
+      yTicks
+    } = this.props;
+
     const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
-    const findScenario = (slug) => (this.props.scenarios.find((s) => slug.toString() === s.slug) || {});
+    const findScenario = (slug) => (scenarios.find((s) => slug.toString() === s.slug) || {});
     const tickFormat = (slug) => findScenario(slug).label;
     const colorFor = (slug) => findScenario(slug).color;
-
-    const margin = {
-      left: 30,
-      right: 30,
-      top: 30,
-      bottom: 30
-    };
 
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
     const domain = {
-      x: this.props.remote.data.map((d) => d.swl).filter(uniq),
+      x: remote.data.map((d) => d.swl).filter(uniq),
       y: [
-        Math.min.apply(null, this.props.remote.data.map((d) => d.minimum)),
-        Math.max.apply(null, this.props.remote.data.map((d) => d.maximum))
+        Math.min.apply(null, remote.data.map((d) => d.minimum)),
+        Math.max.apply(null, remote.data.map((d) => d.maximum))
       ]
     };
 
@@ -74,7 +52,7 @@ class BoxAndWhiskers extends Component {
         .tickSizeOuter(0),
       y: d3.axisLeft()
         .scale(scale.y)
-        .ticks(this.props.yTicks)
+        .ticks(yTicks)
         .tickSizeInner(-width)
         .tickSizeOuter(0)
         .tickPadding(10)
@@ -101,7 +79,7 @@ class BoxAndWhiskers extends Component {
 
     // each bar with whiskers (visualization element)
     const bars = svg.selectAll('.dot')
-      .data(this.props.remote.data)
+      .data(remote.data)
       .enter()
       .append('g');
 
@@ -185,6 +163,7 @@ class BoxAndWhiskers extends Component {
 }
 
 BoxAndWhiskers.propTypes = {
+  ...BaseChart.propTypes,
   iso: React.PropTypes.string.isRequired,
   title: React.PropTypes.func.isRequired,
   info: React.PropTypes.func.isRequired,
@@ -203,6 +182,7 @@ BoxAndWhiskers.propTypes = {
 };
 
 BoxAndWhiskers.defaultProps = {
+  ...BaseChart.defaultProps,
   meta: {},
   scenarios: [],
   yTicks: 5,
