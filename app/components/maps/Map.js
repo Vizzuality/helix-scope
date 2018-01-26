@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from 'react-dom';
+import { render, unmountComponentAtNode } from 'react-dom';
 import $ from 'jquery';
 import L from 'leaflet';
 import LoadingSpinner from 'components/common/LoadingSpinner';
@@ -123,6 +123,11 @@ class Map extends React.Component {
     });
     this.map.on('drag', () => {
       this.props.onMapDrag(this.getMapParams());
+    });
+    this.map.on('popupclose', ({ popup }) => {
+      unmountComponentAtNode(
+        document.querySelector(`.${popup.options.className} .leaflet-popup-content`)
+      );
     });
     this.map.on('click', (e) => {
       const {
