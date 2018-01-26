@@ -133,6 +133,7 @@ class Map extends React.Component {
       if (!this.props.mapData) return;
 
       const {
+        id,
         measure,
         scenario,
         indicator
@@ -172,10 +173,12 @@ class Map extends React.Component {
           which has experienced ${scenario.name} relative to pre-industrial levels.
           The map shows the average values of the model projections (${mean.toFixed(2)} ${indicator.unit}).
         `;
+        const popupClassName = `details-popup-${id}`;
         const popup = L.popup({
+          className: popupClassName,
           closeButton: false,
-          className: 'details-popup',
-          maxWidth: 'auto'
+          maxWidth: 400,
+          minWidth: 400
         })
           .setLatLng(e.latlng)
           .openOn(this.map);
@@ -187,7 +190,7 @@ class Map extends React.Component {
               {dynamicText}
             </div>
           </Popup>,
-          document.querySelector('.details-popup .leaflet-popup-content')
+          document.querySelector(`.${popupClassName} .leaflet-popup-content`)
         );
       }).catch((error) => {
         console.error(error);
