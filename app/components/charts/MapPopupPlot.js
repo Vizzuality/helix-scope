@@ -28,6 +28,8 @@ class MapPopupPlot extends BaseChart {
     const maxValue = Math.max(...values);
     const models = uniqBy(flatMap(data, (d) => d.model_short_name));
     const colorFor = (model) => modelColors[models.indexOf(model)];
+    const showLastWithUnit = (d, idx, arr) => (idx === (arr.length - 1) ? `${d} ${unit}` : d);
+    const tickCount = Math.max(4, data.length / 2);
 
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
@@ -45,8 +47,8 @@ class MapPopupPlot extends BaseChart {
     const axes = {
       x: d3.axisBottom()
         .scale(scale.x)
-        .ticks(data.length / 2)
-        .tickFormat((d, idx, arr) => (idx === (arr.length - 1) ? `${d} ${unit}` : d))
+        .ticks(tickCount)
+        .tickFormat(showLastWithUnit)
         .tickSizeOuter(0)
         .tickSizeInner(10)
     };

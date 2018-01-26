@@ -137,69 +137,44 @@ class Map extends React.Component {
 
       if (!this.props.mapData) return;
 
-      const {
-        id,
-        measure,
-        scenario,
-        indicator
-      } = this.props.mapData;
+      this.getPopupData(lng, lat)
+        .then(this.createPopup.bind(this, lng, lat));
+    });
+  }
 
-      const query = `
-        SELECT
-          m.model_short_name,
-          m.model_long_name,
-          run,
-          ${measure.slug} as value
-        FROM five_grid_shapefiles s
-          INNER JOIN master_5x5 m on m.shape_id = s.id_val
-        WHERE
-          ST_WITHIN(
-            ST_GeomFromText('POINT(${lng} ${lat})', 4326),
-            s.the_geom
-          )
-          AND m.swl_info = ${scenario.slug}
-          AND m.variable = '${indicator.slug}'
-      `;
+  getPopupData(lng, lat) {
+    const {
+      measure,
+      scenario,
+      indicator
+    } = this.props.mapData;
 
-      axios.get(ENDPOINT_SQL, {
-        params: {
-          q: query
-        }
-      }).then((response) => {
-        const data = response.data.rows;
-        if (!data || !data.length) return;
+    const query = `
+      SELECT
+        m.model_short_name,
+        m.model_long_name,
+        run,
+        ${measure.slug} as value
+      FROM five_grid_shapefiles s
+        INNER JOIN master_5x5 m on m.shape_id = s.id_val
+      WHERE
+        ST_WITHIN(
+          ST_GeomFromText('POINT(${lng} ${lat})', 4326),
+          s.the_geom
+        )
+        AND m.swl_info = ${scenario.slug}
+        AND m.variable = '${indicator.slug}'
+    `;
 
-        const title = `${indicator.name} under ${scenario.name}`;
-        const mean = data.map((d) => d.value).reduce((acc, v) => acc + v, 0) / data.length;
-        const dynamicText = `
-          Each point represents a model run. Together, they represent the range of possible futures
-          for the ${measure.name} of ${indicator.name} in the area you have selected, in a world
-          which has experienced ${scenario.name} relative to pre-industrial levels.
-          The map shows the average values of the model projections (${mean.toFixed(2)} ${indicator.unit}).
-        `;
-        const popupClassName = `details-popup-${id}`;
-        const popup = L.popup({
-          className: popupClassName,
-          closeButton: false,
-          maxWidth: 400,
-          minWidth: 400
-        })
-          .setLatLng(e.latlng)
-          .openOn(this.map);
-
-        render(
-          <Popup title={title} onCloseClick={() => this.map.closePopup(popup)}>
-            <MapPopupPlot data={data} unit={indicator.unit} />
-            <div>
-              {dynamicText}
-            </div>
-          </Popup>,
-          document.querySelector(`.${popupClassName} .leaflet-popup-content`)
-        );
-      }).catch((error) => {
+    return axios.get(ENDPOINT_SQL, {
+      params: {
+        q: query
+      }
+    })
+      .then((response) => response.data.rows)
+      .catch((error) => {
         console.error(error);
       });
-    });
   }
 
   getLatLng() {
@@ -273,6 +248,42 @@ class Map extends React.Component {
     `;
 
     return query;
+  }
+
+  createPopup(lng, lat, data) {
+    if (!data || !data.length) return;
+
+    const {
+      id,
+      measure,
+      scenario,
+      indicator
+    } = this.props.mapData;
+
+    const title = `${indicator.name} under ${scenario.name}`;
+    const mean = data.map((d) => d.value).reduce((acc, v) => acc + v, 0) / data.length;
+    const popupClassName = `details-popup-${id}`;
+    const popup = L.popup({
+      className: popupClassName,
+      closeButton: false,
+      maxWidth: 400,
+      minWidth: 400
+    })
+      .setLatLng(L.latLng(lat, lng))
+      .openOn(this.map);
+
+    render(
+      <Popup title={title} onCloseClick={() => this.map.closePopup(popup)}>
+        <MapPopupPlot data={data} unit={indicator.unit} />
+        <div>
+          Each point represents a model run. Together, they represent the range of possible futures
+          for the ${measure.name} of ${indicator.name} in the area you have selected, in a world
+          which has experienced ${scenario.name} relative to pre-industrial levels.
+          The map shows the average values of the model projections (${mean.toFixed(2)} ${indicator.unit}).
+        </div>
+      </Popup>,
+      document.querySelector(`.${popupClassName} .leaflet-popup-content`)
+    );
   }
 
   updateLayer(layer) {
