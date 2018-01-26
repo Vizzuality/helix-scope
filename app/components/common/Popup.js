@@ -7,7 +7,7 @@ const Popup = (props) => {
     <div className="c-popup">
       <div className="header">
         {props.title}
-        <Button icon="close" style="none" size="small" position="right" />
+        <Button icon="close" style="primary" size="small" position="right" onClick={props.onCloseClick} />
       </div>
       <div className="content">
         {props.children}
@@ -17,6 +17,7 @@ const Popup = (props) => {
 };
 
 Popup.propTypes = {
+  onCloseClick: React.PropTypes.func,
   children: React.PropTypes.any,
   title: React.PropTypes.string
 };
