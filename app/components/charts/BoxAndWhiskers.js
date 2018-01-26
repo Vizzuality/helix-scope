@@ -7,10 +7,14 @@ import uniqBy from 'lodash/uniqBy';
 import InfoButton from './InfoButton';
 
 class BoxAndWhiskers extends Component {
+  constructor() {
+    super();
+    this.onPageResize = this.onPageResize.bind(this);
+  }
 
   componentDidMount() {
     this.drawChart();
-    window.addEventListener('resize', this.onPageResize.bind(this));
+    window.addEventListener('resize', this.onPageResize);
   }
 
   componentDidUpdate() {
@@ -18,7 +22,7 @@ class BoxAndWhiskers extends Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.onPageResize.bind(this));
+    window.removeEventListener('resize', this.onPageResize);
   }
 
   onPageResize() {

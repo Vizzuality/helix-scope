@@ -6,9 +6,14 @@ import uniqBy from 'lodash/uniqBy';
 import { modelColors } from 'constants/colors';
 
 class MapPopupPlot extends Component {
+  constructor() {
+    super();
+    this.onPageResize = this.onPageResize.bind(this);
+  }
+
   componentDidMount() {
     this.drawChart();
-    window.addEventListener('resize', this.onPageResize.bind(this));
+    window.addEventListener('resize', this.onPageResize);
   }
 
   componentDidUpdate() {
@@ -16,7 +21,7 @@ class MapPopupPlot extends Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.onPageResize.bind(this));
+    window.removeEventListener('resize', this.onPageResize);
   }
 
   onPageResize() {
