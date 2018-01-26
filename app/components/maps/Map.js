@@ -277,9 +277,9 @@ class Map extends React.Component {
         <MapPopupPlot data={data} unit={indicator.unit} />
         <div>
           Each point represents a model run. Together, they represent the range of possible futures
-          for the ${measure.name} of ${indicator.name} in the area you have selected, in a world
-          which has experienced ${scenario.name} relative to pre-industrial levels.
-          The map shows the average values of the model projections (${mean.toFixed(2)} ${indicator.unit}).
+          for the {measure.name} of {indicator.name} in the area you have selected, in a world
+          which has experienced {scenario.name} relative to pre-industrial levels.
+          The map shows the average values of the model projections ({mean.toFixed(2)} {indicator.unit}).
         </div>
       </Popup>,
       document.querySelector(`.${popupClassName} .leaflet-popup-content`)
