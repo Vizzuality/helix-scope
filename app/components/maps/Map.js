@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
-import $ from 'jquery';
+import axios from 'axios';
 import L from 'leaflet';
 import LoadingSpinner from 'components/common/LoadingSpinner';
 import Popup from 'components/common/Popup';
@@ -161,13 +161,12 @@ class Map extends React.Component {
           AND m.variable = '${indicator.slug}'
       `;
 
-      $.get({
-        url: ENDPOINT_SQL,
-        data: {
+      axios.get(ENDPOINT_SQL, {
+        params: {
           q: query
         }
-      }).then((res) => {
-        const data = res.rows;
+      }).then((response) => {
+        const data = response.data.rows;
         if (!data || !data.length) return;
 
         const title = `${indicator.name} under ${scenario.name}`;

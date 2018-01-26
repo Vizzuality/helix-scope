@@ -1,4 +1,4 @@
-import $ from 'jquery';
+import axios from 'axios';
 import { push } from 'react-router-redux';
 import { ENDPOINT_TILES, ENDPOINT_SQL, MAX_MAPS } from 'constants/map';
 
@@ -167,15 +167,14 @@ function setMapData(mapData, newData) {
 
 export function createLayer(mapData, layerData) {
   return (dispatch) => {
-    $.post({
-      url: ENDPOINT_TILES,
-      dataType: 'json',
-      contentType: 'application/json; charset=UTF-8',
-      data: layerData
-    }).then((res) => {
+    axios.post(ENDPOINT_TILES, layerData, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(({ data }) => {
       dispatch(setMapData(mapData, {
         layer: {
-          tileUrl: `${ENDPOINT_TILES}${res.layergroupid}/{z}/{x}/{y}@2x.png32`,
+          tileUrl: `${ENDPOINT_TILES}${data.layergroupid}/{z}/{x}/{y}@2x.png32`,
           slug: `layer_${mapData.indicator.slug}_${mapData.measure.slug}_${mapData.scenario.slug}`
         }
       }));
@@ -189,14 +188,13 @@ export function getMapBuckets(mapData) {
   return (dispatch) => {
     const query = `SELECT * FROM get_buckets('${mapData.indicator.slug}', '${mapData.measure.slug}', ${mapData.scenario.slug}, 7)`;
 
-    $.get({
-      url: ENDPOINT_SQL,
-      data: {
+    axios.get(ENDPOINT_SQL, {
+      params: {
         q: query
       }
-    }).then((res) => {
+    }).then(({ data }) => {
       dispatch(setMapData(mapData, {
-        bucket: res.rows
+        bucket: data.rows
       }));
     }).catch((error) => {
       console.error(error);
