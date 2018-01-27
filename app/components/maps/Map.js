@@ -1,10 +1,15 @@
 import React from 'react';
+import { render, unmountComponentAtNode } from 'react-dom';
+import axios from 'axios';
 import L from 'leaflet';
 import LoadingSpinner from 'components/common/LoadingSpinner';
+import Popup from 'components/common/Popup';
+import MapPopupPlot from 'components/charts/MapPopupPlot';
 import objectToCSS from 'utils/objectToCSS';
 import {
   BASEMAP_GEOM_TILE,
   BASEMAP_LABELS_TILE,
+  ENDPOINT_SQL,
   MAP_MIN_ZOOM,
   MAP_LAYER_SPEC,
   MAP_VECTOR_CSS
@@ -115,15 +120,63 @@ class Map extends React.Component {
   }
 
   setListeners() {
-    function zoomend() {
+    this.map.on('zoomend', () => {
       this.props.onMapDrag(this.getMapParams());
-    }
-    function drag() {
+    });
+    this.map.on('drag', () => {
       this.props.onMapDrag(this.getMapParams());
-    }
+    });
+    this.map.on('popupclose', ({ popup }) => {
+      unmountComponentAtNode(
+        document.querySelector(`.${popup.options.className} .leaflet-popup-content`)
+      );
+    });
+    this.map.on('click', (e) => {
+      const {
+        lng,
+        lat
+      } = e.latlng;
 
-    this.map.on('zoomend', zoomend.bind(this));
-    this.map.on('drag', drag.bind(this));
+      if (!this.props.mapData) return;
+
+      this.getPopupData(lng, lat)
+        .then(this.createPopup.bind(this, lng, lat));
+    });
+  }
+
+  getPopupData(lng, lat) {
+    const {
+      measure,
+      scenario,
+      indicator
+    } = this.props.mapData;
+
+    const query = `
+      SELECT
+        m.model_short_name,
+        m.model_long_name,
+        run,
+        ${measure.slug} as value
+      FROM five_grid_shapefiles s
+        INNER JOIN master_5x5 m on m.shape_id = s.id_val
+      WHERE
+        ST_WITHIN(
+          ST_GeomFromText('POINT(${lng} ${lat})', 4326),
+          s.the_geom
+        )
+        AND m.swl_info = ${scenario.slug}
+        AND m.variable = '${indicator.slug}'
+    `;
+
+    return axios.get(ENDPOINT_SQL, {
+      params: {
+        q: query
+      }
+    })
+      .then((response) => response.data.rows)
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   getLatLng() {
@@ -199,6 +252,42 @@ class Map extends React.Component {
     return query;
   }
 
+  createPopup(lng, lat, data) {
+    if (!data || !data.length) return;
+
+    const {
+      id,
+      measure,
+      scenario,
+      indicator
+    } = this.props.mapData;
+
+    const title = `${indicator.name} under ${scenario.name}`;
+    const mean = data.map((d) => d.value).reduce((acc, v) => acc + v, 0) / data.length;
+    const popupClassName = `details-popup-${id}`;
+    const popup = L.popup({
+      className: popupClassName,
+      closeButton: false,
+      maxWidth: 400,
+      minWidth: 400
+    })
+      .setLatLng(L.latLng(lat, lng))
+      .openOn(this.map);
+
+    render(
+      <Popup title={title} onCloseClick={() => this.map.closePopup(popup)}>
+        <MapPopupPlot data={data} unit={indicator.unit} />
+        <div>
+          Each point represents a model run. Together, they represent the range of possible futures
+          for the {measure.name} of {indicator.name} in the area you have selected, in a world
+          which has experienced {scenario.name} relative to pre-industrial levels.
+          The map shows the average values of the model projections ({mean.toFixed(2)} {indicator.unit}).
+        </div>
+      </Popup>,
+      document.querySelector(`.${popupClassName} .leaflet-popup-content`)
+    );
+  }
+
   updateLayer(layer) {
     if (this.layer) {
       this.layer.setUrl(layer.tileUrl);
@@ -254,6 +343,7 @@ class Map extends React.Component {
 Map.propTypes = {
   mapData: React.PropTypes.shape({
     id: React.PropTypes.string,
+    measure: React.PropTypes.object,
     layer: React.PropTypes.object,
     scenario: React.PropTypes.object,
     category: React.PropTypes.object,

@@ -1,6 +1,11 @@
 import { connect } from 'react-redux';
 import Map from 'components/maps/Map';
-import { panMaps, updateURL, createLayer, getMapBuckets } from 'actions/maps';
+import {
+  createLayer,
+  getMapBuckets,
+  panMaps,
+  updateURL
+} from 'actions/maps';
 
 const mapStateToProps = state => ({
   mapConfig: {
@@ -9,7 +14,6 @@ const mapStateToProps = state => ({
     source: state.maps.source
   }
 });
-
 
 const mapDispatchToProps = dispatch => ({
   onMapDrag: params => {

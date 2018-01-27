@@ -7,3 +7,10 @@ export const categoryColorScheme = {
   'ag': ['#fff452', '#f8e44d', '#d6d346', '#b7c241', '#96b13b', '#74a236', '#509131'],
   'cl': ['#fdeb58', '#fbd24c', '#f8b93f', '#f3a034', '#ee8628', '#e76a1d', '#e04b12']
 };
+
+export const modelColors = [
+  '#d36060',
+  '#6bdfa1',
+  '#8d43da',
+  '#fbd24c'
+];

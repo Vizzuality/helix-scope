@@ -1,75 +1,55 @@
-import React, { Component } from 'react';
-import d3 from 'd3';
-import debounce from 'debounce';
+import React from 'react';
+import * as d3 from 'd3';
 import uniqBy from 'lodash/uniqBy';
 
+import BaseChart from './BaseChart';
 import InfoButton from './InfoButton';
 
-class RegularBar extends Component {
-
-  componentDidMount() {
-    this.drawChart();
-    window.addEventListener('resize', this.onPageResize.bind(this));
-  }
-
-  componentDidUpdate() {
-    this.drawChart();
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.onPageResize.bind(this));
-  }
-
-  onPageResize() {
-    debounce(this.drawChart.bind(this), 200)();
-  }
-
+class RegularBar extends BaseChart {
   drawChart() {
     if (!this.chart) {
       return;
     }
+    const {
+      margin,
+      scenarios,
+      remote,
+      yTicks
+    } = this.props;
 
     const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
-    const findScenario = (slug) => (this.props.scenarios.find((s) => slug.toString() === s.slug) || {});
+    const findScenario = (slug) => (scenarios.find((s) => slug.toString() === s.slug) || {});
     const tickFormat = (slug) => findScenario(slug).label;
     const colorFor = (slug) => findScenario(slug).color;
-
-    const margin = {
-      left: 30,
-      right: 30,
-      top: 30,
-      bottom: 30
-    };
 
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
     const domain = {
-      x: this.props.remote.data.map((d) => d.swl).filter(uniq),
-      y: d3.extent(this.props.remote.data, (d) => d.value)
+      x: remote.data.map((d) => d.swl).filter(uniq),
+      y: d3.extent(remote.data, (d) => d.value)
     };
 
     const scale = {
-      x: d3.scale.ordinal()
+      x: d3.scalePoint()
         .domain(domain.x)
-        .rangePoints([0, width], 1),
-      y: d3.scale.linear()
+        .range([0, width])
+        .padding(1),
+      y: d3.scaleLinear()
         .domain(domain.y)
         .nice()
         .range([height, 0])
     };
 
     const axes = {
-      x: d3.svg.axis()
+      x: d3.axisBottom()
         .scale(scale.x)
         .tickFormat(tickFormat)
-        .outerTickSize(0)
-        .orient('bottom'),
-      y: d3.svg.axis()
+        .tickSizeOuter(0),
+      y: d3.axisLeft()
         .scale(scale.y)
-        .orient('left')
-        .ticks(this.props.yTicks)
-        .innerTickSize(-width)
-        .outerTickSize(0)
+        .ticks(yTicks)
+        .tickSizeInner(-width)
+        .tickSizeOuter(0)
         .tickPadding(10)
     };
 
@@ -94,7 +74,7 @@ class RegularBar extends Component {
       .call(axes.y);
 
     svg.selectAll('.dot')
-      .data(this.props.remote.data)
+      .data(remote.data)
       .enter()
       .append('rect')
       .attr('fill', (d) => colorFor(d.swl))
@@ -122,6 +102,7 @@ class RegularBar extends Component {
 }
 
 RegularBar.propTypes = {
+  ...BaseChart.propTypes,
   iso: React.PropTypes.string.isRequired,
   title: React.PropTypes.string.isRequired,
   info: React.PropTypes.func.isRequired,
@@ -135,6 +116,7 @@ RegularBar.propTypes = {
 };
 
 RegularBar.defaultProps = {
+  ...BaseChart.defaultProps,
   meta: {},
   scenarios: [],
   yTicks: 5,
