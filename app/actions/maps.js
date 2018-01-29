@@ -1,7 +1,12 @@
 import axios from 'axios';
 import { push } from 'react-router-redux';
 import uuid from 'uuid/v4';
-import { ENDPOINT_TILES, ENDPOINT_SQL, MAX_MAPS } from 'constants/map';
+import {
+  ENDPOINT_SQL,
+  ENDPOINT_TILES,
+  MAP_NUMBER_BUCKETS,
+  MAX_MAPS
+} from 'constants/map';
 
 export const MAP_UPDATE_DATA = 'MAP_UPDATE_DATA';
 export const MAP_UPDATE_PAN = 'MAP_UPDATE_PAN';
@@ -182,7 +187,23 @@ export function createLayer(mapData, layerData) {
 
 export function getMapBuckets(mapData) {
   return (dispatch) => {
-    const query = `SELECT * FROM get_buckets('${mapData.indicator.slug}', '${mapData.measure.slug}', ${mapData.scenario.slug}, 7)`;
+    const query = `
+      WITH data AS (
+        SELECT ${mapData.measure.slug} AS value
+        FROM master_admin0 m
+        WHERE m.variable = '${mapData.indicator.slug}'
+        AND m.swl_info = ${mapData.scenario.slug}
+        AND ${mapData.measure.slug} IS NOT NULL
+      )
+      SELECT UNNEST(
+        CDB_JenksBins(
+          ARRAY_AGG(
+            DISTINCT(value::numeric)
+          ), ${MAP_NUMBER_BUCKETS}
+        )
+      ) AS value,
+      min(data.value) as "minValue"
+      FROM data`;
 
     axios.get(ENDPOINT_SQL, {
       params: {
