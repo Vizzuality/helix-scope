@@ -48,9 +48,6 @@ used on cartodb to build the application backend (tables and pgplsql functions)
 application configuration based on the `meta_` table family. This is used to
 initialize the applicaton. The function takes no arguments.
 
-* `get_buckets` - This function returns the bucket (or bin) value boundaries
-that allows us to draw the range legend in the map component.
-
 * `get_country` - This function returns a JSON structure with information related to the given country. Its original intent was to return the data used to draw the several charts in the country detail page, but that need was found to be better served by specific SQL queries for each chart.
 
 ## Site architecture
