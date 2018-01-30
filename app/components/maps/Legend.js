@@ -31,7 +31,7 @@ class Legend extends React.Component {
       return <div></div>;
     }
 
-    const perc = 100 / (colors.length - 1);
+    const perc = 100 / MAP_NUMBER_BUCKETS;
     const background = `linear-gradient(to right, ${colors.map((c, index) => `${c} ${perc * index}%, ${c} ${perc * (index + 1)}%`).join(', ')})`;
     const rangeStyle = {
       width: `${100 * MAP_NUMBER_BUCKETS / (MAP_NUMBER_BUCKETS + 1)}%`,
