@@ -77,7 +77,7 @@ class Map extends React.Component {
     if (bucketChanged && bucketEmpty) {
       this.bucket = props.mapData.bucket;
       this.setLoadingStatus(true);
-      props.getMapBuckets(this.props.mapData);
+      props.getMapBuckets(props.mapData);
     }
 
     if (this.bucket && props.mapData.layer &&
