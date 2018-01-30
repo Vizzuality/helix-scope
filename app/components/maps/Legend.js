@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatSI } from 'utils/format';
 import { categoryColorScheme } from 'constants/colors';
 import { MAP_NUMBER_BUCKETS } from 'constants/map';
 
@@ -10,6 +11,18 @@ class Legend extends React.Component {
     return paramsChanged || true;
   }
 
+  renderLegendValue(value, index) {
+    const labelStyle = {
+      width: `${100 / (MAP_NUMBER_BUCKETS + 1)}%`
+    };
+
+    return (
+      <li style={labelStyle} key={`legend-item-${index}`}>
+        {formatSI(value)}
+      </li>
+    );
+  }
+
   render() {
     const { mapData } = this.props;
     const colors = categoryColorScheme[mapData.category.slug];
@@ -19,8 +32,7 @@ class Legend extends React.Component {
     }
 
     const perc = 100 / (colors.length - 1);
-    const background = `linear-gradient(to right, ${colors.map((c, index) => `${c} ${perc * index}%`).join(', ')})`;
-    /* const background = `linear-gradient(to right, ${colors.map((c, index) => `${c} ${perc * index}%, ${c} ${perc * (index + 1)}%`).join(', ')})`;*/
+    const background = `linear-gradient(to right, ${colors.map((c, index) => `${c} ${perc * index}%, ${c} ${perc * (index + 1)}%`).join(', ')})`;
     const rangeStyle = {
       width: `${100 * MAP_NUMBER_BUCKETS / (MAP_NUMBER_BUCKETS + 1)}%`,
       background
@@ -29,23 +41,15 @@ class Legend extends React.Component {
       width: `${100 * (MAP_NUMBER_BUCKETS + 1) / MAP_NUMBER_BUCKETS}%`,
       marginLeft: `-${100 / (MAP_NUMBER_BUCKETS * 2)}%`
     };
-    const labelStyle = {
-      width: `${100 / (MAP_NUMBER_BUCKETS + 1)}%`
-    };
-    const legendValue = (value, index) => ((
-      <li style={labelStyle} key={`legend-item-${index}`}>
-        {value.toFixed(1)}
-      </li>
-    ));
 
     return (
       <div className="c-legend" style={legendStyle}>
         <div className="range" style={rangeStyle}></div>
         <ul className="labels">
-          {legendValue(mapData.bucket[0].minValue, 0)}
+          {this.renderLegendValue(mapData.bucket[0].minValue, 0)}
           {mapData.bucket.map((bucket, index) =>
             bucket.value && (
-              legendValue(bucket.value, index + 1)
+              this.renderLegendValue(bucket.value, index + 1)
             )
           )}
         </ul>
