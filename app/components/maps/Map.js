@@ -132,14 +132,12 @@ class Map extends React.Component {
       );
     });
     this.map.on('click', (e) => {
-      const {
-        lng,
-        lat
-      } = e.latlng;
+      const { lng, lat } = e.latlng;
+      const { lng: wLng, lat: wLat } = e.latlng.wrap(); // wrap to work with world copy
 
       if (!this.props.mapData) return;
 
-      this.getPopupData(lng, lat)
+      this.getPopupData(wLng, wLat)
         .then(this.createPopup.bind(this, lng, lat));
     });
   }
