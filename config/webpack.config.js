@@ -9,6 +9,7 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const rootPath = process.cwd();
 const postcssConfigPath = path.resolve(rootPath, '.postcssrc');
@@ -95,15 +96,16 @@ const webpackConfig = {
 
 // Environment configuration
 if (isProduction) {
-  webpackConfig.plugins.push(new webpack.optimize.UglifyJsPlugin({
-    compress: {
-      warnings: false,
-      dead_code: true,
-      drop_debugger: true,
-      drop_console: true
+  webpackConfig.plugins.push(new UglifyJsPlugin({
+    uglifyOptions: {
+      compress: {
+        warnings: false,
+        dead_code: true,
+        drop_debugger: true,
+        drop_console: true
+      }
     },
-    comments: false,
-    sourceMap: true
+    sourceMap: false
   }));
 } else {
   webpackConfig.devtool = 'eval-source-map';
