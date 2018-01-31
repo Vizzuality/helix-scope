@@ -1,0 +1,9 @@
+{
+  "plugins": {
+    "postcss-import": {},
+    "postcss-simple-vars": {},
+    "postcss-nested": {},
+    "lost": {},
+    "postcss-cssnext": {}
+  }
+}

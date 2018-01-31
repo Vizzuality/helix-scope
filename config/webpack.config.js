@@ -6,25 +6,50 @@ process.env.BROWSERSLIST_CONFIG = 'browserslist';
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const cssnext = require('postcss-cssnext');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
-const postcssImporter = require('postcss-import');
-const postcssSimpleVars = require('postcss-simple-vars');
-const postcssNested = require('postcss-nested');
-const lost = require('lost');
-
 const rootPath = process.cwd();
+const postcssConfigPath = path.resolve(rootPath, '.postcssrc');
 
-const webpackConfig = {
-
-  entry: [
-    path.join(rootPath, 'app/main.jsx')
-  ],
+const webpackConfigNew = {
+  entry: ['./app/main.jsx'],
 
   output: {
-    path: path.join(rootPath, 'dist/'),
+    path: path.join(rootPath, '/dist/'),
     filename: '[name]-[hash].js',
     publicPath: '/'
+  },
+
+  module: {
+    rules: [
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader'
+      },
+      {
+        test: /\.pcss$/,
+        exclude: /node_modules/,
+        use: [
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: { config: { path: postcssConfigPath } }
+          }
+        ]
+      },
+      {
+        test: /\.(eot|ttf|woff2|woff)$/,
+        loader: 'url-loader?prefix=fonts/&context=./app/fonts'
+      },
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          'css-loader'
+        ]
+      }
+    ]
   },
 
   plugins: [
@@ -33,9 +58,8 @@ const webpackConfig = {
       inject: 'body',
       filename: 'index.html'
     }),
-    new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       'process.env.GA': JSON.stringify(process.env.GOOGLE_ANALYTICS)
@@ -46,24 +70,10 @@ const webpackConfig = {
     })
   ],
 
-  module: {
-    loaders: [
-      { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel' },
-      {
-        test: /\.pcss$/,
-        exclude: /node_modules/,
-        loader: 'style!css!postcss'
-      },
-      {
-        test: /\.(eot|ttf|woff2|woff)$/,
-        loader: 'url-loader?prefix=fonts/&context=./app/fonts'
-      },
-      { test: /\.css$/, loader: 'style-loader!css-loader' }
-    ]
-  },
   resolve: {
-    root: [
-      rootPath
+    modules: [
+      rootPath,
+      'node_modules'
     ],
     alias: {
       actions: 'app/actions',
@@ -74,18 +84,11 @@ const webpackConfig = {
       utils: 'app/utils',
       fonts: 'app/fonts'
     },
-    extensions: ['', '.js', '.jsx']
-  },
-
-  postcss: (webpackPCss) => [
-    postcssImporter({ addDependencyTo: webpackPCss }),
-    cssnext,
-    lost,
-    postcssSimpleVars,
-    postcssNested
-  ]
-
+    extensions: ['.js', '.jsx']
+  }
 };
+
+const webpackConfig = webpackConfigNew;
 
 // Environment configuration
 if (process.env.NODE_ENV === 'production') {
@@ -96,7 +99,8 @@ if (process.env.NODE_ENV === 'production') {
       drop_debugger: true,
       drop_console: true
     },
-    comments: false
+    comments: false,
+    sourceMap: true
   }));
 } else {
   webpackConfig.devtool = 'eval-source-map';
