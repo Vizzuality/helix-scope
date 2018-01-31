@@ -5,12 +5,10 @@
   "main": "server.js",
   "scripts": {
     "build": "webpack --config ./config/webpack.config.js --progress --profile --colors",
-    "postinstall": "npm run build",
+    "postinstall": "yarn build",
     "lint": "./node_modules/.bin/eslint .",
-    "runTest": "./node_modules/mocha/bin/mocha --compilers js:babel-core/register --recursive --reporter nyan",
-    "test": "npm run lint && npm run runTest",
-    "test:watch": "npm run test -- --watch",
-    "prepush": "npm test"
+    "test": "yarn lint && NODE_PATH=./app jest",
+    "prepush": "yarn test"
   },
   "repository": {
     "type": "git",
@@ -71,7 +69,6 @@
     "webpack": "^1.13.0"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
     "cli-colors": "^0.0.2",
     "eslint": "^2.9.0",
     "eslint-config-airbnb": "^9.0.1",
@@ -79,10 +76,8 @@
     "eslint-plugin-jsx-a11y": "^1.2.0",
     "eslint-plugin-react": "^5.0.1",
     "husky": "^0.11.7",
-    "jsdom": "^9.3.0",
-    "mocha": "^2.5.3",
+    "jest": "^22.1.4",
     "node-fetch": "^1.7.3",
-    "react-addons-test-utils": "^15.1.0",
     "stylelint": "^8.2.0",
     "webpack-dev-middleware": "^1.6.1"
   }

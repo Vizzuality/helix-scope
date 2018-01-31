@@ -7,16 +7,15 @@ const PREFIXES = {
 };
 
 export function formatSI(num) {
-  if (num === 0) {
-    return '0';
-  }
-  let sig = Math.abs(num); // significand
+  let number = num;
   let exponent = 0;
-  while (sig >= 1000) {
-    sig /= 1000;
+
+  while (Math.abs(number) >= 1000) {
+    number /= 1000;
     exponent += 3;
   }
 
-  const signPrefix = num < 0 ? '-' : '';
-  return signPrefix + parseFloat(sig.toFixed(1)) + PREFIXES[exponent];
+  const rounded = parseFloat(Number(number).toFixed(1));
+
+  return rounded + PREFIXES[exponent];
 }
