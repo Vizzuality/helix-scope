@@ -5,12 +5,16 @@ process.env.BROWSERSLIST_CONFIG = 'browserslist';
 
 const path = require('path');
 const webpack = require('webpack');
+
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
+
 const rootPath = process.cwd();
 const postcssConfigPath = path.resolve(rootPath, '.postcssrc');
+const isProduction = process.env.NODE_ENV === 'production';
 
-const webpackConfigNew = {
+const webpackConfig = {
   entry: ['./app/main.jsx'],
 
   output: {
@@ -27,32 +31,33 @@ const webpackConfigNew = {
         loader: 'babel-loader'
       },
       {
-        test: /\.pcss$/,
+        test: /\.(css|pcss)$/,
         exclude: /node_modules/,
-        use: [
-          'style-loader',
-          'css-loader',
-          {
-            loader: 'postcss-loader',
-            options: { config: { path: postcssConfigPath } }
-          }
-        ]
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [
+            {
+              loader: 'css-loader',
+              options: { minimize: isProduction }
+            },
+            {
+              loader: 'postcss-loader',
+              options: { config: { path: postcssConfigPath } }
+            }
+          ]
+        })
       },
       {
         test: /\.(eot|ttf|woff2|woff)$/,
         loader: 'url-loader?prefix=fonts/&context=./app/fonts'
-      },
-      {
-        test: /\.css$/,
-        use: [
-          'style-loader',
-          'css-loader'
-        ]
       }
     ]
   },
 
   plugins: [
+    new ExtractTextPlugin(
+      isProduction ? '[name]-[hash].css' : '[name].css'
+    ),
     new HtmlWebpackPlugin({
       template: 'app/index.html',
       inject: 'body',
@@ -88,10 +93,8 @@ const webpackConfigNew = {
   }
 };
 
-const webpackConfig = webpackConfigNew;
-
 // Environment configuration
-if (process.env.NODE_ENV === 'production') {
+if (isProduction) {
   webpackConfig.plugins.push(new webpack.optimize.UglifyJsPlugin({
     compress: {
       warnings: false,
