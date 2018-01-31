@@ -2,7 +2,9 @@ import React from 'react';
 import * as d3 from 'd3';
 import flatMap from 'lodash/flatMap';
 import uniqBy from 'lodash/uniqBy';
+
 import BaseChart from './BaseChart';
+import { formatSI } from 'utils/format';
 import { modelColors } from 'constants/colors';
 
 class MapPopupPlot extends BaseChart {
@@ -28,7 +30,9 @@ class MapPopupPlot extends BaseChart {
     const maxValue = Math.max(...values);
     const models = uniqBy(flatMap(data, (d) => d.model_short_name));
     const colorFor = (model) => modelColors[models.indexOf(model)];
-    const showLastWithUnit = (d, idx, arr) => (idx === (arr.length - 1) ? `${d} ${unit}` : d);
+    const showLastWithUnit = (d, idx, arr) => (
+      idx === (arr.length - 1) ? `${formatSI(d, 2)} ${unit}` : formatSI(d, 2)
+    );
     const tickCount = Math.max(4, data.length / 2);
 
     const width = this.chart.offsetWidth - (margin.left + margin.right);

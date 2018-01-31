@@ -6,7 +6,7 @@ const PREFIXES = {
   0: ''
 };
 
-export function formatSI(num) {
+export function formatSI(num, decimalPlaces = 1) {
   let number = num;
   let exponent = 0;
 
@@ -15,7 +15,7 @@ export function formatSI(num) {
     exponent += 3;
   }
 
-  const rounded = parseFloat(Number(number).toFixed(1));
+  const rounded = parseFloat(Number(number).toFixed(decimalPlaces));
 
   return rounded + PREFIXES[exponent];
 }

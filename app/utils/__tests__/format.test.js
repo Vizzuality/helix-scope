@@ -32,7 +32,7 @@ describe('utils', () => {
       expect(formatSI(43.2344)).toBe('43.2');
     });
 
-    it('should have precision set up to 1 decimal place', () => {
+    it('should have precision set up to default 1 decimal place', () => {
       expect(formatSI(1200)).toBe('1.2k');
       expect(formatSI(34400)).toBe('34.4k');
       expect(formatSI(-34400)).toBe('-34.4k');
@@ -42,10 +42,17 @@ describe('utils', () => {
       expect(formatSI(-0.02344)).toBe('0');
     });
 
-    it('should round the value up to 1 decimal place precision', () => {
+    it('should round the value up to default 1 decimal place precision', () => {
       expect(formatSI(34460)).toBe('34.5k');
       expect(formatSI(3451)).toBe('3.5k');
       expect(formatSI(-3451)).toBe('-3.5k');
+    });
+
+    it('should round the value up to decimal place precision', () => {
+      expect(formatSI(34460, 2)).toBe('34.46k');
+      expect(formatSI(34466, 2)).toBe('34.47k');
+      expect(formatSI(3451, 2)).toBe('3.45k');
+      expect(formatSI(-3451, 2)).toBe('-3.45k');
     });
   });
 });
