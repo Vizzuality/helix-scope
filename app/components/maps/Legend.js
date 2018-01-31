@@ -1,5 +1,7 @@
 import React from 'react';
+import { formatSI } from 'utils/format';
 import { categoryColorScheme } from 'constants/colors';
+import { MAP_NUMBER_BUCKETS } from 'constants/map';
 
 class Legend extends React.Component {
   shouldComponentUpdate(props) {
@@ -9,22 +11,46 @@ class Legend extends React.Component {
     return paramsChanged || true;
   }
 
-  render() {
-    const colors = categoryColorScheme[this.props.mapData.category.slug];
+  renderLegendValue(value, index) {
+    const labelStyle = {
+      width: `${100 / (MAP_NUMBER_BUCKETS + 1)}%`
+    };
 
-    if (this.props.mapData && !this.props.mapData.bucket) {
+    return (
+      <li style={labelStyle} key={`legend-item-${index}`}>
+        {formatSI(value)}
+      </li>
+    );
+  }
+
+  render() {
+    const { mapData } = this.props;
+    const colors = categoryColorScheme[mapData.category.slug];
+
+    if (!mapData || !mapData.bucket || !mapData.bucket.length) {
       return <div></div>;
     }
 
-    const gradient = `linear-gradient(to right, ${colors.map((c, index) => `${c} ${(100 / (colors.length - 1)) * index}%`).join(', ')})`;
+    const perc = 100 / MAP_NUMBER_BUCKETS;
+    const background = `linear-gradient(to right, ${colors.map((c, index) => `${c} ${perc * index}%, ${c} ${perc * (index + 1)}%`).join(', ')})`;
+    const rangeStyle = {
+      width: `${100 * MAP_NUMBER_BUCKETS / (MAP_NUMBER_BUCKETS + 1)}%`,
+      background
+    };
+    const legendStyle = {
+      width: `${100 * (MAP_NUMBER_BUCKETS + 1) / MAP_NUMBER_BUCKETS}%`,
+      marginLeft: `-${100 / (MAP_NUMBER_BUCKETS * 2)}%`
+    };
+
     return (
-      <div className="c-legend">
+      <div className="c-legend" style={legendStyle}>
+        <div className="range" style={rangeStyle}></div>
         <ul className="labels">
-          <div className="range" style={{ background: gradient }}></div>
-          {this.props.mapData.bucket.map((bucket, index) =>
-            bucket.value && (<li key={`legend-item-${index}`}>
-              {parseFloat(bucket.value.toFixed(2))}
-            </li>)
+          {this.renderLegendValue(mapData.bucket[0].minValue, 0)}
+          {mapData.bucket.map((bucket, index) =>
+            bucket.value && (
+              this.renderLegendValue(bucket.value, index + 1)
+            )
           )}
         </ul>
       </div>

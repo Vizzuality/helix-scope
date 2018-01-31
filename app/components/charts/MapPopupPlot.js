@@ -2,7 +2,9 @@ import React from 'react';
 import * as d3 from 'd3';
 import flatMap from 'lodash/flatMap';
 import uniqBy from 'lodash/uniqBy';
+
 import BaseChart from './BaseChart';
+import { formatSI } from 'utils/format';
 import { modelColors } from 'constants/colors';
 
 class MapPopupPlot extends BaseChart {
@@ -22,13 +24,15 @@ class MapPopupPlot extends BaseChart {
       d3.quantile(d, 0.5),
       d3.quantile(d, 0.75)
     ]);
-    const values = data.map((d) => d.value).sort();
+    const values = data.map((d) => d.value).sort((a, b) => a - b);
     const quartiles = getBoxQuartiles(values);
     const minValue = Math.min(...values);
     const maxValue = Math.max(...values);
     const models = uniqBy(flatMap(data, (d) => d.model_short_name));
     const colorFor = (model) => modelColors[models.indexOf(model)];
-    const showLastWithUnit = (d, idx, arr) => (idx === (arr.length - 1) ? `${d} ${unit}` : d);
+    const showLastWithUnit = (d, idx, arr) => (
+      idx === (arr.length - 1) ? `${formatSI(d, 2)} ${unit}` : formatSI(d, 2)
+    );
     const tickCount = Math.max(4, data.length / 2);
 
     const width = this.chart.offsetWidth - (margin.left + margin.right);
@@ -83,13 +87,15 @@ class MapPopupPlot extends BaseChart {
 
     // quartiles box
     const qboxHeight = 30;
+    const qboxWidth = scale.x(quartiles[2]) - scale.x(quartiles[0]);
+
     bar.append('rect')
       .attr('stroke-width', 0)
       .attr('fill', barColor)
       .attr('opacity', 0.3)
       .attr('x', scale.x(quartiles[0]))
       .attr('y', y - (qboxHeight / 2))
-      .attr('width', scale.x(quartiles[2]) - scale.x(quartiles[0]))
+      .attr('width', qboxWidth)
       .attr('height', qboxHeight);
 
     // median

@@ -18,6 +18,8 @@
 /dist
 
 # Data management
+cartodb.json
+
 # Ignore data files.
 /resources/data_management/rasters/data/*
 /resources/data_management/tabular_data/data/*

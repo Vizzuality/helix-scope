@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import { ckmeans } from 'simple-statistics';
 
+import { MAP_NUMBER_BUCKETS } from 'constants/map';
 import MapsList from 'components/maps/MapsList';
 
 const mapStateToProps = state => {
@@ -18,10 +19,11 @@ const mapStateToProps = state => {
       const mapsToCompare = findMapsToCompare(map);
       const getBucket = ({ bucket }) => {
         const combineBuckets = (buckets) => {
-          const oneBucket = buckets
-                .reduce((acc, b) => acc.concat(b), [])
-                .map((b) => b.value);
-          return ckmeans(oneBucket, 7).map((c) => ({ value: c.slice(-1)[0] }));
+          const mergeBuckets = buckets.reduce((acc, b) => acc.concat(b), []);
+          const oneBucket = mergeBuckets.map((b) => b.value);
+          const minValue = Math.min(...mergeBuckets.map((b) => b.minValue));
+
+          return ckmeans(oneBucket, MAP_NUMBER_BUCKETS).map((c) => ({ value: c.slice(-1)[0], minValue }));
         };
 
         return bucket && bucket.length && mapsToCompare.length
