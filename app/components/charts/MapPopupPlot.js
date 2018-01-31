@@ -24,7 +24,7 @@ class MapPopupPlot extends BaseChart {
       d3.quantile(d, 0.5),
       d3.quantile(d, 0.75)
     ]);
-    const values = data.map((d) => d.value).sort();
+    const values = data.map((d) => d.value).sort((a, b) => a - b);
     const quartiles = getBoxQuartiles(values);
     const minValue = Math.min(...values);
     const maxValue = Math.max(...values);
@@ -87,13 +87,15 @@ class MapPopupPlot extends BaseChart {
 
     // quartiles box
     const qboxHeight = 30;
+    const qboxWidth = scale.x(quartiles[2]) - scale.x(quartiles[0]);
+
     bar.append('rect')
       .attr('stroke-width', 0)
       .attr('fill', barColor)
       .attr('opacity', 0.3)
       .attr('x', scale.x(quartiles[0]))
       .attr('y', y - (qboxHeight / 2))
-      .attr('width', scale.x(quartiles[2]) - scale.x(quartiles[0]))
+      .attr('width', qboxWidth)
       .attr('height', qboxHeight);
 
     // median
