@@ -3,24 +3,7 @@ import cartoQuery from 'utils/cartoQuery';
 export const LOAD_CHART = 'LOAD_CHART';
 export const RECEIVE_CHART = 'RECEIVE_CHART';
 
-export function fetchInterQuartileRange(chart, iso, variable) {
-  const sql = `
-    SELECT swl, variable,
-      PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY value) AS median,
-      PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY value) - PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY value) AS iqr,
-      ARRAY_AGG(value ORDER BY value ASC) AS values,
-      ARRAY_AGG(DISTINCT model_short_name) AS models,
-      ARRAY_AGG(DISTINCT institution) AS institutions
-    FROM (
-      SELECT mean as value, swl_info as swl, variable, model_short_name, institution
-      FROM master_admin0
-      WHERE variable like '%${variable}%'
-      AND iso = '${iso}'
-      AND swl_info < 6
-    ) data
-    GROUP BY swl, variable
-  `;
-
+function fetchChartData(chart, sql, iso) {
   return (dispatch) => {
     dispatch({
       type: LOAD_CHART,
@@ -43,6 +26,27 @@ export function fetchInterQuartileRange(chart, iso, variable) {
   };
 }
 
+export function fetchInterQuartileRange(chart, iso, variable) {
+  const sql = `
+    SELECT swl, variable,
+      PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY value) AS median,
+      PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY value) - PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY value) AS iqr,
+      ARRAY_AGG(value ORDER BY value ASC) AS values,
+      ARRAY_AGG(DISTINCT model_short_name) AS models,
+      ARRAY_AGG(DISTINCT institution) AS institutions
+    FROM (
+      SELECT mean as value, swl_info as swl, variable, model_short_name, institution
+      FROM master_admin0
+      WHERE variable like '%${variable}%'
+      AND iso = '${iso}'
+      AND swl_info < 6
+    ) data
+    GROUP BY swl, variable
+  `;
+
+  return fetchChartData(chart, sql, iso);
+}
+
 export function fetchRegularBar(chart, iso, variable) {
   const sql = `
     SELECT mean / 10e6 as value, swl_info as swl, variable, institution, model_short_name AS model
@@ -52,26 +56,7 @@ export function fetchRegularBar(chart, iso, variable) {
     AND swl_info < 6
   `;
 
-  return (dispatch) => {
-    dispatch({
-      type: LOAD_CHART,
-      payload: {
-        chart,
-        iso
-      }
-    });
-
-    return cartoQuery(sql)
-      .then((response) => response.json())
-      .then((response) => dispatch({
-        type: RECEIVE_CHART,
-        payload: {
-          chart,
-          iso,
-          data: response.rows
-        }
-      }));
-  };
+  return fetchChartData(chart, sql, iso);
 }
 
 export function fetchBoxAndWhiskers(chart, iso) {
@@ -109,10 +94,10 @@ export function fetchBoxAndWhiskers(chart, iso) {
              model_short_name,
              institution,
              variable,
-      		 CASE WHEN variable LIKE '%biodiversity' THEN min*100 ELSE min END AS min,
-      		 CASE WHEN variable LIKE '%biodiversity' THEN max*100 ELSE max END AS max,
-      		 CASE WHEN variable LIKE '%biodiversity' THEN mean*100 ELSE mean END AS mean,
-      		 CASE WHEN variable LIKE '%biodiversity' THEN std*100 ELSE std END AS std
+           CASE WHEN variable LIKE '%biodiversity' THEN min*100 ELSE min END AS min,
+           CASE WHEN variable LIKE '%biodiversity' THEN max*100 ELSE max END AS max,
+           CASE WHEN variable LIKE '%biodiversity' THEN mean*100 ELSE mean END AS mean,
+           CASE WHEN variable LIKE '%biodiversity' THEN std*100 ELSE std END AS std
       FROM master_admin0
       WHERE iso = '${iso}'
       AND swl_info < 6
@@ -121,24 +106,5 @@ export function fetchBoxAndWhiskers(chart, iso) {
     GROUP BY swl, variable
   `;
 
-  return (dispatch) => {
-    dispatch({
-      type: LOAD_CHART,
-      payload: {
-        chart,
-        iso
-      }
-    });
-
-    return cartoQuery(sql)
-      .then((response) => response.json())
-      .then((response) => dispatch({
-        type: RECEIVE_CHART,
-        payload: {
-          chart,
-          iso,
-          data: response.rows
-        }
-      }));
-  };
+  return fetchChartData(chart, sql, iso);
 }
