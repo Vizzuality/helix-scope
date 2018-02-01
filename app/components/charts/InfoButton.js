@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-// import cx from 'classnames';
 import Button from 'components/common/Button';
 
 class InfoButton extends Component {
