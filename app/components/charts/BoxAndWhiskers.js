@@ -1,9 +1,6 @@
 import React from 'react';
 import * as d3 from 'd3';
-import flatMap from 'lodash/flatMap';
-import uniqBy from 'lodash/uniqBy';
 
-import InfoButton from './InfoButton';
 import BaseChart from './BaseChart';
 
 class BoxAndWhiskers extends BaseChart {
