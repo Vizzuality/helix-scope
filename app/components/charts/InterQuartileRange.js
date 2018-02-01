@@ -1,9 +1,6 @@
 import React from 'react';
 import * as d3 from 'd3';
-import flatMap from 'lodash/flatMap';
-import uniqBy from 'lodash/uniqBy';
 
-import InfoButton from './InfoButton';
 import BaseChart from './BaseChart';
 
 class InterQuartileRange extends BaseChart {
@@ -120,14 +117,8 @@ class InterQuartileRange extends BaseChart {
   }
 
   render() {
-    const models = uniqBy(flatMap(this.props.remote.data, (d) => d.models)).join(', ');
-    const institutions = uniqBy(flatMap(this.props.remote.data, (d) => d.institutions)).join(', ');
-    const infoText = this.props.info(models, institutions);
-
     return (
       <div className="c-chart">
-        <InfoButton text={infoText} />
-        <div className="title">{this.props.title}</div>
         {!this.props.remote.loading ?
           (<div className="chart" ref={(ref) => { this.chart = ref; }}></div>) :
           (<div className="content subtitle">Loading</div>)}
@@ -138,9 +129,6 @@ class InterQuartileRange extends BaseChart {
 
 InterQuartileRange.propTypes = {
   ...BaseChart.propTypes,
-  iso: React.PropTypes.string.isRequired,
-  title: React.PropTypes.string.isRequired,
-  info: React.PropTypes.func.isRequired,
   variables: React.PropTypes.array,
   scenarios: React.PropTypes.array,
   yTicks: React.PropTypes.number,

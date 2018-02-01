@@ -1,10 +1,12 @@
 import React from 'react';
+import uuid from 'uuid/v4';
 
-const MeasureSelector = ({ id, measure, measurements, onChange }) => {
+const MeasureSelector = ({ measure, measurements, onChange }) => {
   const handleChange = (e) => {
     const selectedMeasure = measurements.find((m) => m.slug === e.target.value);
     onChange(selectedMeasure);
   };
+  const id = uuid();
 
   return (
     <div className="c-step-selector">
@@ -13,16 +15,16 @@ const MeasureSelector = ({ id, measure, measurements, onChange }) => {
           <div className="action" key={`measure_${m.slug}`}>
             <input
               className="radio"
-              id={`map_${id}_measure_${m.slug}`}
+              id={`${id}_measure_${m.slug}`}
               type="radio"
-              name={`map_${id}_measure_${m.slug}`}
-              value={measure.slug}
+              name={`${id}_measure_${m.slug}`}
+              value={m.slug}
               checked={measure.slug === m.slug}
               onChange={handleChange}
             />
             <label
               className={measure.slug === m.slug ? 'label -current' : 'label'}
-              htmlFor={`map_${id}_measure_${m.slug}`}
+              htmlFor={`${id}_measure_${m.slug}`}
             >
               <span className="text">{m.slug}</span>
             </label>
@@ -34,7 +36,6 @@ const MeasureSelector = ({ id, measure, measurements, onChange }) => {
 };
 
 MeasureSelector.propTypes = {
-  id: React.PropTypes.string,
   measure: React.PropTypes.object,
   onChange: React.PropTypes.func,
   measurements: React.PropTypes.array

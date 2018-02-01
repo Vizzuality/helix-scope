@@ -6,21 +6,22 @@ const Button = (props) => {
   if (props.text) {
     btnText = <span className={`btn-text -${props.color}`}>{props.text}</span>;
   }
+  const icon = props.icon && (
+    <svg className={`btn-icon icon-${props.icon} -${props.style} -size-${props.size}`}>
+      <use xlinkHref={`#icon-${props.icon}`}></use>
+    </svg>
+  );
   if (props.link) {
     return (
       <Link to={props.link} className="c-btn btn-link">
-        <svg className={`btn-icon icon-${props.icon} -${props.style} -size-${props.size}`}>
-          <use xlinkHref={`#icon-${props.icon}`}></use>
-        </svg>
+        {icon}
         {btnText}
       </Link>
     );
   }
   return (
     <button className={`c-btn -${props.position}`} onClick={props.onClick}>
-      <svg className={`btn-icon icon-${props.icon} -${props.style} -size-${props.size}`}>
-        <use xlinkHref={`#icon-${props.icon}`}></use>
-      </svg>
+      {icon}
       {btnText}
     </button>
   );

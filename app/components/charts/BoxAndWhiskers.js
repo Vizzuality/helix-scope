@@ -134,26 +134,8 @@ class BoxAndWhiskers extends BaseChart {
   }
 
   render() {
-    const titleText = this.props.title(
-      this.props.indicatorName,
-      this.props.measurementName
-    );
-
-    const models = uniqBy(flatMap(this.props.remote.data, (d) => d.models)).join(', ');
-    const institutions = uniqBy(flatMap(this.props.remote.data, (d) => d.institutions)).join(', ');
-
-    const infoText = this.props.info(
-      this.props.indicatorName,
-      this.props.measurementName,
-      this.props.indicatorLongName,
-      models,
-      institutions
-    );
-
     return (
       <div className="c-chart">
-        <InfoButton text={infoText} />
-        <div className="title">{titleText}</div>
         {!this.props.remote.loading ?
           (<div className="chart" ref={(ref) => { this.chart = ref; }}></div>) :
           (<div className="content subtitle">Loading</div>)}
@@ -165,8 +147,6 @@ class BoxAndWhiskers extends BaseChart {
 BoxAndWhiskers.propTypes = {
   ...BaseChart.propTypes,
   iso: React.PropTypes.string.isRequired,
-  title: React.PropTypes.func.isRequired,
-  info: React.PropTypes.func.isRequired,
   scenarios: React.PropTypes.array,
   indicatorName: React.PropTypes.string,
   indicatorLongName: React.PropTypes.string,

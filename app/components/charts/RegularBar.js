@@ -85,14 +85,8 @@ class RegularBar extends BaseChart {
   }
 
   render() {
-    const models = uniqBy(this.props.remote.data, (d) => d.model).join(', ');
-    const institutions = uniqBy(this.props.remote.data, (d) => d.institution).join(', ');
-    const infoText = this.props.info(models, institutions);
-
     return (
       <div className="c-chart">
-        <InfoButton text={infoText} />
-        <div className="title">{this.props.title}</div>
         {!this.props.remote.loading ?
           (<div className="chart" ref={(ref) => { this.chart = ref; }}></div>) :
           (<div className="content subtitle">Loading</div>)}
@@ -104,8 +98,6 @@ class RegularBar extends BaseChart {
 RegularBar.propTypes = {
   ...BaseChart.propTypes,
   iso: React.PropTypes.string.isRequired,
-  title: React.PropTypes.string.isRequired,
-  info: React.PropTypes.func.isRequired,
   scenarios: React.PropTypes.array,
   yTicks: React.PropTypes.number,
   chart: React.PropTypes.string.isRequired,

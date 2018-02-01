@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import cx from 'classnames';
+// import cx from 'classnames';
+import Button from 'components/common/Button';
 
 class InfoButton extends Component {
   constructor(...args) {
@@ -7,22 +8,20 @@ class InfoButton extends Component {
     this.state = {
       open: false
     };
+
+    this.handleClick = this.handleClick.bind(this);
   }
 
-  onClick() {
-    this.setState({
-      open: !this.state.open
-    });
+  handleClick() {
+    this.setState((state) => ({
+      open: !state.open
+    }));
   }
 
   render() {
     return (
       <div className="c-info">
-        <div className={cx('icon', { active: this.state.open })} onClick={() => this.onClick()}>
-          <svg width="10" height="10" viewBox="0 0 16 16">
-            <title>Info</title>
-          </svg>
-        </div>
+        <Button style="none" size="small" onClick={this.handleClick} text="i" />
         {this.state.open && <div className="infobox">
           <p>{this.props.text}</p>
         </div>}

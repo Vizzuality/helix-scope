@@ -33,7 +33,6 @@ const Dashboard = (props) => {
       </div>
       <div className="measure">
         <MeasureSelector
-          id={props.mapData.id}
           measure={props.mapData.measure}
           measurements={measurements}
           onChange={handleMeasureChange}
