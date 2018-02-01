@@ -1,5 +1,9 @@
 import React from 'react';
-import * as d3 from 'd3';
+
+import { axisBottom, axisLeft } from 'd3-axis';
+import { extent } from 'd3-array';
+import { scaleLinear, scalePoint } from 'd3-scale';
+import { select } from 'd3-selection';
 
 import BaseChart from './BaseChart';
 
@@ -27,26 +31,26 @@ class InterQuartileRange extends BaseChart {
 
     const domain = {
       x: remote.data.map((d) => d.swl).filter(uniq),
-      y: d3.extent(remote.data, (d) => d.median)
+      y: extent(remote.data, (d) => d.median)
     };
 
     const scale = {
-      x: d3.scalePoint()
+      x: scalePoint()
         .domain(domain.x)
         .range([0, width])
         .padding(1),
-      y: d3.scaleLinear()
+      y: scaleLinear()
         .domain(domain.y)
         .nice()
         .range([height, 0])
     };
 
     const axes = {
-      x: d3.axisBottom()
+      x: axisBottom()
         .scale(scale.x)
         .tickFormat(tickFormat)
         .tickSizeOuter(0),
-      y: d3.axisLeft()
+      y: axisLeft()
         .scale(scale.y)
         .ticks(yTicks)
         .tickSizeInner(-width)
@@ -54,7 +58,7 @@ class InterQuartileRange extends BaseChart {
         .tickPadding(10)
     };
 
-    const chart = d3.select(this.chart);
+    const chart = select(this.chart);
     chart.selectAll('svg').remove();
 
     const svg = chart.append('svg')

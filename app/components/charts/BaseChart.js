@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 
 class BaseChart extends Component {
   constructor() {

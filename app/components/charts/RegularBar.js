@@ -1,9 +1,10 @@
 import React from 'react';
-import * as d3 from 'd3';
-import uniqBy from 'lodash/uniqBy';
+import { axisBottom, axisLeft } from 'd3-axis';
+import { extent } from 'd3-array';
+import { scaleLinear, scalePoint } from 'd3-scale';
+import { select } from 'd3-selection';
 
 import BaseChart from './BaseChart';
-import InfoButton from './InfoButton';
 
 class RegularBar extends BaseChart {
   drawChart() {
@@ -26,26 +27,26 @@ class RegularBar extends BaseChart {
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
     const domain = {
       x: remote.data.map((d) => d.swl).filter(uniq),
-      y: d3.extent(remote.data, (d) => d.value)
+      y: extent(remote.data, (d) => d.value)
     };
 
     const scale = {
-      x: d3.scalePoint()
+      x: scalePoint()
         .domain(domain.x)
         .range([0, width])
         .padding(1),
-      y: d3.scaleLinear()
+      y: scaleLinear()
         .domain(domain.y)
         .nice()
         .range([height, 0])
     };
 
     const axes = {
-      x: d3.axisBottom()
+      x: axisBottom()
         .scale(scale.x)
         .tickFormat(tickFormat)
         .tickSizeOuter(0),
-      y: d3.axisLeft()
+      y: axisLeft()
         .scale(scale.y)
         .ticks(yTicks)
         .tickSizeInner(-width)
@@ -55,7 +56,7 @@ class RegularBar extends BaseChart {
 
     const barWidth = 50;
 
-    const chart = d3.select(this.chart);
+    const chart = select(this.chart);
     chart.selectAll('svg').remove();
 
     const svg = chart.append('svg')

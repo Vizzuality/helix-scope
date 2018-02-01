@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
-import { get } from 'lodash';
+import get from 'lodash/get';
 
 import InfoButton from 'components/charts/InfoButton';
 import MeasureSelector from 'components/maps/MeasureSelector';

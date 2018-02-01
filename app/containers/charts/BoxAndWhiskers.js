@@ -1,5 +1,4 @@
 import { connect } from 'react-redux';
-import flatMap from 'lodash/flatMap';
 
 import BoxAndWhiskers from 'components/charts/BoxAndWhiskers';
 import { scenarioColors } from 'constants/country';
@@ -30,15 +29,7 @@ const mapStateToProps = ({ charts, config }, { chart, iso, variable, value }) =>
       slug: scenario.slug,
       label: scenario.short_name,
       color: scenarioColors[idx]
-    })),
-    indicatorName: flatMap(config.categories, (c) => c.indicators)
-      .find((i) => i.slug === variable)
-      .name,
-    indicatorLongName: flatMap(config.categories, (c) => c.indicators)
-      .find((i) => i.slug === variable)
-      .name_long,
-    measurementName: config.measurements.find((i) => i.slug === value)
-      .name
+    }))
   };
 };
 

@@ -1,5 +1,10 @@
 import React from 'react';
-import * as d3 from 'd3';
+
+import { axisBottom } from 'd3-axis';
+import { scaleLinear } from 'd3-scale';
+import { select } from 'd3-selection';
+import { quantile } from 'd3-array';
+
 import flatMap from 'lodash/flatMap';
 import uniqBy from 'lodash/uniqBy';
 
@@ -20,9 +25,9 @@ class MapPopupPlot extends BaseChart {
     } = this.props;
 
     const getBoxQuartiles = (d) => ([
-      d3.quantile(d, 0.25),
-      d3.quantile(d, 0.5),
-      d3.quantile(d, 0.75)
+      quantile(d, 0.25),
+      quantile(d, 0.5),
+      quantile(d, 0.75)
     ]);
     const values = data.map((d) => d.value).sort((a, b) => a - b);
     const quartiles = getBoxQuartiles(values);
@@ -42,14 +47,14 @@ class MapPopupPlot extends BaseChart {
     };
 
     const scale = {
-      x: d3.scaleLinear()
+      x: scaleLinear()
         .range([0, width])
         .domain(domain.x)
         .nice()
     };
 
     const axes = {
-      x: d3.axisBottom()
+      x: axisBottom()
         .scale(scale.x)
         .ticks(tickCount)
         .tickFormat(showLastWithUnit)
@@ -58,7 +63,7 @@ class MapPopupPlot extends BaseChart {
     };
     const y = height - 20;
 
-    const chart = d3.select(this.chart);
+    const chart = select(this.chart);
     chart.selectAll('svg').remove();
 
     const svg = chart.append('svg')

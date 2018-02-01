@@ -1,5 +1,8 @@
 import React from 'react';
-import * as d3 from 'd3';
+
+import { axisBottom, axisLeft } from 'd3-axis';
+import { scaleLinear, scalePoint } from 'd3-scale';
+import { select } from 'd3-selection';
 
 import BaseChart from './BaseChart';
 
@@ -32,22 +35,22 @@ class BoxAndWhiskers extends BaseChart {
     };
 
     const scale = {
-      x: d3.scalePoint()
+      x: scalePoint()
         .domain(domain.x)
         .range([0, width])
         .padding(1),
-      y: d3.scaleLinear()
+      y: scaleLinear()
         .domain(domain.y)
         .nice()
         .range([height, 0])
     };
 
     const axes = {
-      x: d3.axisBottom()
+      x: axisBottom()
         .scale(scale.x)
         .tickFormat(tickFormat)
         .tickSizeOuter(0),
-      y: d3.axisLeft()
+      y: axisLeft()
         .scale(scale.y)
         .ticks(yTicks)
         .tickSizeInner(-width)
@@ -55,7 +58,7 @@ class BoxAndWhiskers extends BaseChart {
         .tickPadding(10)
     };
 
-    const chart = d3.select(this.chart);
+    const chart = select(this.chart);
     chart.selectAll('svg').remove();
 
     const svg = chart.append('svg')
@@ -145,9 +148,6 @@ BoxAndWhiskers.propTypes = {
   ...BaseChart.propTypes,
   iso: React.PropTypes.string.isRequired,
   scenarios: React.PropTypes.array,
-  indicatorName: React.PropTypes.string,
-  indicatorLongName: React.PropTypes.string,
-  measurementName: React.PropTypes.string,
   yTicks: React.PropTypes.number,
   chart: React.PropTypes.string,
   variable: React.PropTypes.string.isRequired,
@@ -160,7 +160,6 @@ BoxAndWhiskers.propTypes = {
 
 BoxAndWhiskers.defaultProps = {
   ...BaseChart.defaultProps,
-  meta: {},
   scenarios: [],
   yTicks: 5,
   remote: { loading: true, data: [] }
