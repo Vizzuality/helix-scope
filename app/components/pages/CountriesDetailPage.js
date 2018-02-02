@@ -25,7 +25,7 @@ function getCharts(category, country) {
         {
           slug: 'crop_yield_change_baseline',
           label: 'Projected changes in crop yields relative to 1981–2010 base-level (%)',
-          info: 'placeholder',
+          info: 'Projected changes in crop yields relative to 1981–2010 base-level (%), Projected changes in crop yields relative to 1981–2010 base-level (%), Projected changes in crop yields relative to 1981–2010 base-level (%)',
           chart: (
             <InterQuartileRangeChart
               iso={country.iso}
