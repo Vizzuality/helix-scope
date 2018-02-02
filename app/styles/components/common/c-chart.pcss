@@ -101,22 +101,44 @@
 }
 
 .c-info {
-  .info-tooltip {
-    max-width: 400px;
-    border-color: rgba(81, 81, 83, 0.2) !important;
-    background-color: $color-base !important;
-    font-family: $font-body !important;
-    color: $font-grey !important;
-    font-size: $font-size-small;
-    margin: $margin-small;
-    padding: $margin-small;
+  position: relative;
 
-    &::after {
-      border-left-color: $color-base !important;
-    }
+  .infobox {
+    position: absolute;
+    right: 55px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: $color-base;
+    box-shadow: 0 0 4px 0 rgba(81, 81, 83, 0.2);
+    font-family: $font-body;
+    color: $font-grey;
+    font-size: $font-size-x-small;
+    margin-left: -500px;
+    padding: $margin-small;
+    z-index: 2;
 
     &::before {
-      border-left-color: rgba(81, 81, 83, 0.2) !important;
+      content: " ";
+      position: absolute;
+      width: 12px;
+      height: 20px;
+      right: 1px;
+      top: calc(50% - 20px / 2);
+      background-color: $color-base;
+      z-index: 2;
+    }
+
+    &::after {
+      content: " ";
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      right: -7px;
+      top: calc(50% - 15px / 2);
+      transform: rotate(45deg);
+      box-shadow: 0 0 4px 0 rgba(81, 81, 83, 0.2);
+      background-color: $color-base;
+      z-index: 1;
     }
   }
 }
