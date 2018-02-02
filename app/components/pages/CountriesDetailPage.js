@@ -1,103 +1,15 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 
-import CountryPageChart from 'components/charts/CountryPageChart';
+import getChartGroups from 'utils/getChartGroups';
+import CountryPageChart from 'containers/charts/CountryPageChart';
 import CallToAction from 'components/common/CallToAction';
 import ExploreScenarios from 'components/common/ExploreScenarios';
 import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
 import LoadingSpinner from 'components/common/LoadingSpinner';
 
-import InterQuartileRangeChart from 'containers/charts/InterQuartileRange';
-import RegularBarChart from 'containers/charts/RegularBar';
-import BoxAndWhiskersChart from 'containers/charts/BoxAndWhiskers';
-import {
-  maizeVariables,
-  irrigationVariables
-} from 'constants/country';
-
-function getCharts(category, country) {
-  const onlyForCountry = (i) => i.section === 'country';
-
-  switch (category.slug) {
-    case 'ag':
-      return [
-        {
-          slug: 'crop_yield_change_baseline',
-          label: 'Projected changes in crop yields relative to 1981–2010 base-level (%)',
-          info: 'Projected changes in crop yields relative to 1981–2010 base-level (%), Projected changes in crop yields relative to 1981–2010 base-level (%), Projected changes in crop yields relative to 1981–2010 base-level (%)',
-          chart: (
-            <InterQuartileRangeChart
-              iso={country.iso}
-              chart="crop_yield_change_baseline"
-              variables={maizeVariables}
-            />
-          )
-        },
-        {
-          slug: 'crop_yield_change_irrigation',
-          label: 'Change in crop yields (relative to 1981-2010 base levels) avoided under different warming scenarios due to Irrigation (%)',
-          info: 'placeholder',
-          chart: (
-            <InterQuartileRangeChart
-              iso={country.iso}
-              chart="crop_yield_change_irrigation"
-              variables={irrigationVariables}
-            />
-          )
-        }
-      ];
-    case 'cl':
-    case 'eco':
-    case 'bd':
-      return category.indicators.filter(onlyForCountry).map((i) => ({
-        ...i,
-        label: `${i.name} (${i.unit})`,
-        charts: i.measurements.reduce((acc, m) => ({
-          ...acc,
-          info: 'placeholder',
-          [m]: (
-            <BoxAndWhiskersChart
-              iso={country.iso}
-              chart="climatological_ecological"
-              variable={i.slug}
-              value={m}
-            />
-          )
-        }), {})
-      }));
-    case 'w':
-      return [
-        {
-          slug: 'annual_expected_flood_damage',
-          label: 'Annual expected flood damages relative to 1976–2005 levels (millions of €)',
-          info: 'placeholder',
-          chart: (
-            <RegularBarChart
-              iso={country.iso}
-              chart="annual_expected_flood_damage"
-            />
-          )
-        },
-        {
-          slug: 'population_affected_anually',
-          label: 'Population affected annually year from river flooding relative to 1976–2005 levels',
-          info: 'placeholder',
-          chart: (
-            <RegularBarChart
-              iso={country.iso}
-              chart="population_affected_anually"
-            />
-          )
-        }
-      ];
-    default:
-      return category.indicators.filter(onlyForCountry);
-  }
-}
-
 class CountriesDetailPage extends Component {
-
   componentDidMount() {
     this.props.fetchInterQuartileRange('crop_yield_change_baseline', this.props.iso, 'yield');
     this.props.fetchInterQuartileRange('crop_yield_change_irrigation', this.props.iso, 'Irrigation');
@@ -111,6 +23,8 @@ class CountriesDetailPage extends Component {
 
     const country = this.props.countriesList && this.props.countriesList.find((c) => c.iso === this.props.iso);
 
+    if (!country) return null;
+
     return (
       <div>
         <div className="l-banner -country">
@@ -123,13 +37,19 @@ class CountriesDetailPage extends Component {
         </div>
         <div className="l-page-content">
           {this.props.config.categories.map((category, index) => (
-            <CountryPageChart
-              category={category}
-              country={country}
-              charts={getCharts(category, country)}
-              measurements={this.props.config.measurements}
-              key={index}
-            />
+            <div className="c-country-page-chart" key={index}>
+              <div className="row">
+                <div className="column">
+                  <h2>{category.name}</h2>
+                </div>
+              </div>
+              <CountryPageChart
+                category={category}
+                country={country}
+                chartGroups={getChartGroups(category, country)}
+                measurements={this.props.config.measurements}
+              />
+            </div>
           ))}
         </div>
         <CallToAction

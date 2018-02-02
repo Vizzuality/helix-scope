@@ -11,29 +11,29 @@ class CountryPageChart extends Component {
 
     this.state = { ...this.getInitialState(props) };
 
-    this.handleChartChange = this.handleChartChange.bind(this);
+    this.handleChartGroupChange = this.handleChartGroupChange.bind(this);
     this.handleMeasureChange = this.handleMeasureChange.bind(this);
   }
 
   getInitialState(props) {
-    const selectedChart = get(props, 'charts[0]');
+    const selectedChartGroup = get(props, 'chartGroups[0]');
     const selectedMeasure = props.measurements.find(
-      (m) => m.slug === get(selectedChart, 'measurements[0]')
+      (m) => m.slug === get(selectedChartGroup, 'measurements[0]')
     );
 
     return {
-      selectedChart,
+      selectedChartGroup,
       selectedMeasure
     };
   }
 
-  handleChartChange(chart) {
+  handleChartGroupChange(chartGroup) {
     const selectedMeasure = this.props.measurements.find(
-      (m) => m.slug === get(chart, 'measurements[0]')
+      (m) => m.slug === get(chartGroup, 'measurements[0]')
     );
 
     this.setState({
-      selectedChart: chart,
+      selectedChartGroup: chartGroup,
       selectedMeasure
     });
   }
@@ -42,37 +42,34 @@ class CountryPageChart extends Component {
     this.setState({ selectedMeasure: measure });
   }
 
-  renderChart() {
-    const { selectedChart, selectedMeasure } = this.state;
-    if (selectedChart.chart) return selectedChart.chart;
-    return selectedChart.charts && selectedMeasure && selectedChart.charts[selectedMeasure.slug];
-  }
-
   render() {
-    const { category, charts, measurements } = this.props;
-    const { selectedChart, selectedMeasure } = this.state;
-    const availableMeasurements = get(selectedChart, 'measurements.length') && measurements.filter(
-      (m) => selectedChart.measurements.includes(m.slug)
+    const { chartGroups, chartData, measurements, country } = this.props;
+    const { selectedChartGroup, selectedMeasure } = this.state;
+    const availableMeasurements = get(selectedChartGroup, 'measurements.length') && measurements.filter(
+      (m) => selectedChartGroup.measurements.includes(m.slug)
     );
+    const selectedChart = selectedChartGroup.charts.length > 1 && selectedMeasure
+      ? selectedChartGroup.charts.find((c) => c.measurement === selectedMeasure.slug)
+      : selectedChartGroup.charts[0];
+    const selectedChartData = get(chartData, `[${selectedChartGroup.slug}][${country.iso}].data`);
 
     return (
-      <div className="c-country-page-chart">
-        <div className="row">
-          <div className="column">
-            <h2>{category.name}</h2>
-          </div>
-        </div>
+      <div className="c-chart-box">
         <div className="row">
           <div className="column header">
-            <Select
-              className="c-react-select"
-              options={charts}
-              value={selectedChart}
-              onChange={this.handleChartChange}
-              clearable={false}
-              labelKey="label"
-              valueKey="slug"
-            />
+            {chartGroups.length > 1 ? (
+              <Select
+                className="c-react-select"
+                options={chartGroups}
+                value={selectedChartGroup}
+                onChange={this.handleChartGroupChange}
+                clearable={false}
+                labelKey="label"
+                valueKey="slug"
+              />
+            ) : (
+              selectedChartGroup.label
+            )}
             {availableMeasurements && (
               <MeasureSelector
                 measure={selectedMeasure}
@@ -80,12 +77,12 @@ class CountryPageChart extends Component {
                 onChange={this.handleMeasureChange}
               />
             )}
-            {selectedChart.info && <InfoButton text={selectedChart.info} />}
+            {selectedChart.info && <InfoButton text={selectedChart.info(selectedChartData)} />}
           </div>
         </div>
         <div className="row">
           <div className="column">
-            {this.renderChart()}
+            {selectedChart.component}
           </div>
         </div>
       </div>
@@ -94,7 +91,8 @@ class CountryPageChart extends Component {
 }
 
 CountryPageChart.propTypes = {
-  charts: React.PropTypes.array.isRequired,
+  chartGroups: React.PropTypes.array.isRequired,
+  chartData: React.PropTypes.any,
   category: React.PropTypes.object.isRequired,
   country: React.PropTypes.object.isRequired,
   measurements: React.PropTypes.array
