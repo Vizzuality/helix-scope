@@ -155,8 +155,8 @@ class Map extends React.Component {
         m.model_long_name,
         run,
         ${measure.slug} as value
-      FROM five_grid_shapefiles s
-        INNER JOIN master_5x5 m on m.shape_id = s.id_val
+      FROM onedegintermod s
+        INNER JOIN test_1deg_tn m on m.shape_id = s.id_val
       WHERE
         ST_WITHIN(
           ST_GeomFromText('POINT(${lng} ${lat})', 4326),
@@ -238,13 +238,13 @@ class Map extends React.Component {
     const query = `
       WITH data AS (
         SELECT shape_id, AVG(${measure}) AS ${measure}
-        FROM master_5x5
+        FROM test_1deg_tn
         WHERE variable = '${indicator}'
         AND swl_info = ${scenario}
         GROUP BY shape_id
       )
-      SELECT five_grid_shapefiles.id_val, five_grid_shapefiles.the_geom_webmercator, five_grid_shapefiles.cartodb_id, data.${measure}
-      FROM five_grid_shapefiles INNER JOIN data ON five_grid_shapefiles.id_val = data.shape_id
+      SELECT onedegintermod.id_val, onedegintermod.the_geom_webmercator, onedegintermod.cartodb_id, data.${measure}
+      FROM onedegintermod INNER JOIN data ON onedegintermod.id_val = data.shape_id
     `;
 
     return query;
