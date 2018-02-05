@@ -4,7 +4,7 @@ import BoxAndWhiskers from 'components/charts/BoxAndWhiskers';
 import { scenarioColors } from 'constants/country';
 
 const mapStateToProps = ({ charts, config }, { chart, iso, variable, value }) => {
-  if (!charts[chart]) {
+  if (!charts[chart] || !iso) {
     return {};
   }
 

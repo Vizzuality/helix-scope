@@ -47,12 +47,14 @@ class CountriesDetailPage extends Component {
                   <h2>{category.name}</h2>
                 </div>
               </div>
-              <CountryPageChart
-                category={category}
-                country={country}
-                charts={getCharts(category)}
-                measurements={this.props.config.measurements}
-              />
+              <div className="row">
+                <div className="column">
+                  <CountryPageChart
+                    country={country}
+                    charts={getCharts(category)}
+                  />
+                </div>
+              </div>
             </div>
           ))}
         </div>

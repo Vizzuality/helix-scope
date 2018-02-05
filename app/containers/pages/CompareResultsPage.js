@@ -8,7 +8,7 @@ import {
 } from 'actions/charts';
 
 const mapStateToProps = (state, { params }) => ({
-  configLoaded: !state.config.loading,
+  config: state.config,
   countriesList: state.countries.countriesList,
   iso1: params.iso1,
   iso2: params.iso2
