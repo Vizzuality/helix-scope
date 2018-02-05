@@ -5,6 +5,7 @@ import { scaleLinear, scalePoint } from 'd3-scale';
 import { select } from 'd3-selection';
 
 import BaseChart from './BaseChart';
+import { formatSI } from 'utils/format';
 
 class RegularBar extends BaseChart {
   drawChart() {
@@ -49,6 +50,7 @@ class RegularBar extends BaseChart {
       y: axisLeft()
         .scale(scale.y)
         .ticks(yTicks)
+        .tickFormat(formatSI)
         .tickSizeInner(-width)
         .tickSizeOuter(0)
         .tickPadding(10)

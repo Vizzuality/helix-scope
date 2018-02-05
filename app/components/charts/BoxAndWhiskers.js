@@ -4,6 +4,7 @@ import { axisBottom, axisLeft } from 'd3-axis';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { select } from 'd3-selection';
 
+import { formatSI } from 'utils/format';
 import BaseChart from './BaseChart';
 
 class BoxAndWhiskers extends BaseChart {
@@ -53,6 +54,7 @@ class BoxAndWhiskers extends BaseChart {
       y: axisLeft()
         .scale(scale.y)
         .ticks(yTicks)
+        .tickFormat(formatSI)
         .tickSizeInner(-width)
         .tickSizeOuter(0)
         .tickPadding(10)

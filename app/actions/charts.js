@@ -49,11 +49,12 @@ export function fetchInterQuartileRange(chart, iso, variable) {
 
 export function fetchRegularBar(chart, iso, variable) {
   const sql = `
-    SELECT mean / 10e6 as value, swl_info as swl, variable, institution, model_short_name AS model
+    SELECT mean as value, swl_info as swl, variable, institution, model_short_name AS model
     FROM master_admin0
     WHERE variable = '${variable}'
     AND iso = '${iso}'
     AND swl_info < 6
+    ORDER BY swl
   `;
 
   return fetchChartData(chart, sql, iso);

@@ -29,7 +29,7 @@ class BaseChart extends Component {
 
 BaseChart.defaultProps = {
   margin: {
-    left: 30,
+    left: 40,
     right: 30,
     top: 30,
     bottom: 30
