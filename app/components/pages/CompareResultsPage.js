@@ -107,6 +107,7 @@ class CountriesPage extends Component {
         if (chart.measurements && chart.measurements.length) {
           const eachAsSeparateChart = (m) => ({
             ...chart,
+            label: `${chart.label} - ${m} value`,
             measurements: null,
             measurement: m
           });
