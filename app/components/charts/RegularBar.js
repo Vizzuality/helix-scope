@@ -15,7 +15,7 @@ class RegularBar extends BaseChart {
     const {
       margin,
       scenarios,
-      remote,
+      data,
       yTicks
     } = this.props;
 
@@ -27,8 +27,8 @@ class RegularBar extends BaseChart {
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
     const domain = {
-      x: remote.data.map((d) => d.swl).filter(uniq),
-      y: extent(remote.data, (d) => d.value)
+      x: data.map((d) => d.swl).filter(uniq),
+      y: extent(data, (d) => d.value)
     };
 
     const scale = {
@@ -77,7 +77,7 @@ class RegularBar extends BaseChart {
       .call(axes.y);
 
     svg.selectAll('.dot')
-      .data(remote.data)
+      .data(data)
       .enter()
       .append('rect')
       .attr('fill', (d) => colorFor(d.swl))
@@ -86,16 +86,6 @@ class RegularBar extends BaseChart {
       .attr('width', barWidth)
       .attr('height', (d) => height - scale.y(d.value) - 1);
   }
-
-  render() {
-    return (
-      <div className="c-chart">
-        {!this.props.remote.loading ?
-          (<div className="chart" ref={(ref) => { this.chart = ref; }}></div>) :
-          (<div className="content subtitle">Loading</div>)}
-      </div>
-    );
-  }
 }
 
 RegularBar.propTypes = {
@@ -103,19 +93,14 @@ RegularBar.propTypes = {
   iso: React.PropTypes.string.isRequired,
   scenarios: React.PropTypes.array,
   yTicks: React.PropTypes.number,
-  chart: React.PropTypes.string.isRequired,
-  remote: React.PropTypes.shape({
-    loading: React.PropTypes.bool.isRequired,
-    data: React.PropTypes.array.isRequired
-  }).isRequired
+  chart: React.PropTypes.string.isRequired
 };
 
 RegularBar.defaultProps = {
   ...BaseChart.defaultProps,
   meta: {},
   scenarios: [],
-  yTicks: 5,
-  remote: { loading: true, data: [] }
+  yTicks: 5
 };
 
 export default RegularBar;

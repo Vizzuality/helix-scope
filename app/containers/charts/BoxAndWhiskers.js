@@ -10,22 +10,20 @@ const mapStateToProps = ({ charts, config }, { chart, iso, variable, value }) =>
   if (!chartData) return {};
 
   return {
-    remote: {
-      ...charts[chart][iso],
-      data: charts[chart][iso].data
-        .filter((d) => d.variable === variable)
-        .map((d) => ({
-          swl: d.swl,
-          variable: d.variable,
-          models: d.models,
-          institutions: d.institutions,
-          minimum: d[`${value}_minimum`],
-          maximum: d[`${value}_maximum`],
-          median: d[`${value}_median`],
-          q1: d[`${value}_q1`],
-          q3: d[`${value}_q3`]
-        }))
-    },
+    loading: chartData.loading,
+    data: chartData.data
+      .filter((d) => d.variable === variable)
+      .map((d) => ({
+        swl: d.swl,
+        variable: d.variable,
+        models: d.models,
+        institutions: d.institutions,
+        minimum: d[`${value}_minimum`],
+        maximum: d[`${value}_maximum`],
+        median: d[`${value}_median`],
+        q1: d[`${value}_q1`],
+        q3: d[`${value}_q3`]
+      })),
     scenarios: config.scenarios.map((scenario, idx) => ({
       slug: scenario.slug,
       label: scenario.short_name,

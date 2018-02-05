@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import debounce from 'lodash/debounce';
+import get from 'lodash/get';
 
 class BaseChart extends Component {
   constructor() {
@@ -25,6 +26,29 @@ class BaseChart extends Component {
   }
 
   drawChart() {}
+
+  render() {
+    const isLoading = this.props.loading;
+    const noData = !isLoading && get(this.props, 'data.length', 0) === 0;
+
+    if (isLoading) {
+      return (
+        <div className="c-chart">
+          <div className="content subtitle">Loading...</div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="c-chart">
+        {noData ? (
+          <div className="content subtitle">No data available</div>
+        ) : (
+          <div className="chart" ref={(ref) => { this.chart = ref; }}></div>
+        )}
+      </div>
+    );
+  }
 }
 
 BaseChart.defaultProps = {
@@ -33,7 +57,9 @@ BaseChart.defaultProps = {
     right: 30,
     top: 30,
     bottom: 30
-  }
+  },
+  loading: true,
+  data: []
 };
 
 BaseChart.propTypes = {
@@ -42,7 +68,9 @@ BaseChart.propTypes = {
     right: React.PropTypes.number,
     top: React.PropTypes.number,
     bottom: React.PropTypes.number
-  })
+  }),
+  loading: React.PropTypes.bool.isRequired,
+  data: React.PropTypes.array.isRequired
 };
 
 export default BaseChart;

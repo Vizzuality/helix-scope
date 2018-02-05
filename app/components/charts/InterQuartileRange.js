@@ -16,7 +16,7 @@ class InterQuartileRange extends BaseChart {
     const {
       margin,
       scenarios,
-      remote,
+      data,
       yTicks,
       variables
     } = this.props;
@@ -30,8 +30,8 @@ class InterQuartileRange extends BaseChart {
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
 
     const domain = {
-      x: remote.data.map((d) => d.swl).filter(uniq),
-      y: extent(remote.data, (d) => d.median)
+      x: data.map((d) => d.swl).filter(uniq),
+      y: extent(data, (d) => d.median)
     };
 
     const scale = {
@@ -77,7 +77,7 @@ class InterQuartileRange extends BaseChart {
       .call(axes.y);
 
     svg.selectAll('.dot')
-      .data(remote.data)
+      .data(data)
       .enter()
       .append('circle')
       .attr('r', 5)
@@ -86,7 +86,7 @@ class InterQuartileRange extends BaseChart {
       .attr('cy', (d) => scale.y(d.median));
 
     svg.selectAll('.dot')
-      .data(remote.data)
+      .data(data)
       .enter()
       .append('line')
       .attr('stroke', (d) => colorFor(d.variable))
@@ -119,16 +119,6 @@ class InterQuartileRange extends BaseChart {
       .attr('y', height + 55)
       .text((d) => d.label);
   }
-
-  render() {
-    return (
-      <div className="c-chart">
-        {!this.props.remote.loading ?
-          (<div className="chart" ref={(ref) => { this.chart = ref; }}></div>) :
-          (<div className="content subtitle">Loading</div>)}
-      </div>
-    );
-  }
 }
 
 InterQuartileRange.propTypes = {
@@ -136,11 +126,7 @@ InterQuartileRange.propTypes = {
   variables: React.PropTypes.array,
   scenarios: React.PropTypes.array,
   yTicks: React.PropTypes.number,
-  chart: React.PropTypes.string.isRequired,
-  remote: React.PropTypes.shape({
-    loading: React.PropTypes.bool.isRequired,
-    data: React.PropTypes.array.isRequired
-  }).isRequired
+  chart: React.PropTypes.string.isRequired
 };
 
 InterQuartileRange.defaultProps = {
@@ -154,8 +140,7 @@ InterQuartileRange.defaultProps = {
   meta: {},
   variables: [],
   scenarios: [],
-  yTicks: 5,
-  remote: { loading: true, data: [] }
+  yTicks: 5
 };
 
 export default InterQuartileRange;

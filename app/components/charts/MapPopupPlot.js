@@ -175,7 +175,6 @@ class MapPopupPlot extends BaseChart {
 
 MapPopupPlot.propTypes = {
   ...BaseChart.propTypes,
-  data: React.PropTypes.array.isRequired,
   unit: React.PropTypes.string.isRequired
 };
 

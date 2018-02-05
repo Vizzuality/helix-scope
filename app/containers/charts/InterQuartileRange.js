@@ -1,14 +1,15 @@
 import { connect } from 'react-redux';
+import get from 'lodash/get';
 
 import InterQuartileRange from 'components/charts/InterQuartileRange';
 
 const mapStateToProps = ({ charts, config }, { chart, iso }) => {
-  if (!charts[chart]) {
-    return {};
-  }
+  const chartData = get(charts, `[${chart}][${iso}]`);
+  if (!chartData) return {};
 
   return {
-    remote: charts[chart][iso],
+    loading: chartData.loading,
+    data: chartData.data,
     scenarios: config.scenarios
   };
 };

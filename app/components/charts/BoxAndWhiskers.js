@@ -16,7 +16,7 @@ class BoxAndWhiskers extends BaseChart {
     const {
       margin,
       scenarios,
-      remote,
+      data,
       yTicks
     } = this.props;
 
@@ -28,10 +28,10 @@ class BoxAndWhiskers extends BaseChart {
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
     const domain = {
-      x: remote.data.map((d) => d.swl).filter(uniq),
+      x: data.map((d) => d.swl).filter(uniq),
       y: [
-        Math.min.apply(null, remote.data.map((d) => d.minimum)),
-        Math.max.apply(null, remote.data.map((d) => d.maximum))
+        Math.min.apply(null, data.map((d) => d.minimum)),
+        Math.max.apply(null, data.map((d) => d.maximum))
       ]
     };
 
@@ -81,7 +81,7 @@ class BoxAndWhiskers extends BaseChart {
 
     // each bar with whiskers (visualization element)
     const bars = svg.selectAll('.dot')
-      .data(remote.data)
+      .data(data)
       .enter()
       .append('g');
 
@@ -134,16 +134,6 @@ class BoxAndWhiskers extends BaseChart {
       .attr('width', mboxWidth)
       .attr('height', mboxWidth);
   }
-
-  render() {
-    return (
-      <div className="c-chart">
-        {!this.props.remote.loading ?
-          (<div className="chart" ref={(ref) => { this.chart = ref; }}></div>) :
-          (<div className="content subtitle">Loading</div>)}
-      </div>
-    );
-  }
 }
 
 BoxAndWhiskers.propTypes = {
@@ -153,18 +143,13 @@ BoxAndWhiskers.propTypes = {
   yTicks: React.PropTypes.number,
   chart: React.PropTypes.string,
   variable: React.PropTypes.string.isRequired,
-  value: React.PropTypes.string.isRequired,
-  remote: React.PropTypes.shape({
-    loading: React.PropTypes.bool.isRequired,
-    data: React.PropTypes.array.isRequired
-  }).isRequired
+  value: React.PropTypes.string.isRequired
 };
 
 BoxAndWhiskers.defaultProps = {
   ...BaseChart.defaultProps,
   scenarios: [],
-  yTicks: 5,
-  remote: { loading: true, data: [] }
+  yTicks: 5
 };
 
 export default BoxAndWhiskers;
