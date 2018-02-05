@@ -1,12 +1,13 @@
 import { connect } from 'react-redux';
+import get from 'lodash/get';
 
 import BoxAndWhiskers from 'components/charts/BoxAndWhiskers';
 import { scenarioColors } from 'constants/country';
 
 const mapStateToProps = ({ charts, config }, { chart, iso, variable, value }) => {
-  if (!charts[chart] || !iso) {
-    return {};
-  }
+  const chartData = get(charts, `[${chart}][${iso}]`);
+
+  if (!chartData) return {};
 
   return {
     remote: {
