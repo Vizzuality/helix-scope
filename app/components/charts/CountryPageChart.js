@@ -24,7 +24,7 @@ class CountryPageChart extends Component {
 
   getInitialState(props) {
     const selectedChart = get(props, 'charts[0]');
-    const selectedMeasure = this.getSelectedMeasure(selectedChart);
+    const selectedMeasure = this.getDefaultMeasure(selectedChart);
 
     return {
       selectedChart,
@@ -32,13 +32,14 @@ class CountryPageChart extends Component {
     };
   }
 
-  getSelectedMeasure(chart) {
-    const measurementSlug = get(chart, 'measurements[0]') || get(chart, 'measurement');
+  getDefaultMeasure(chart) {
+    const chartMeasures = (chart.measurements || [chart.measurement]).filter(m => m);
+    const measurementSlug = chartMeasures.find((m) => m === 'mean') || chartMeasures[0];
     return this.props.measurements.find((m) => m.slug === measurementSlug);
   }
 
   handleChartChange(chart) {
-    const selectedMeasure = this.getSelectedMeasure(chart);
+    const selectedMeasure = this.getDefaultMeasure(chart);
 
     this.setState({
       selectedChart: chart,
