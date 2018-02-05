@@ -107,3 +107,48 @@
     height: 50px;
   }
 }
+
+.flexible-width-select {
+  width: auto;
+  max-width: 700px;
+
+  .Select-menu-outer {
+    text-align: left;
+  }
+
+  .Select-placeholder,
+  &.Select--single > .Select-control .Select-value {
+    position: relative;
+    padding-left: 0;
+    margin-right: 30px;
+    left: 0;
+  }
+
+  .Select-control,
+  .Select-clear-zone,
+  .Select-arrow-zone {
+    display: inherit;
+  }
+
+  .Select-multi-value-wrapper {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+
+  .Select-clear-zone {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+  }
+
+  .Select-arrow-zone {
+    position: absolute;
+    top: 10px;
+    right: 0;
+  }
+
+  .Select-option {
+    padding: 15px 20px;
+    height: 50px;
+  }
+}

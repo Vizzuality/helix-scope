@@ -11,6 +11,10 @@ import {
   irrigationVariables
 } from 'constants/country';
 
+function removeLastDot(str) {
+  return str.replace(/\.\s*$/, '');
+}
+
 function cropYieldDynamicInfo(data) {
   const models = get(data, '[0].models');
   const institutions = get(data, '[0].institutions');
@@ -27,7 +31,7 @@ function climatologicalDynamicInfo(measurement, variable, data) {
   const institutions = uniq(flatMap(filtered, (d) => d.institutions)).join(', ');
 
   return `
-    ${measurement} of ${variable.name} over the country wide area: ${variable.name_long}.
+    ${measurement} of ${variable.name} over the country wide area: ${removeLastDot(variable.name_long)}.
     These data are obtained from ${models} models, processed by ${institutions}.
   `;
 }
@@ -91,8 +95,8 @@ export default function getChartGroups(category, country) {
     case 'eco':
     case 'bd':
       return category.indicators.filter(onlyForCountry).map((i) => ({
-        ...i,
         slug: 'climatological_ecological',
+        measurements: i.measurements,
         label: `${i.name} (${i.unit})`,
         charts: i.measurements.map((m) => ({
           measurement: m,

@@ -45,13 +45,13 @@ class CountryPageChart extends Component {
   render() {
     const { chartGroups, chartData, measurements, country } = this.props;
     const { selectedChartGroup, selectedMeasure } = this.state;
+    const selectedChart = selectedChartGroup.charts.length > 1 && selectedMeasure
+                        ? selectedChartGroup.charts.find((c) => c.measurement === selectedMeasure.slug)
+                        : selectedChartGroup.charts[0];
+    const selectedChartData = get(chartData, `[${selectedChartGroup.slug}][${country.iso}].data`);
     const availableMeasurements = get(selectedChartGroup, 'measurements.length') && measurements.filter(
       (m) => selectedChartGroup.measurements.includes(m.slug)
     );
-    const selectedChart = selectedChartGroup.charts.length > 1 && selectedMeasure
-      ? selectedChartGroup.charts.find((c) => c.measurement === selectedMeasure.slug)
-      : selectedChartGroup.charts[0];
-    const selectedChartData = get(chartData, `[${selectedChartGroup.slug}][${country.iso}].data`);
 
     return (
       <div className="c-chart-box">
@@ -59,11 +59,12 @@ class CountryPageChart extends Component {
           <div className="column header">
             {chartGroups.length > 1 ? (
               <Select
-                className="c-react-select"
+                className="c-react-select flexible-width-select"
                 options={chartGroups}
                 value={selectedChartGroup}
                 onChange={this.handleChartGroupChange}
                 clearable={false}
+                searchable={false}
                 labelKey="label"
                 valueKey="slug"
               />
@@ -77,7 +78,9 @@ class CountryPageChart extends Component {
                 onChange={this.handleMeasureChange}
               />
             )}
-            {selectedChart.info && <InfoButton text={selectedChart.info(selectedChartData)} />}
+            {selectedChart.info && (
+              <InfoButton text={selectedChart.info(selectedChartData)} />
+            )}
           </div>
         </div>
         <div className="row">
