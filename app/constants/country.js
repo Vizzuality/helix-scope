@@ -76,3 +76,5 @@ export const scenarioColors = [
   '#c4bb00',
   '#ff9000'
 ];
+
+export const categoriesOrder = ['cl', 'ag', 'bd', 'w', 'eco'];

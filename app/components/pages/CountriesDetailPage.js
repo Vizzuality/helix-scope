@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router';
 
 import getChartGroups from 'utils/getChartGroups';
+import { categoriesOrder } from 'constants/country';
 import CountryPageChart from 'containers/charts/CountryPageChart';
 import CallToAction from 'components/common/CallToAction';
 import ExploreScenarios from 'components/common/ExploreScenarios';
@@ -22,6 +23,9 @@ class CountriesDetailPage extends Component {
     if (this.props.config.loading) return <LoadingSpinner />;
 
     const country = this.props.countriesList && this.props.countriesList.find((c) => c.iso === this.props.iso);
+    const categories = [...this.props.config.categories].sort(
+      (a, b) => categoriesOrder.indexOf(a.slug) > categoriesOrder.indexOf(b.slug)
+    );
 
     if (!country) return null;
 
@@ -36,7 +40,7 @@ class CountriesDetailPage extends Component {
           </div>
         </div>
         <div className="l-page-content">
-          {this.props.config.categories.map((category, index) => (
+          {categories.map((category, index) => (
             <div className="c-country-page-chart" key={index}>
               <div className="row">
                 <div className="column">
