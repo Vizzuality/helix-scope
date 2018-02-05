@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 
-import getChartGroups from 'utils/getChartGroups';
+import { getCharts } from 'utils/charts';
 import { categoriesOrder } from 'constants/country';
 import CountryPageChart from 'containers/charts/CountryPageChart';
 import CallToAction from 'components/common/CallToAction';
@@ -50,7 +50,7 @@ class CountriesDetailPage extends Component {
               <CountryPageChart
                 category={category}
                 country={country}
-                chartGroups={getChartGroups(category, country)}
+                charts={getCharts(category)}
                 measurements={this.props.config.measurements}
               />
             </div>

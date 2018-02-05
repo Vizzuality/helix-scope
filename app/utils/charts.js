@@ -1,18 +1,13 @@
-import React from 'react';
 import get from 'lodash/get';
 import uniq from 'lodash/uniqBy';
 import flatMap from 'lodash/flatMap';
 
-import InterQuartileRangeChart from 'containers/charts/InterQuartileRange';
-import RegularBarChart from 'containers/charts/RegularBar';
-import BoxAndWhiskersChart from 'containers/charts/BoxAndWhiskers';
-import {
-  maizeVariables,
-  irrigationVariables
-} from 'constants/country';
-
 function removeLastDot(str) {
   return str.replace(/\.\s*$/, '');
+}
+
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 function cropYieldDynamicInfo(data) {
@@ -25,13 +20,13 @@ function cropYieldDynamicInfo(data) {
   `;
 }
 
-function climatologicalDynamicInfo(measurement, variable, data) {
+function climatologicalDynamicInfo(variable, data, measurement) {
   const filtered = (data || []).filter((d) => d.variable === variable.slug);
   const models = uniq(flatMap(filtered, (d) => d.models)).join(', ');
   const institutions = uniq(flatMap(filtered, (d) => d.institutions)).join(', ');
 
   return `
-    ${measurement} of ${variable.name} over the country wide area: ${removeLastDot(variable.name_long)}.
+    ${capitalize(measurement)} of ${variable.name} over the country wide area: ${removeLastDot(variable.name_long)}.
     These data are obtained from ${models} models, processed by ${institutions}.
   `;
 }
@@ -56,7 +51,7 @@ function floodAffDynamicInfo(data) {
   `;
 }
 
-export default function getChartGroups(category, country) {
+export function getCharts(category) {
   const onlyForCountry = (i) => i.section === 'country';
 
   switch (category.slug) {
@@ -65,30 +60,12 @@ export default function getChartGroups(category, country) {
         {
           slug: 'crop_yield_change_baseline',
           label: 'Projected changes in crop yields relative to 1981–2010 base-level (%)',
-          charts: [{
-            info: cropYieldDynamicInfo,
-            component: (
-              <InterQuartileRangeChart
-                iso={country.iso}
-                chart="crop_yield_change_baseline"
-                variables={maizeVariables}
-              />
-            )
-          }]
+          info: cropYieldDynamicInfo
         },
         {
           slug: 'crop_yield_change_irrigation',
           label: 'Change in crop yields (relative to 1981-2010 base levels) avoided under different warming scenarios due to Irrigation (%)',
-          charts: [{
-            info: cropYieldDynamicInfo,
-            component: (
-              <InterQuartileRangeChart
-                iso={country.iso}
-                chart="crop_yield_change_irrigation"
-                variables={irrigationVariables}
-              />
-            )
-          }]
+          info: cropYieldDynamicInfo
         }
       ];
     case 'cl':
@@ -98,46 +75,20 @@ export default function getChartGroups(category, country) {
         slug: 'climatological_ecological',
         measurements: i.measurements,
         label: `${i.name} (${i.unit})`,
-        charts: i.measurements.map((m) => ({
-          measurement: m,
-          info: climatologicalDynamicInfo.bind(null, m, i),
-          component: (
-            <BoxAndWhiskersChart
-              iso={country.iso}
-              chart="climatological_ecological"
-              variable={i.slug}
-              value={m}
-            />
-          )
-        }))
+        variable: i.slug,
+        info: climatologicalDynamicInfo.bind(null, i)
       }));
     case 'w':
       return [
         {
           slug: 'annual_expected_flood_damage',
           label: 'Annual expected flood damages relative to 1976–2005 levels (millions of €)',
-          charts: [{
-            info: floodCostDynamicInfo,
-            component: (
-              <RegularBarChart
-                iso={country.iso}
-                chart="annual_expected_flood_damage"
-              />
-            )
-          }]
+          info: floodCostDynamicInfo
         },
         {
           slug: 'population_affected_anually',
           label: 'Population affected annually year from river flooding relative to 1976–2005 levels',
-          charts: [{
-            info: floodAffDynamicInfo,
-            component: (
-              <RegularBarChart
-                iso={country.iso}
-                chart="population_affected_anually"
-              />
-            )
-          }]
+          info: floodAffDynamicInfo
         }
       ];
     default:

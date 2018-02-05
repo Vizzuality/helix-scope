@@ -2,6 +2,13 @@ import React, { Component } from 'react';
 import Select from 'react-select';
 import get from 'lodash/get';
 
+import InterQuartileRangeChart from 'containers/charts/InterQuartileRange';
+import RegularBarChart from 'containers/charts/RegularBar';
+import BoxAndWhiskersChart from 'containers/charts/BoxAndWhiskers';
+import {
+  maizeVariables,
+  irrigationVariables
+} from 'constants/country';
 import InfoButton from 'components/charts/InfoButton';
 import MeasureSelector from 'components/maps/MeasureSelector';
 
@@ -11,29 +18,29 @@ class CountryPageChart extends Component {
 
     this.state = { ...this.getInitialState(props) };
 
-    this.handleChartGroupChange = this.handleChartGroupChange.bind(this);
+    this.handleChartChange = this.handleChartChange.bind(this);
     this.handleMeasureChange = this.handleMeasureChange.bind(this);
   }
 
   getInitialState(props) {
-    const selectedChartGroup = get(props, 'chartGroups[0]');
+    const selectedChart = get(props, 'charts[0]');
     const selectedMeasure = props.measurements.find(
-      (m) => m.slug === get(selectedChartGroup, 'measurements[0]')
+      (m) => m.slug === get(selectedChart, 'measurements[0]')
     );
 
     return {
-      selectedChartGroup,
+      selectedChart,
       selectedMeasure
     };
   }
 
-  handleChartGroupChange(chartGroup) {
+  handleChartChange(chart) {
     const selectedMeasure = this.props.measurements.find(
-      (m) => m.slug === get(chartGroup, 'measurements[0]')
+      (m) => m.slug === get(chart, 'measurements[0]')
     );
 
     this.setState({
-      selectedChartGroup: chartGroup,
+      selectedChart: chart,
       selectedMeasure
     });
   }
@@ -42,34 +49,62 @@ class CountryPageChart extends Component {
     this.setState({ selectedMeasure: measure });
   }
 
+  renderChart(chart, country) {
+    const { selectedMeasure } = this.state;
+    const props = {
+      chart: chart.slug,
+      iso: country.iso
+    };
+
+    switch (chart.slug) {
+      case 'crop_yield_change_baseline':
+        return <InterQuartileRangeChart {...props} variables={maizeVariables} />;
+      case 'crop_yield_change_irrigation':
+        return <InterQuartileRangeChart {...props} variables={irrigationVariables} />;
+      case 'annual_expected_flood_damage':
+      case 'population_affected_anually':
+        return <RegularBarChart {...props} />;
+      case 'climatological_ecological':
+        return (
+          <BoxAndWhiskersChart
+            {...props}
+            variable={chart.variable}
+            value={selectedMeasure.slug}
+          />
+        );
+      default:
+        return null;
+    }
+  }
+
   render() {
-    const { chartGroups, chartData, measurements, country } = this.props;
-    const { selectedChartGroup, selectedMeasure } = this.state;
-    const selectedChart = selectedChartGroup.charts.length > 1 && selectedMeasure
-                        ? selectedChartGroup.charts.find((c) => c.measurement === selectedMeasure.slug)
-                        : selectedChartGroup.charts[0];
-    const selectedChartData = get(chartData, `[${selectedChartGroup.slug}][${country.iso}].data`);
-    const availableMeasurements = get(selectedChartGroup, 'measurements.length') && measurements.filter(
-      (m) => selectedChartGroup.measurements.includes(m.slug)
+    const { charts, chartData, measurements, country } = this.props;
+    const { selectedChart, selectedMeasure } = this.state;
+
+    if (!charts || !charts.length) return null;
+
+    const selectedChartData = get(chartData, `[${selectedChart.slug}][${country.iso}].data`);
+    const availableMeasurements = get(selectedChart, 'measurements.length') && measurements.filter(
+      (m) => selectedChart.measurements.includes(m.slug)
     );
 
     return (
       <div className="c-chart-box">
         <div className="row">
           <div className="column header">
-            {chartGroups.length > 1 ? (
+            {charts.length > 1 ? (
               <Select
                 className="c-react-select flexible-width-select"
-                options={chartGroups}
-                value={selectedChartGroup}
-                onChange={this.handleChartGroupChange}
+                options={charts}
+                value={selectedChart}
+                onChange={this.handleChartChange}
                 clearable={false}
                 searchable={false}
                 labelKey="label"
                 valueKey="slug"
               />
             ) : (
-              selectedChartGroup.label
+              selectedChart.label
             )}
             {availableMeasurements && (
               <MeasureSelector
@@ -79,13 +114,13 @@ class CountryPageChart extends Component {
               />
             )}
             {selectedChart.info && (
-              <InfoButton text={selectedChart.info(selectedChartData)} />
+              <InfoButton text={selectedChart.info(selectedChartData, get(selectedMeasure, 'name'))} />
             )}
           </div>
         </div>
         <div className="row">
           <div className="column">
-            {selectedChart.component}
+            {this.renderChart(selectedChart, country)}
           </div>
         </div>
       </div>
@@ -94,7 +129,7 @@ class CountryPageChart extends Component {
 }
 
 CountryPageChart.propTypes = {
-  chartGroups: React.PropTypes.array.isRequired,
+  charts: React.PropTypes.array.isRequired,
   chartData: React.PropTypes.any,
   category: React.PropTypes.object.isRequired,
   country: React.PropTypes.object.isRequired,
