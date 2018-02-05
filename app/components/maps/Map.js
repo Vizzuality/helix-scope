@@ -156,7 +156,7 @@ class Map extends React.Component {
         run,
         ${measure.slug} as value
       FROM onedegintermod s
-        INNER JOIN test_1deg_tn m on m.shape_id = s.id_val
+        INNER JOIN table_cl_tn m on m.shape_id = s.id_val
       WHERE
         ST_WITHIN(
           ST_GeomFromText('POINT(${lng} ${lat})', 4326),
@@ -238,7 +238,7 @@ class Map extends React.Component {
     const query = `
       WITH data AS (
         SELECT shape_id, AVG(${measure}) AS ${measure}
-        FROM test_1deg_tn
+        FROM table_cl_tn
         WHERE variable = '${indicator}'
         AND swl_info = ${scenario}
         GROUP BY shape_id
