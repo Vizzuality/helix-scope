@@ -50,3 +50,9 @@ export const MAP_RASTER_CSS = {
   'raster-colorizer-epsilon': '0.1',
   'raster-colorizer-stops': ''
 };
+
+export const TABLE_NAMES = {
+  'tn': 'table_cl_tn',
+  'ts': 'table_cl_ts',
+  'tx': 'table_cl_tx'
+};

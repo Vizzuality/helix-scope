@@ -12,7 +12,8 @@ import {
   ENDPOINT_SQL,
   MAP_MIN_ZOOM,
   MAP_LAYER_SPEC,
-  MAP_VECTOR_CSS
+  MAP_VECTOR_CSS,
+  TABLE_NAMES
 } from 'constants/map';
 import { categoryColorScheme } from 'constants/colors';
 
@@ -156,7 +157,7 @@ class Map extends React.Component {
         run,
         ${measure.slug} as value
       FROM onedegintermod s
-        INNER JOIN table_cl_tn m on m.shape_id = s.id_val
+        INNER JOIN ${TABLE_NAMES[indicator]} m on m.shape_id = s.id_val
       WHERE
         ST_WITHIN(
           ST_GeomFromText('POINT(${lng} ${lat})', 4326),
@@ -234,11 +235,10 @@ class Map extends React.Component {
     const indicator = mapData.indicator.slug;
     const scenario = mapData.scenario.slug;
     const measure = mapData.measure.slug;
-
     const query = `
       WITH data AS (
         SELECT shape_id, AVG(${measure}) AS ${measure}
-        FROM table_cl_tn
+        FROM ${TABLE_NAMES[indicator]}
         WHERE variable = '${indicator}'
         AND swl_info = ${scenario}
         GROUP BY shape_id
