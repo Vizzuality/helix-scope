@@ -54,5 +54,27 @@ export const MAP_RASTER_CSS = {
 export const TABLE_NAMES = {
   'tn': 'table_cl_tn',
   'ts': 'table_cl_ts',
-  'tx': 'table_cl_tx'
-};
+  'tx': 'table_cl_tx',
+  'pr': 'table_cl_pr',
+  'reptilenobiodiversity': 'table_bd_reptilenobiodiversity',
+  'birdnobiodiversity': 'table_bd_birdnobiodiversity',
+  'amphibianobiodiversity': 'table_bd_amphibianobiodiversity',
+  'mammalrealbiodiversity': 'table_bd_mammalrealbiodiversity',
+  'mammalnobiodiversity': 'table_bd_mammalnobiodiversity',
+  'birdrealbiodiversity': 'table_bd_birdrealbiodiversity',
+  'amphibiarealbiodiversity': 'table_bd_amphibiarealbiodiversity',
+  'plantsrealbiodiversity': 'table_bd_plantsrealbiodiversity',
+  'plantsnobiodiversity': 'table_bd_plantsnobiodiversity',
+  'reptilerealbiodiversity': 'table_bd_reptilerealbiodiversity',
+  'perc_change_roff': 'table_w_perc_change_roff',
+  'perc_change_low_roff': 'table_w_perc_change_low_roff',
+  'time_perc_change_SPI6': 'table_w_time_perc_change_SPI6',
+  'time_perc_change_SPI48': 'table_w_time_perc_change_SPI48',
+  'time_perc_change_SRI48': 'table_w_time_perc_change_SRI48',
+  'time_perc_change_SRI6': 'table_w_time_perc_change_SRI6',
+  'cSoil': 'table_eco_cSoil',
+  'gpp': 'table_eco_gpp',
+  'evap': 'table_eco_evap',
+  'nbp': 'table_eco_nbp',
+  'cVeg': 'table_eco_cVeg'
+}
