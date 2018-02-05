@@ -18,7 +18,7 @@ class InfoButton extends Component {
   render() {
     return (
       <div className="c-info">
-        <Button icon="info" style={this.state.open ? 'primary' : 'dark'} size="medium" onClick={this.handleClick} />
+        <Button icon="info" style={this.state.open ? 'primary' : 'light'} size="medium" onClick={this.handleClick} />
         {this.state.open && <div className="infobox">
           <p>{this.props.text}</p>
         </div>}
