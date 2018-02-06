@@ -1,3 +1,5 @@
+/* eslint-disable quote-props */
+
 export const CARTODB_USER = 'helixscope';
 export const ENDPOINT_TILES = `https://${CARTODB_USER}.carto.com/api/v1/map/`;
 export const ENDPOINT_SQL = `https://${CARTODB_USER}.carto.com/api/v2/sql`;
@@ -77,4 +79,4 @@ export const TABLE_NAMES = {
   'evap': 'table_eco_evap',
   'nbp': 'table_eco_nbp',
   'cVeg': 'table_eco_cVeg'
-}
+};

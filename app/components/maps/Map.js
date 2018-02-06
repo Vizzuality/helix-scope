@@ -145,7 +145,6 @@ class Map extends React.Component {
 
   getPopupData(lng, lat) {
     const {
-      measure,
       scenario,
       indicator
     } = this.props.mapData;
@@ -155,9 +154,9 @@ class Map extends React.Component {
         m.model_short_name,
         m.model_long_name,
         run,
-        ${measure.slug} as value
+        mean as value
       FROM onedegintermod s
-        INNER JOIN ${TABLE_NAMES[indicator]} m on m.shape_id = s.id_val
+        INNER JOIN ${TABLE_NAMES[indicator.slug]} m on m.shape_id = s.id_val
       WHERE
         ST_WITHIN(
           ST_GeomFromText('POINT(${lng} ${lat})', 4326),
@@ -234,16 +233,15 @@ class Map extends React.Component {
   getQuery(mapData) {
     const indicator = mapData.indicator.slug;
     const scenario = mapData.scenario.slug;
-    const measure = mapData.measure.slug;
     const query = `
       WITH data AS (
-        SELECT shape_id, AVG(${measure}) AS ${measure}
+        SELECT shape_id, AVG(mean) AS value
         FROM ${TABLE_NAMES[indicator]}
         WHERE variable = '${indicator}'
         AND swl_info = ${scenario}
         GROUP BY shape_id
       )
-      SELECT onedegintermod.id_val, onedegintermod.the_geom_webmercator, onedegintermod.cartodb_id, data.${measure}
+      SELECT onedegintermod.id_val, onedegintermod.the_geom_webmercator, onedegintermod.cartodb_id, data.value
       FROM onedegintermod INNER JOIN data ON onedegintermod.id_val = data.shape_id
     `;
 
@@ -255,7 +253,6 @@ class Map extends React.Component {
 
     const {
       id,
-      measure,
       scenario,
       indicator
     } = this.props.mapData;
@@ -277,7 +274,7 @@ class Map extends React.Component {
         <MapPopupPlot data={data} unit={indicator.unit} />
         <div>
           Each point represents a model run. Together, they represent the range of possible futures
-          for the {measure.name} of {indicator.name} in the area you have selected, in a world
+          of {indicator.name} in the area you have selected, in a world
           which has experienced {scenario.name} relative to pre-industrial levels.
           The map shows the average values of the model projections ({mean.toFixed(2)} {indicator.unit}).
         </div>
@@ -309,7 +306,7 @@ class Map extends React.Component {
     };
 
     bucketList.forEach((bucket, index) => {
-      const key = `#null[${mapData.measure.slug} <= ${bucket.value}]`;
+      const key = `#null[value <= ${bucket.value}]`;
       cssProps[key] = { 'polygon-fill': colorscheme[index] };
     });
 
@@ -341,7 +338,6 @@ class Map extends React.Component {
 Map.propTypes = {
   mapData: React.PropTypes.shape({
     id: React.PropTypes.string,
-    measure: React.PropTypes.object,
     layer: React.PropTypes.object,
     scenario: React.PropTypes.object,
     category: React.PropTypes.object,

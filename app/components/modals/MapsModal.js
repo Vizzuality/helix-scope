@@ -14,13 +14,11 @@ class MapsModal extends Component {
       /* initial state options for modal */
       selectedScenario: this.props.mapConfigData.scenario,
       selectedCategory: this.props.mapConfigData.category,
-      selectedIndicator: this.props.mapConfigData.indicator,
-      selectedMeasure: this.props.mapConfigData.measure
+      selectedIndicator: this.props.mapConfigData.indicator
     };
     this.handleScenarioChange = this.handleScenarioChange.bind(this);
     this.handleCategory = this.handleCategory.bind(this);
     this.handleIndicator = this.handleIndicator.bind(this);
-    this.handleMeasure = this.handleMeasure.bind(this);
     this.setMapState = this.setMapState.bind(this);
   }
 
@@ -28,14 +26,12 @@ class MapsModal extends Component {
     this.setState({
       selectedScenario: nextProps.mapConfigData.scenario,
       selectedCategory: nextProps.mapConfigData.category,
-      selectedIndicator: nextProps.mapConfigData.indicator,
-      selectedMeasure: nextProps.mapConfigData.measure
+      selectedIndicator: nextProps.mapConfigData.indicator
     });
   }
 
   setMapState() {
     const mapState = {
-      measure: this.state.selectedMeasure,
       scenario: this.state.selectedScenario,
       category: this.state.selectedCategory,
       indicator: this.state.selectedIndicator
@@ -65,12 +61,6 @@ class MapsModal extends Component {
   handleIndicator(newValue) {
     this.setState({
       selectedIndicator: newValue
-    });
-  }
-
-  handleMeasure(newValue) {
-    this.setState({
-      selectedMeasure: newValue
     });
   }
 
@@ -118,7 +108,7 @@ class MapsModal extends Component {
             </div>
           </div>
           <div className="row">
-            <div className="column small-12 medium-4">
+            <div className="column small-12 medium-6">
               <Select
                 className="c-react-select"
                 options={this.props.config.categories.filter((c) => c.indicators.some((i) => i.section === 'map'))}
@@ -131,7 +121,7 @@ class MapsModal extends Component {
                 valueKey="slug"
               />
             </div>
-            <div className="column small-12 medium-4">
+            <div className="column small-12 medium-6">
               <Select
                 className="c-react-select"
                 options={this.state.selectedCategory.indicators.filter((s) => s.section === 'map')}
@@ -139,19 +129,6 @@ class MapsModal extends Component {
                 disabled={this.state.disabled}
                 value={this.state.selectedIndicator.slug}
                 onChange={this.handleIndicator}
-                searchable={this.state.searchable}
-                labelKey="name"
-                valueKey="slug"
-              />
-            </div>
-            <div className="column small-12 medium-4">
-              <Select
-                className="c-react-select"
-                options={this.props.config.measurements}
-                clearable={this.state.clearable}
-                disabled={this.state.disabled}
-                value={this.state.selectedMeasure.slug}
-                onChange={this.handleMeasure}
                 searchable={this.state.searchable}
                 labelKey="name"
                 valueKey="slug"
@@ -185,7 +162,6 @@ MapsModal.propTypes = {
   * Default config to populating modals
   **/
   config: React.PropTypes.shape({
-    measurements: React.PropTypes.array,
     indicators: React.PropTypes.array,
     categories: React.PropTypes.array,
     scenarios: React.PropTypes.array
@@ -194,7 +170,6 @@ MapsModal.propTypes = {
   * Data of the map config
   **/
   mapConfigData: React.PropTypes.shape({
-    measure: React.PropTypes.object,
     indicator: React.PropTypes.object,
     scenario: React.PropTypes.object,
     category: React.PropTypes.object
