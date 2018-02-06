@@ -10,6 +10,7 @@ export const MAP_MAX_BOUNDS = [
   [59.44, 182.98],
   [-30.14, -132.53]
 ];
+export const MAP_LEGEND_MAX_TICKS = 7;
 
 // Basemap
 
