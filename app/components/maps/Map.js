@@ -7,13 +7,13 @@ import Popup from 'components/common/Popup';
 import MapPopupPlot from 'components/charts/MapPopupPlot';
 import objectToCSS from 'utils/objectToCSS';
 import {
+  getTableName,
   BASEMAP_GEOM_TILE,
   BASEMAP_LABELS_TILE,
   ENDPOINT_SQL,
   MAP_MIN_ZOOM,
   MAP_LAYER_SPEC,
-  MAP_VECTOR_CSS,
-  TABLE_NAMES
+  MAP_VECTOR_CSS
 } from 'constants/map';
 import { categoryColorScheme } from 'constants/colors';
 
@@ -145,6 +145,7 @@ class Map extends React.Component {
 
   getPopupData(lng, lat) {
     const {
+      category,
       scenario,
       indicator
     } = this.props.mapData;
@@ -156,7 +157,7 @@ class Map extends React.Component {
         run,
         mean as value
       FROM onedegintermod s
-        INNER JOIN ${TABLE_NAMES[indicator.slug]} m on m.shape_id = s.id_val
+        INNER JOIN ${getTableName(category.slug, indicator.slug)} m on m.shape_id = s.id_val
       WHERE
         ST_WITHIN(
           ST_GeomFromText('POINT(${lng} ${lat})', 4326),
@@ -231,12 +232,13 @@ class Map extends React.Component {
   }
 
   getQuery(mapData) {
+    const category = mapData.category.slug;
     const indicator = mapData.indicator.slug;
     const scenario = mapData.scenario.slug;
     const query = `
       WITH data AS (
         SELECT shape_id, AVG(mean) AS value
-        FROM ${TABLE_NAMES[indicator]}
+        FROM ${getTableName(category, indicator)}
         WHERE variable = '${indicator}'
         AND swl_info = ${scenario}
         GROUP BY shape_id
