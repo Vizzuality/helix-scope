@@ -2,6 +2,8 @@ import { connect } from 'react-redux';
 import get from 'lodash/get';
 
 import InterQuartileRange from 'components/charts/InterQuartileRange';
+import withFetching from 'components/charts/withFetching';
+import { fetchInterQuartileRange } from 'actions/charts';
 
 const mapStateToProps = ({ charts, config }, { chart, iso }) => {
   const chartData = get(charts, `[${chart}][${iso}]`);
@@ -14,4 +16,10 @@ const mapStateToProps = ({ charts, config }, { chart, iso }) => {
   };
 };
 
-export default connect(mapStateToProps)(InterQuartileRange);
+const mapDispatchToProps = (dispatch, { chart, iso, variable }) => ({
+  fetchData: () => {
+    dispatch(fetchInterQuartileRange(chart, iso, variable));
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withFetching(InterQuartileRange));

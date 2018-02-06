@@ -11,6 +11,8 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+const onlyForCountry = (i) => i.section === 'country';
+
 function cropYieldDynamicInfo(data) {
   const models = get(data, '[0].models');
   const institutions = get(data, '[0].institutions');
@@ -52,19 +54,44 @@ function floodAffDynamicInfo(data) {
   `;
 }
 
-export function getCharts(category) {
-  const onlyForCountry = (i) => i.section === 'country';
+function getClimatologicalCharts(category) {
+  return category.indicators.filter(onlyForCountry).map((i) => ({
+    slug: 'climatological_ecological',
+    measurements: i.measurements,
+    label: `${i.name} (${i.unit})`,
+    variable: i.slug,
+    info: climatologicalDynamicInfo.bind(null, i)
+  }));
+}
 
+function getSummaryCharts(category) {
+  const notTemperature = (i) => !['tn', 'tx', 'ts'].includes(i.slug);
+
+  return category
+    .indicators
+    .filter(onlyForCountry)
+    .filter(notTemperature)
+    .map((i) => ({
+      slug: `${i.slug}_summary`,
+      label: `${i.name} - Summary (${i.unit})`,
+      variable: i.slug,
+      info: () => {}
+    }));
+}
+
+export function getCharts(category) {
   switch (category.slug) {
     case 'ag':
       return [
         {
           slug: 'crop_yield_change_baseline',
+          variable: 'yield',
           label: 'Projected changes in crop yields relative to 1981–2010 base-level (%)',
           info: cropYieldDynamicInfo
         },
         {
           slug: 'crop_yield_change_irrigation',
+          variable: 'Irrigation',
           label: 'Change in crop yields (relative to 1981-2010 base levels) avoided under different warming scenarios due to Irrigation (%)',
           info: cropYieldDynamicInfo
         }
@@ -72,23 +99,25 @@ export function getCharts(category) {
     case 'cl':
     case 'eco':
     case 'bd':
-      return category.indicators.filter(onlyForCountry).map((i) => ({
-        slug: 'climatological_ecological',
-        measurements: i.measurements,
-        label: `${i.name} (${i.unit})`,
-        variable: i.slug,
-        info: climatologicalDynamicInfo.bind(null, i)
-      }));
+      return (getClimatologicalCharts(category) || [])
+        .concat([{
+          slug: 'temperature_summary',
+          label: 'Average Temperature Summary',
+          info: () => {}
+        }])
+        .concat(getSummaryCharts(category));
     case 'w':
       return [
         {
           slug: 'annual_expected_flood_damage',
           label: 'Annual expected flood damages relative to 1976–2005 levels (millions of €)',
+          variable: 'river_floods_ExpDam',
           info: floodCostDynamicInfo
         },
         {
           slug: 'population_affected_anually',
           label: 'Population affected annually year from river flooding relative to 1976–2005 levels',
+          variable: 'river_floods_PopAff',
           info: floodAffDynamicInfo
         }
       ];

@@ -91,6 +91,7 @@ class RegularBar extends BaseChart {
 RegularBar.propTypes = {
   ...BaseChart.propTypes,
   iso: React.PropTypes.string.isRequired,
+  variable: React.PropTypes.string.isRequired,
   scenarios: React.PropTypes.array,
   yTicks: React.PropTypes.number,
   chart: React.PropTypes.string.isRequired

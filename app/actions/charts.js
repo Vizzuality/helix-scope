@@ -109,3 +109,33 @@ export function fetchBoxAndWhiskers(chart, iso) {
 
   return fetchChartData(chart, sql, iso);
 }
+
+export function fetchSummary(chart, iso, variable) {
+  const sql = `
+    SELECT
+      AVG(min) as min,
+      AVG(mean) as mean,
+      AVG(max) as max,
+      swl_info
+    FROM master_admin0
+    WHERE variable = '${variable}'
+      AND iso = '${iso}'
+      AND swl_info < 6
+    GROUP BY swl_info
+  `;
+
+  return fetchChartData(chart, sql, iso);
+}
+
+export function fetchTemperatureSummary(chart, iso) {
+  const sql = `
+    SELECT AVG(mean), swl_info, variable
+    FROM master_admin0
+    WHERE variable IN ('tx', 'tn', 'ts')
+      AND iso = '${iso}'
+      AND swl_info < 6
+    GROUP BY swl_info, variable
+  `;
+
+  return fetchChartData(chart, sql, iso);
+}

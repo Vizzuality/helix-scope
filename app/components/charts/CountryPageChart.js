@@ -55,7 +55,8 @@ class CountryPageChart extends Component {
     const { selectedMeasure } = this.state;
     const props = {
       chart: chart.slug,
-      iso: country.iso
+      iso: country.iso,
+      variable: chart.variable
     };
 
     switch (chart.slug) {

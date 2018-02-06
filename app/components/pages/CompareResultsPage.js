@@ -37,14 +37,6 @@ class CountriesPage extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchInterQuartileRange('crop_yield_change_baseline', this.props.iso1, 'yield');
-    this.props.fetchInterQuartileRange('crop_yield_change_baseline', this.props.iso2, 'yield');
-    this.props.fetchInterQuartileRange('crop_yield_change_irrigation', this.props.iso1, 'Irrigation');
-    this.props.fetchInterQuartileRange('crop_yield_change_irrigation', this.props.iso2, 'Irrigation');
-    this.props.fetchRegularBar('annual_expected_flood_damage', this.props.iso1, 'river_floods_ExpDam');
-    this.props.fetchRegularBar('annual_expected_flood_damage', this.props.iso2, 'river_floods_ExpDam');
-    this.props.fetchRegularBar('population_affected_anually', this.props.iso1, 'river_floods_PopAff');
-    this.props.fetchRegularBar('population_affected_anually', this.props.iso2, 'river_floods_PopAff');
     this.props.fetchBoxAndWhiskers('climatological_ecological', this.props.iso1);
     this.props.fetchBoxAndWhiskers('climatological_ecological', this.props.iso2);
   }
