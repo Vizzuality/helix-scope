@@ -5,6 +5,7 @@ import get from 'lodash/get';
 import InterQuartileRangeChart from 'containers/charts/InterQuartileRange';
 import RegularBarChart from 'containers/charts/RegularBar';
 import BoxAndWhiskersChart from 'containers/charts/BoxAndWhiskers';
+import SummaryChart from 'containers/charts/Summary';
 import {
   maizeVariables,
   irrigationVariables
@@ -71,11 +72,14 @@ class CountryPageChart extends Component {
         return (
           <BoxAndWhiskersChart
             {...props}
-            variable={chart.variable}
             value={selectedMeasure.slug}
           />
         );
       default:
+        if (chart.slug.endsWith('_summary')) {
+          return <SummaryChart {...props} />;
+        }
+
         return null;
     }
   }

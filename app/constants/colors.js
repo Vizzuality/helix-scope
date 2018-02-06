@@ -14,3 +14,9 @@ export const modelColors = [
   '#8d43da',
   '#fbd24c'
 ];
+
+export const summaryLineColors = {
+  min: '#FCE64D',
+  mean: '#F29C30',
+  max: '#DD4414'
+};

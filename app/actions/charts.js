@@ -1,9 +1,10 @@
 import cartoQuery from 'utils/cartoQuery';
+import flatMap from 'lodash/flatMap';
 
 export const LOAD_CHART = 'LOAD_CHART';
 export const RECEIVE_CHART = 'RECEIVE_CHART';
 
-function fetchChartData(chart, sql, iso) {
+function fetchChartData(chart, sql, iso, mapResponse) {
   return (dispatch) => {
     dispatch({
       type: LOAD_CHART,
@@ -15,12 +16,14 @@ function fetchChartData(chart, sql, iso) {
 
     return cartoQuery(sql)
       .then((response) => response.json())
-      .then((response) => dispatch({
+      .then((response) => response.rows)
+      .then((response) => (mapResponse ? mapResponse(response) : response))
+      .then((data) => dispatch({
         type: RECEIVE_CHART,
         payload: {
           chart,
           iso,
-          data: response.rows
+          data
         }
       }));
   };
@@ -113,29 +116,51 @@ export function fetchBoxAndWhiskers(chart, iso) {
 export function fetchSummary(chart, iso, variable) {
   const sql = `
     SELECT
-      AVG(min) as min,
-      AVG(mean) as mean,
-      AVG(max) as max,
-      swl_info
+      AVG(min) AS min,
+      AVG(mean) AS mean,
+      AVG(max) AS max,
+      swl_info AS swl
     FROM master_admin0
     WHERE variable = '${variable}'
       AND iso = '${iso}'
       AND swl_info < 6
-    GROUP BY swl_info
+    GROUP BY swl
+    ORDER BY swl
   `;
 
-  return fetchChartData(chart, sql, iso);
+  return fetchChartData(chart, sql, iso, (data) => (
+    flatMap(data, (v) => ([
+      { line: 'min', value: v.min, swl: v.swl },
+      { line: 'mean', value: v.mean, swl: v.swl },
+      { line: 'max', value: v.max, swl: v.swl }
+    ]))
+  ));
 }
 
 export function fetchTemperatureSummary(chart, iso) {
   const sql = `
-    SELECT AVG(mean), swl_info, variable
+    SELECT
+      AVG(mean) AS value,
+      swl_info AS swl,
+      variable AS line
     FROM master_admin0
     WHERE variable IN ('tx', 'tn', 'ts')
       AND iso = '${iso}'
       AND swl_info < 6
     GROUP BY swl_info, variable
+    ORDER BY swl
   `;
 
-  return fetchChartData(chart, sql, iso);
+  return fetchChartData(chart, sql, iso, (data) => {
+    const lineMap = {
+      tn: 'min',
+      ts: 'mean',
+      tx: 'max'
+    };
+
+    return data.map((v) => ({
+      ...v,
+      line: lineMap[v.line]
+    }));
+  });
 }

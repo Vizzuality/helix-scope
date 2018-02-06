@@ -72,8 +72,6 @@ class CountriesDetailPage extends Component {
 CountriesDetailPage.propTypes = {
   config: React.PropTypes.object.isRequired,
   fetchCountryData: React.PropTypes.func.isRequired,
-  fetchInterQuartileRange: React.PropTypes.func.isRequired,
-  fetchRegularBar: React.PropTypes.func.isRequired,
   fetchBoxAndWhiskers: React.PropTypes.func.isRequired,
   countryData: React.PropTypes.any,
   countriesList: React.PropTypes.array,

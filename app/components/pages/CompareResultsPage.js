@@ -215,8 +215,6 @@ CountriesPage.propTypes = {
   }).isRequired,
   countriesList: React.PropTypes.array,
   updateCompareUrl: React.PropTypes.func,
-  fetchInterQuartileRange: React.PropTypes.func.isRequired,
-  fetchRegularBar: React.PropTypes.func.isRequired,
   fetchBoxAndWhiskers: React.PropTypes.func.isRequired,
   iso1: React.PropTypes.string,
   iso2: React.PropTypes.string
