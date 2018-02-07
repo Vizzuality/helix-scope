@@ -5,8 +5,8 @@ import get from 'lodash/get';
 import LoadingChart from './LoadingChart';
 
 class BaseChart extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.onPageResize = this.onPageResize.bind(this);
   }
 
@@ -26,8 +26,6 @@ class BaseChart extends Component {
   onPageResize() {
     debounce(this.drawChart.bind(this), 200)();
   }
-
-  drawChart() {}
 
   render() {
     const isLoading = this.props.loading;
