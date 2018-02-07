@@ -1,13 +1,16 @@
+/* eslint-disable quote-props */
+
 export const CARTODB_USER = 'helixscope';
 export const ENDPOINT_TILES = `https://${CARTODB_USER}.carto.com/api/v1/map/`;
 export const ENDPOINT_SQL = `https://${CARTODB_USER}.carto.com/api/v2/sql`;
 export const MAX_MAPS = 4;
-export const MAP_NUMBER_BUCKETS = 7;
+export const MAP_NUMBER_BUCKETS = 15;
 export const MAP_MIN_ZOOM = 3;
 export const MAP_MAX_BOUNDS = [
   [59.44, 182.98],
   [-30.14, -132.53]
 ];
+export const MAP_LEGEND_MAX_TICKS = 7;
 
 // Basemap
 
@@ -50,3 +53,5 @@ export const MAP_RASTER_CSS = {
   'raster-colorizer-epsilon': '0.1',
   'raster-colorizer-stops': ''
 };
+
+export const getTableName = (category, indicator) => `table_${category}_${indicator}`;
