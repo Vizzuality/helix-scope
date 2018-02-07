@@ -1,11 +1,20 @@
 /* eslint-disable quote-props */
+import chroma from 'chroma-js';
+import { MAP_NUMBER_BUCKETS } from './map';
+
+function generateScheme(...colors) {
+  return chroma.bezier(colors)
+    .scale()
+    .correctLightness()
+    .colors(MAP_NUMBER_BUCKETS);
+}
 
 export const categoryColorScheme = {
-  'bd': ['#f887f0', '#e477dd', '#d066cb', '#bc56b9', '#a946a7', '#963696', '#832685'],
-  'w': ['#b3ecdd', '#a2cdd3', '#8fafc8', '#7d91bd', '#6875b3', '#5259a7', '#383e9c'],
-  'eco': ['#9de644', '#88d14a', '#72bc4f', '#5ba755', '#44925a', '#287d5f', '#00666b'],
-  'ag': ['#fff452', '#f8e44d', '#d6d346', '#b7c241', '#96b13b', '#74a236', '#509131'],
-  'cl': ['#fdeb58', '#fbd24c', '#f8b93f', '#f3a034', '#ee8628', '#e76a1d', '#e04b12']
+  'bd': generateScheme('#F887F0', '#832685'),
+  'w': generateScheme('#B3ECDD', '#383E9C'),
+  'eco': generateScheme('#9DE644', '#00666B'),
+  'ag': generateScheme('#FFF452', '#509131'),
+  'cl': generateScheme('#FFF780', '#93001C')
 };
 
 export const modelColors = [

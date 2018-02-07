@@ -9,7 +9,6 @@ const mapStateToProps = state => {
   const findMapsToCompare = (map) => (
     mapsList.filter((m) => (
       m.indicator.slug === map.indicator.slug &&
-        m.measure.slug === map.measure.slug &&
         m.scenario.slug !== map.scenario.slug
     ))
   );

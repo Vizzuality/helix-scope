@@ -60,9 +60,6 @@ export function initializeMaps() {
           category,
           indicator: category.indicators.find((elem) => (
             elem.slug === params[2]
-          )),
-          measure: config.measurements.find((elem) => (
-            elem.slug === params[3]
           ))
         });
       }
@@ -85,7 +82,7 @@ export function updateURL() {
       query = '?maps=';
 
       maps.mapsList.forEach((map, index) => {
-        query += `${map.scenario.slug},${map.category.slug},${map.indicator.slug},${map.measure.slug}`;
+        query += `${map.scenario.slug},${map.category.slug},${map.indicator.slug}`;
 
         if (index < maps.mapsList.length - 1) {
           query += '/';
@@ -176,7 +173,7 @@ export function createLayer(mapData, layerData) {
       dispatch(setMapData(mapData, {
         layer: {
           tileUrl: `${ENDPOINT_TILES}${data.layergroupid}/{z}/{x}/{y}@2x.png32`,
-          slug: `layer_${mapData.indicator.slug}_${mapData.measure.slug}_${mapData.scenario.slug}_${uuid()}`
+          slug: `layer_${mapData.indicator.slug}_${uuid()}`
         }
       }));
     }).catch((error) => {
@@ -189,11 +186,11 @@ export function getMapBuckets(mapData) {
   return (dispatch) => {
     const query = `
       WITH data AS (
-        SELECT ${mapData.measure.slug} AS value
+        SELECT mean AS value
         FROM master_admin0 m
         WHERE m.variable = '${mapData.indicator.slug}'
         AND m.swl_info = ${mapData.scenario.slug}
-        AND ${mapData.measure.slug} IS NOT NULL
+        AND mean IS NOT NULL
       )
       SELECT UNNEST(
         CDB_JenksBins(

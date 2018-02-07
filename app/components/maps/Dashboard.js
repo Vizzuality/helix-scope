@@ -1,18 +1,11 @@
 import React from 'react';
 import Button from 'components/common/Button';
 import Legend from './Legend';
-import MeasureSelector from './MeasureSelector';
 
 const Dashboard = (props) => {
   const deleteBtn = props.showDeleteBtn ?
     <Button onClick={() => props.deleteMap(props.mapData.id)} icon="close" style="light" size="small" /> :
     null;
-
-  const measurements = props.mapData.indicator.measurements
-    .map((measurement) => props.config.measurements.find((m) => m.slug === measurement));
-  const handleMeasureChange = (measure) => {
-    props.setMapState({ ...props.mapData, measure });
-  };
 
   return (
     <div className="c-dashboard">
@@ -31,13 +24,6 @@ const Dashboard = (props) => {
         <span>{props.mapData.indicator.name} ({props.mapData.indicator.unit})</span>
         <Legend mapData={props.mapData} />
       </div>
-      <div className="measure">
-        <MeasureSelector
-          measure={props.mapData.measure}
-          measurements={measurements}
-          onChange={handleMeasureChange}
-        />
-      </div>
     </div>
  );
 };
@@ -54,10 +40,7 @@ Dashboard.propTypes = {
   deleteMap: React.PropTypes.func,
   setMapState: React.PropTypes.func,
   handleMapConfig: React.PropTypes.func,
-  showDeleteBtn: React.PropTypes.bool,
-  config: React.PropTypes.shape({
-    measurements: React.PropTypes.array
-  }).isRequired
+  showDeleteBtn: React.PropTypes.bool
 };
 
 export default Dashboard;

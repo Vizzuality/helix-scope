@@ -7,6 +7,7 @@ import Popup from 'components/common/Popup';
 import MapPopupPlot from 'components/charts/MapPopupPlot';
 import objectToCSS from 'utils/objectToCSS';
 import {
+  getTableName,
   BASEMAP_GEOM_TILE,
   BASEMAP_LABELS_TILE,
   ENDPOINT_SQL,
@@ -144,7 +145,7 @@ class Map extends React.Component {
 
   getPopupData(lng, lat) {
     const {
-      measure,
+      category,
       scenario,
       indicator
     } = this.props.mapData;
@@ -154,9 +155,9 @@ class Map extends React.Component {
         m.model_short_name,
         m.model_long_name,
         run,
-        ${measure.slug} as value
-      FROM five_grid_shapefiles s
-        INNER JOIN master_5x5 m on m.shape_id = s.id_val
+        mean as value
+      FROM onedegintermod s
+        INNER JOIN ${getTableName(category.slug, indicator.slug)} m on m.shape_id = s.id_val
       WHERE
         ST_WITHIN(
           ST_GeomFromText('POINT(${lng} ${lat})', 4326),
@@ -231,20 +232,19 @@ class Map extends React.Component {
   }
 
   getQuery(mapData) {
+    const category = mapData.category.slug;
     const indicator = mapData.indicator.slug;
     const scenario = mapData.scenario.slug;
-    const measure = mapData.measure.slug;
-
     const query = `
       WITH data AS (
-        SELECT shape_id, AVG(${measure}) AS ${measure}
-        FROM master_5x5
+        SELECT shape_id, AVG(mean) AS value
+        FROM ${getTableName(category, indicator)}
         WHERE variable = '${indicator}'
         AND swl_info = ${scenario}
         GROUP BY shape_id
       )
-      SELECT five_grid_shapefiles.id_val, five_grid_shapefiles.the_geom_webmercator, five_grid_shapefiles.cartodb_id, data.${measure}
-      FROM five_grid_shapefiles INNER JOIN data ON five_grid_shapefiles.id_val = data.shape_id
+      SELECT onedegintermod.id_val, onedegintermod.the_geom_webmercator, onedegintermod.cartodb_id, data.value
+      FROM onedegintermod INNER JOIN data ON onedegintermod.id_val = data.shape_id
     `;
 
     return query;
@@ -255,7 +255,6 @@ class Map extends React.Component {
 
     const {
       id,
-      measure,
       scenario,
       indicator
     } = this.props.mapData;
@@ -277,7 +276,7 @@ class Map extends React.Component {
         <MapPopupPlot data={data} unit={indicator.unit} />
         <div>
           Each point represents a model run. Together, they represent the range of possible futures
-          for the {measure.name} of {indicator.name} in the area you have selected, in a world
+          of {indicator.name} in the area you have selected, in a world
           which has experienced {scenario.name} relative to pre-industrial levels.
           The map shows the average values of the model projections ({mean.toFixed(2)} {indicator.unit}).
         </div>
@@ -309,7 +308,7 @@ class Map extends React.Component {
     };
 
     bucketList.forEach((bucket, index) => {
-      const key = `#null[${mapData.measure.slug} <= ${bucket.value}]`;
+      const key = `#null[value <= ${bucket.value}]`;
       cssProps[key] = { 'polygon-fill': colorscheme[index] };
     });
 
@@ -341,7 +340,6 @@ class Map extends React.Component {
 Map.propTypes = {
   mapData: React.PropTypes.shape({
     id: React.PropTypes.string,
-    measure: React.PropTypes.object,
     layer: React.PropTypes.object,
     scenario: React.PropTypes.object,
     category: React.PropTypes.object,
