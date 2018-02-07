@@ -108,7 +108,23 @@
   }
 }
 
-.flexible-width-select {
+.-white {
+  &.is-focused:not(.is-open) {
+    box-shadow: none;
+    border: none;
+  }
+
+  .Select-control {
+    background-color: #fff !important;
+    box-shadow: none !important;
+
+    .Select-input {
+      background-color: #fff !important;
+    }
+  }
+}
+
+.-flexible-width {
   width: auto;
   max-width: 700px;
 
@@ -122,20 +138,6 @@
     padding-left: 0;
     margin-right: 30px;
     left: 0;
-  }
-
-  &.is-focused:not(.is-open) {
-    box-shadow: none;
-    border: none;
-  }
-
-  .Select-control {
-    background-color: #fff !important;
-    box-shadow: none !important;
-
-    .Select-input {
-      background-color: #fff !important;
-    }
   }
 
   .Select-control,

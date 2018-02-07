@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import debounce from 'lodash/debounce';
 import get from 'lodash/get';
 
+import LoadingChart from './LoadingChart';
+
 class BaseChart extends Component {
   constructor() {
     super();
@@ -31,13 +33,7 @@ class BaseChart extends Component {
     const isLoading = this.props.loading;
     const noData = !isLoading && get(this.props, 'data.length', 0) === 0;
 
-    if (isLoading) {
-      return (
-        <div className="c-chart">
-          <div className="content subtitle">Loading...</div>
-        </div>
-      );
-    }
+    if (isLoading) return <LoadingChart />;
 
     return (
       <div className="c-chart">

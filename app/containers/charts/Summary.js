@@ -2,7 +2,6 @@ import { connect } from 'react-redux';
 import get from 'lodash/get';
 
 import Summary from 'components/charts/Summary';
-import { scenarioColors } from 'constants/country';
 import withFetching from 'components/charts/withFetching';
 import {
   fetchSummary,
@@ -10,17 +9,15 @@ import {
 } from 'actions/charts';
 
 const mapStateToProps = ({ charts, config }, { chart, iso }) => {
-  if (!charts[chart]) {
-    return {};
-  }
+  const chartData = get(charts, `[${chart}][${iso}]`);
+
+  if (!chartData) return {};
 
   return {
-    loading: get(charts, `[${chart}][${iso}].loading`),
-    data: get(charts, `[${chart}][${iso}].data`),
-    scenarios: config.scenarios.map((scenario, idx) => ({
-      slug: scenario.slug,
-      label: scenario.name,
-      color: scenarioColors[idx]
+    loading: chartData.loading,
+    data: chartData.data.map((d) => ({
+      ...d,
+      swl: config.scenarios.find((s) => s.slug === d.swl.toString()).short_name
     }))
   };
 };

@@ -4,7 +4,7 @@ import flatMap from 'lodash/flatMap';
 export const LOAD_CHART = 'LOAD_CHART';
 export const RECEIVE_CHART = 'RECEIVE_CHART';
 
-function fetchChartData(chart, sql, iso, mapResponse) {
+function fetchChartData(chart, sql, iso, transform) {
   return (dispatch) => {
     dispatch({
       type: LOAD_CHART,
@@ -17,7 +17,7 @@ function fetchChartData(chart, sql, iso, mapResponse) {
     return cartoQuery(sql)
       .then((response) => response.json())
       .then((response) => response.rows)
-      .then((response) => (mapResponse ? mapResponse(response) : response))
+      .then((response) => (transform ? transform(response) : response))
       .then((data) => dispatch({
         type: RECEIVE_CHART,
         payload: {

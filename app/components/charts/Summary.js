@@ -18,14 +18,11 @@ class Summary extends BaseChart {
     }
     const {
       margin,
-      scenarios,
       data,
       yTicks
     } = this.props;
 
     const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
-    const findScenario = (slug) => (scenarios.find((s) => slug.toString() === s.slug) || {});
-    const tickFormat = (slug) => findScenario(slug).label;
 
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
@@ -48,7 +45,6 @@ class Summary extends BaseChart {
     const axes = {
       x: axisBottom()
         .scale(scale.x)
-        .tickFormat(tickFormat)
         .tickSizeOuter(0),
       y: axisLeft()
         .scale(scale.y)
@@ -132,7 +128,6 @@ class Summary extends BaseChart {
 Summary.propTypes = {
   ...BaseChart.propTypes,
   iso: React.PropTypes.string.isRequired,
-  scenarios: React.PropTypes.array,
   yTicks: React.PropTypes.number,
   chart: React.PropTypes.string.isRequired
 };
@@ -146,7 +141,6 @@ Summary.defaultProps = {
     bottom: 60
   },
   meta: {},
-  scenarios: [],
   yTicks: 5
 };
 

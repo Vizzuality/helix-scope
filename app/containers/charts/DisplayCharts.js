@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
 
-import CountryPageChart from 'components/charts/CountryPageChart';
+import DisplayCharts from 'components/charts/DisplayCharts';
 
 const mapStateToProps = ({ charts, config }) => ({
   measurements: config.measurements,
   chartData: charts
 });
 
-export default connect(mapStateToProps)(CountryPageChart);
+export default connect(mapStateToProps)(DisplayCharts);

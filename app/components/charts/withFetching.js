@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import get from 'lodash/get';
-// import { fetchChart } from 'actions/charts';
 
 function withFetching(ChartComponent) {
   class WithFetching extends Component {
@@ -15,15 +12,12 @@ function withFetching(ChartComponent) {
 
     reloadDataIfNeeded(props) {
       const {
-        chart,
-        charts,
-        iso,
+        data,
+        loading,
         fetchData
       } = props;
 
-      const chartData = get(charts, `[${chart}][${iso}]`);
-
-      if (!chartData) fetchData();
+      if (!data && !loading) fetchData();
     }
 
     render() {
@@ -32,17 +26,12 @@ function withFetching(ChartComponent) {
   }
 
   WithFetching.propTypes = {
-    chart: React.PropTypes.string.isRequired,
-    charts: React.PropTypes.any,
-    iso: React.PropTypes.string.isRequired,
+    data: React.PropTypes.array,
+    loading: React.PropTypes.bool,
     fetchData: React.PropTypes.func.isRequired
   };
 
-  const mapStateToProps = ({ charts }) => ({
-    charts
-  });
-
-  return connect(mapStateToProps)(WithFetching);
+  return WithFetching;
 }
 
 export default withFetching;

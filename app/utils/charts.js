@@ -79,7 +79,7 @@ function getSummaryCharts(category) {
     }));
 }
 
-export function getCharts(category) {
+export function getChartsByCategory(category) {
   switch (category.slug) {
     case 'ag':
       return [
@@ -102,7 +102,7 @@ export function getCharts(category) {
       return (getClimatologicalCharts(category) || [])
         .concat([{
           slug: 'temperature_summary',
-          label: 'Average Temperature Summary',
+          label: 'Average Temperature - Summary (°C)',
           info: () => {}
         }])
         .concat(getSummaryCharts(category));

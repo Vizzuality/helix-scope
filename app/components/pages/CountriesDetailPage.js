@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 
-import { getCharts } from 'utils/charts';
+import { getChartsByCategory } from 'utils/charts';
 import { categoriesOrder } from 'constants/country';
-import CountryPageChart from 'containers/charts/CountryPageChart';
+import DisplayCharts from 'containers/charts/DisplayCharts';
 import CallToAction from 'components/common/CallToAction';
 import ExploreScenarios from 'components/common/ExploreScenarios';
 import GetUpdates from 'components/common/GetUpdates';
@@ -45,9 +45,9 @@ class CountriesDetailPage extends Component {
               </div>
               <div className="row">
                 <div className="column">
-                  <CountryPageChart
+                  <DisplayCharts
                     country={country}
-                    charts={getCharts(category)}
+                    charts={getChartsByCategory(category)}
                   />
                 </div>
               </div>

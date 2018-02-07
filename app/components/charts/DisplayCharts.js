@@ -13,7 +13,7 @@ import {
 import InfoButton from 'components/charts/InfoButton';
 import MeasureSelector from 'components/maps/MeasureSelector';
 
-class CountryPageChart extends Component {
+class DisplayCharts extends Component {
   constructor(props) {
     super(props);
 
@@ -97,49 +97,45 @@ class CountryPageChart extends Component {
 
     return (
       <div className="c-chart-box">
-        <div className="row">
-          <div className="column header">
-            {charts.length > 1 ? (
-              <Select
-                className="c-react-select flexible-width-select"
-                options={charts}
-                value={selectedChart}
-                onChange={this.handleChartChange}
-                clearable={false}
-                searchable={false}
-                labelKey="label"
-                valueKey="slug"
-              />
-            ) : (
-              selectedChart.label
-            )}
-            {availableMeasurements && (
-              <MeasureSelector
-                measure={selectedMeasure}
-                measurements={availableMeasurements}
-                onChange={this.handleMeasureChange}
-              />
-            )}
-            {selectedChart.info && (
-              <InfoButton text={selectedChart.info(selectedChartData, get(selectedMeasure, 'name'))} />
-            )}
-          </div>
+        <div className="header">
+          {charts.length > 1 ? (
+            <Select
+              className="c-react-select -flexible-width -white"
+              options={charts}
+              value={selectedChart}
+              onChange={this.handleChartChange}
+              clearable={false}
+              searchable={false}
+              labelKey="label"
+              valueKey="slug"
+            />
+          ) : (
+             selectedChart.label
+          )}
+          {availableMeasurements && (
+            <MeasureSelector
+              measure={selectedMeasure}
+              measurements={availableMeasurements}
+              onChange={this.handleMeasureChange}
+            />
+          )}
+          {selectedChart.info && (
+            <InfoButton text={selectedChart.info(selectedChartData, get(selectedMeasure, 'name'))} />
+          )}
         </div>
-        <div className="row">
-          <div className="column">
-            {this.renderChart(selectedChart, country)}
-          </div>
+        <div className="content">
+          {this.renderChart(selectedChart, country)}
         </div>
       </div>
     );
   }
 }
 
-CountryPageChart.propTypes = {
+DisplayCharts.propTypes = {
   charts: React.PropTypes.array.isRequired,
   chartData: React.PropTypes.any,
   country: React.PropTypes.object.isRequired,
   measurements: React.PropTypes.array
 };
 
-export default CountryPageChart;
+export default DisplayCharts;

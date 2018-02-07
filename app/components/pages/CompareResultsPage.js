@@ -3,9 +3,9 @@ import Select from 'react-select';
 import { StickyContainer, Sticky } from 'react-sticky';
 import flatMap from 'lodash/flatMap';
 
-import { getCharts } from 'utils/charts';
+import { getChartsByCategory } from 'utils/charts';
 import { categoriesOrder } from 'constants/country';
-import CountryPageChart from 'containers/charts/CountryPageChart';
+import DisplayCharts from 'containers/charts/DisplayCharts';
 import Switch from 'components/common/Switch';
 import CallToAction from 'components/common/CallToAction';
 import ExploreScenarios from 'components/common/ExploreScenarios';
@@ -88,7 +88,7 @@ class CountriesPage extends Component {
   renderChart(chart, country, column) {
     return (
       <div className={`column small-12 medium-6 country-${column}`}>
-        <CountryPageChart country={country} charts={[chart]} />
+        <DisplayCharts country={country} charts={[chart]} />
       </div>
     );
   }
@@ -99,7 +99,7 @@ class CountriesPage extends Component {
     );
     const charts = flatMap(
       categories,
-      (c) => flatMap(getCharts(c), (chart) => {
+      (c) => flatMap(getChartsByCategory(c), (chart) => {
         if (chart.measurements && chart.measurements.length) {
           const eachAsSeparateChart = (m) => ({
             ...chart,
