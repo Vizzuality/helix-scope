@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import get from 'lodash/get';
+import { Link } from 'react-router';
 
 import InterQuartileRangeChart from 'containers/charts/InterQuartileRange';
 import RegularBarChart from 'containers/charts/RegularBar';
@@ -112,6 +113,7 @@ class DisplayCharts extends Component {
           ) : (
              selectedChart.label
           )}
+          {selectedChart.mapViewLink && <Link to={selectedChart.mapViewLink}>MAP VIEW</Link>}
           {availableMeasurements && (
             <MeasureSelector
               measure={selectedMeasure}

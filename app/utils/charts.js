@@ -84,6 +84,7 @@ function getClimatologicalCharts(category) {
     measurements: i.measurements,
     label: `${i.name} (${i.unit})`,
     variable: i.slug,
+    mapViewLink: `/global-scenarios/0/0/3?maps=1.5,${category.slug},${i.slug}`,
     info: climatologicalDynamicInfo.bind(null, i)
   }));
 }
@@ -95,6 +96,7 @@ function getSummaryCharts(category) {
     charts.push({
       slug: 'temperature_summary',
       label: 'Average Temperature - Summary (°C)',
+      mapViewLink: '/global-scenarios/0/0/3?maps=1.5,cl,ts',
       colors: categoryColorScheme[category.slug](3),
       info: temperatureSummaryInfo
     });
@@ -108,6 +110,7 @@ function getSummaryCharts(category) {
       slug: `${i.slug}_summary`,
       label: `${i.name} - Summary (${i.unit})`,
       variable: i.slug,
+      mapViewLink: `/global-scenarios/0/0/3?maps=1.5,${category.slug},${i.slug}`,
       colors: categoryColorScheme[category.slug](3),
       info: climatologicalSummaryInfo.bind(null, i)
     })));
