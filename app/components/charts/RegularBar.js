@@ -84,7 +84,7 @@ class RegularBar extends BaseChart {
       .attr('x', (d) => scale.x(d.swl) - (barWidth / 2))
       .attr('y', (d) => scale.y(d.value))
       .attr('width', barWidth)
-      .attr('height', (d) => height - scale.y(d.value) - 1);
+      .attr('height', (d) => height - scale.y(d.value));
   }
 }
 
