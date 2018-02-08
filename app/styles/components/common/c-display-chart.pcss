@@ -14,8 +14,8 @@
     .c-react-select {
       width: auto;
       min-width: 300px;
-      max-width: 700px;
-      margin-bottom: 0px;
+      margin-bottom: 10px;
+      margin-right: 40px;
 
       .Select-menu-outer {
         text-align: left;
@@ -46,8 +46,8 @@
       }
 
       .Select-option {
-        padding: 15px;
-        /* height: 50px; */
+        padding: 15px 20px;
+        height: 50px;
       }
 
       .Select-multi-value-wrapper {
@@ -58,11 +58,56 @@
     .c-step-selector {
       max-width: 240px;
       margin: auto;
-      margin-top: 20px;
+      padding-top: 20px;
+      padding-right: 40px;
+    }
 
-      @media (--small-viewport) {
-        flex: 0 0 100%;
-        order: 2;
+    .c-info {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+
+      .infobox {
+        position: absolute;
+        right: 55px;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: $color-base;
+        box-shadow: 0 0 4px 0 rgba(81, 81, 83, 0.2);
+        font-family: $font-body;
+        color: $font-grey;
+        font-size: $font-size-x-small;
+        margin-left: -500px;
+        padding: $margin-small;
+        z-index: 2;
+
+        @media (--small-viewport) {
+          margin-left: -80vw;
+        }
+
+        &::before {
+          content: " ";
+          position: absolute;
+          width: 12px;
+          height: 20px;
+          right: 1px;
+          top: calc(50% - 20px / 2);
+          background-color: $color-base;
+          z-index: 2;
+        }
+
+        &::after {
+          content: " ";
+          position: absolute;
+          width: 15px;
+          height: 15px;
+          right: -7px;
+          top: calc(50% - 15px / 2);
+          transform: rotate(45deg);
+          box-shadow: 0 0 4px 0 rgba(81, 81, 83, 0.2);
+          background-color: $color-base;
+          z-index: 1;
+        }
       }
     }
   }
