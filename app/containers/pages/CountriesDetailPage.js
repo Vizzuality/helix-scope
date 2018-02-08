@@ -1,11 +1,7 @@
 import { connect } from 'react-redux';
 import CountriesDetailPage from 'components/pages/CountriesDetailPage';
 import { fetchCountryDetail } from 'actions/countries';
-import {
-  fetchInterQuartileRange,
-  fetchRegularBar,
-  fetchBoxAndWhiskers
-} from 'actions/charts';
+import { fetchBoxAndWhiskers } from 'actions/charts';
 
 const mapStateToProps = (state, { params }) => ({
   config: state.config,
@@ -16,8 +12,6 @@ const mapStateToProps = (state, { params }) => ({
 
 const mapDispatchToProps = {
   fetchCountryData: fetchCountryDetail,
-  fetchInterQuartileRange,
-  fetchRegularBar,
   fetchBoxAndWhiskers
 };
 

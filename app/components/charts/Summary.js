@@ -3,26 +3,31 @@ import { axisBottom, axisLeft } from 'd3-axis';
 import { extent } from 'd3-array';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { select } from 'd3-selection';
+import { line } from 'd3-shape';
+import groupBy from 'lodash/groupBy';
+import forEach from 'lodash/forEach';
 
 import BaseChart from './BaseChart';
 import { formatSI } from 'utils/format';
 
-class RegularBar extends BaseChart {
+class Summary extends BaseChart {
   drawChart() {
     if (!this.chart) {
       return;
     }
     const {
-      margin,
-      scenarios,
+      colors,
       data,
+      margin,
       yTicks
     } = this.props;
 
+    const lineColor = {
+      min: colors[0],
+      mean: colors[1],
+      max: colors[2]
+    };
     const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
-    const findScenario = (slug) => (scenarios.find((s) => slug.toString() === s.slug) || {});
-    const tickFormat = (slug) => findScenario(slug).label;
-    const colorFor = (slug) => findScenario(slug).color;
 
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
@@ -45,18 +50,15 @@ class RegularBar extends BaseChart {
     const axes = {
       x: axisBottom()
         .scale(scale.x)
-        .tickFormat(tickFormat)
         .tickSizeOuter(0),
       y: axisLeft()
         .scale(scale.y)
         .ticks(yTicks)
-        .tickFormat((d) => formatSI(d, 2))
+        .tickFormat((d) => formatSI(d, 3))
         .tickSizeInner(-width)
         .tickSizeOuter(0)
         .tickPadding(10)
     };
-
-    const barWidth = 50;
 
     const chart = select(this.chart);
     chart.selectAll('svg').remove();
@@ -76,32 +78,76 @@ class RegularBar extends BaseChart {
       .attr('class', 'y axis')
       .call(axes.y);
 
-    svg.selectAll('.dot')
-      .data(data)
+    const valueLine = line()
+          .x((d) => scale.x(d.swl))
+          .y((d) => scale.y(d.value));
+
+    const lines = groupBy(data, (v) => v.line);
+
+    forEach(lines, (lineData, l) => {
+      const color = lineColor[l];
+      // line
+      svg.append('path')
+        .datum(lineData)
+        .attr('fill', 'none')
+        .attr('stroke', color)
+        .attr('stroke-width', '1px')
+        .attr('d', valueLine);
+
+      // points
+      svg.selectAll('.dot')
+        .data(lineData)
+        .enter()
+        .append('circle')
+        .attr('r', 5)
+        .attr('fill', color)
+        .attr('cx', (d) => scale.x(d.swl))
+        .attr('cy', (d) => scale.y(d.value));
+    });
+
+    const legend = svg.append('g')
+      .attr('class', 'legend')
+      .attr('width', width)
+      .attr('height', 20)
+      .attr('transform', 'translate(0, 0)');
+
+    legend.selectAll('circle')
+      .data(Object.keys(lines))
       .enter()
-      .append('rect')
-      .attr('fill', (d) => colorFor(d.swl))
-      .attr('x', (d) => scale.x(d.swl) - (barWidth / 2))
-      .attr('y', (d) => scale.y(d.value))
-      .attr('width', barWidth)
-      .attr('height', (d) => height - scale.y(d.value));
+      .append('circle')
+      .attr('r', 5)
+      .attr('cx', (d, i) => i * 60)
+      .attr('cy', height + 50)
+      .attr('fill', (d) => lineColor[d]);
+
+    legend.selectAll('text')
+      .data(Object.keys(lines))
+      .enter()
+      .append('text')
+      .attr('x', (d, i) => (i * 60) + 8)
+      .attr('y', height + 55)
+      .text((d) => d);
   }
 }
 
-RegularBar.propTypes = {
+Summary.propTypes = {
   ...BaseChart.propTypes,
+  colors: React.PropTypes.array.isRequired,
   iso: React.PropTypes.string.isRequired,
-  variable: React.PropTypes.string.isRequired,
-  scenarios: React.PropTypes.array,
   yTicks: React.PropTypes.number,
   chart: React.PropTypes.string.isRequired
 };
 
-RegularBar.defaultProps = {
+Summary.defaultProps = {
   ...BaseChart.defaultProps,
+  margin: {
+    left: 30,
+    right: 30,
+    top: 30,
+    bottom: 60
+  },
   meta: {},
-  scenarios: [],
   yTicks: 5
 };
 
-export default RegularBar;
+export default Summary;

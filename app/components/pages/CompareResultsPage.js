@@ -1,21 +1,17 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import { StickyContainer, Sticky } from 'react-sticky';
+import flatMap from 'lodash/flatMap';
 
-import InterQuartileRangeChart from 'containers/charts/InterQuartileRange';
-import RegularBarChart from 'containers/charts/RegularBar';
-import BoxAndWhiskersChart from 'containers/charts/BoxAndWhiskers';
+import { getChartsByCategory } from 'utils/charts';
+import { categoriesOrder } from 'constants/country';
+import DisplayCharts from 'containers/charts/DisplayCharts';
 import Switch from 'components/common/Switch';
 import CallToAction from 'components/common/CallToAction';
 import ExploreScenarios from 'components/common/ExploreScenarios';
 import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
 import LoadingSpinner from 'components/common/LoadingSpinner';
-import {
-  maizeVariables,
-  climatologicalEcologicalVariables,
-  statisticValues
-} from 'constants/country';
 
 class CountriesPage extends Component {
   constructor(props) {
@@ -41,10 +37,6 @@ class CountriesPage extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchInterQuartileRange('crop_yield_change_baseline', this.props.iso1, 'yield');
-    this.props.fetchInterQuartileRange('crop_yield_change_baseline', this.props.iso2, 'yield');
-    this.props.fetchRegularBar('annual_expected_flood_damage', this.props.iso1, 'river_floods_ExpDam');
-    this.props.fetchRegularBar('annual_expected_flood_damage', this.props.iso2, 'river_floods_ExpDam');
     this.props.fetchBoxAndWhiskers('climatological_ecological', this.props.iso1);
     this.props.fetchBoxAndWhiskers('climatological_ecological', this.props.iso2);
   }
@@ -93,73 +85,49 @@ class CountriesPage extends Component {
     this.props.updateCompareUrl(this.state.selectedCountry1.iso, this.state.selectedCountry2.iso);
   }
 
-  renderIQRChart(iso, index, countryName) {
+  renderChart(chart, country, column) {
     return (
-      <div className={`column small-12 medium-6 country-${index}`}>
-        <InterQuartileRangeChart
-          iso={iso}
-          chart="crop_yield_change_baseline"
-          title={`Projected changes in crop yields relative to 1981–2010 base-level for ${countryName}`}
-          info={(m, i) => `These data were created using the ${m} models of the ${i}. All yield values are relative to average yields over a baseline period of 1981–2010.`}
-          variables={maizeVariables}
-        />
-      </div>
-    );
-  }
-
-  renderRBChart(iso, index) {
-    return (
-      <div className={`column small-12 medium-6 country-${index}`}>
-        <RegularBarChart
-          iso={iso}
-          chart="annual_expected_flood_damage"
-          info={(m, i) => `These data were produced by the ${m} model, of the ${i}. Values are relative to avearges over the 1976–2005 period. Expected damages are annual estimated cost of flooding, estimated in millions of € (relative to 2010 value).`}
-          title="Annual expected flood damages relative to 1976–2005 levels"
-        />
-      </div>
-    );
-  }
-
-  renderBoxChart(iso, index, variable, value) {
-    return (
-      <div className={`column small-12 medium-6 country-${index}`}>
-        <BoxAndWhiskersChart
-          iso={iso}
-          chart="climatological_ecological"
-          info={(a, b, c, d, e) => `${a} of ${b} over the country wide area: ${c}. These data are obtained from ${d} models, processed by ${e}.`}
-          title={(v, i) => `${v} country-wide ${i} value`}
-          variable={variable}
-          value={value}
-        />
+      <div className={`column small-12 medium-6 country-${column}`}>
+        <DisplayCharts country={country} charts={[chart]} />
       </div>
     );
   }
 
   renderCharts() {
+    const categories = [...this.props.config.categories].sort(
+      (a, b) => categoriesOrder.indexOf(a.slug) > categoriesOrder.indexOf(b.slug)
+    );
+    const charts = flatMap(
+      categories,
+      (c) => flatMap(getChartsByCategory(c), (chart) => {
+        if (chart.measurements && chart.measurements.length) {
+          const eachAsSeparateChart = (m) => ({
+            ...chart,
+            label: `${chart.label} - ${m} value`,
+            measurements: null,
+            measurement: m
+          });
+          return chart.measurements.map(eachAsSeparateChart);
+        }
+
+        return chart;
+      })
+    );
+
     return (
       <div>
-        <div className={`row l-compare -index-${this.state.indexSelected}`}>
-          {this.renderIQRChart(this.props.iso1, 1, this.state.selectedCountry1.name)}
-          {this.renderIQRChart(this.props.iso2, 2, this.state.selectedCountry2.name)}
-        </div>
-        <div className={`row l-compare -index-${this.state.indexSelected}`}>
-          {this.renderRBChart(this.props.iso1, 1)}
-          {this.renderRBChart(this.props.iso2, 2)}
-        </div>
-        {climatologicalEcologicalVariables.map((variable) => (
-          statisticValues.map((value) => (
-            <div className={`row l-compare -index-${this.state.indexSelected}`}>
-              {this.renderBoxChart(this.props.iso1, 1, variable, value)}
-              {this.renderBoxChart(this.props.iso2, 2, variable, value)}
-            </div>
-          ))
+        {charts.map((chart, index) => (
+          <div key={index} className={`row l-compare -index-${this.state.indexSelected}`}>
+          {this.renderChart(chart, this.state.selectedCountry1, 1)}
+          {this.renderChart(chart, this.state.selectedCountry2, 2)}
+          </div>
         ))}
       </div>
     );
   }
 
   render() {
-    if (!this.props.configLoaded) return <LoadingSpinner />;
+    if (this.props.config.loading) return <LoadingSpinner />;
 
     const countriesSelected = [this.state.selectedCountry1.name, this.state.selectedCountry2.name];
 
@@ -240,11 +208,13 @@ class CountriesPage extends Component {
 }
 
 CountriesPage.propTypes = {
-  configLoaded: React.PropTypes.bool.isRequired,
+  config: React.PropTypes.shape({
+    categories: React.PropTypes.array,
+    loading: React.PropTypes.bool,
+    measurements: React.PropTypes.array
+  }).isRequired,
   countriesList: React.PropTypes.array,
   updateCompareUrl: React.PropTypes.func,
-  fetchInterQuartileRange: React.PropTypes.func.isRequired,
-  fetchRegularBar: React.PropTypes.func.isRequired,
   fetchBoxAndWhiskers: React.PropTypes.func.isRequired,
   iso1: React.PropTypes.string,
   iso2: React.PropTypes.string

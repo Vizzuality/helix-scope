@@ -1,37 +1,29 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 
-import InterQuartileRangeChart from 'containers/charts/InterQuartileRange';
-import RegularBarChart from 'containers/charts/RegularBar';
-import BoxAndWhiskersChart from 'containers/charts/BoxAndWhiskers';
+import { getChartsByCategory } from 'utils/charts';
+import { categoriesOrder } from 'constants/country';
+import DisplayCharts from 'containers/charts/DisplayCharts';
 import CallToAction from 'components/common/CallToAction';
 import ExploreScenarios from 'components/common/ExploreScenarios';
 import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
 import LoadingSpinner from 'components/common/LoadingSpinner';
-import {
-  maizeVariables,
-  irrigationVariables,
-  climatologicalEcologicalVariables,
-  statisticValues
-} from 'constants/country';
 
 class CountriesDetailPage extends Component {
-
   componentDidMount() {
-    this.props.fetchInterQuartileRange('crop_yield_change_baseline', this.props.iso, 'yield');
-    this.props.fetchInterQuartileRange('crop_yield_change_irrigation', this.props.iso, 'Irrigation');
-    this.props.fetchRegularBar('annual_expected_flood_damage', this.props.iso, 'river_floods_ExpDam');
     this.props.fetchBoxAndWhiskers('climatological_ecological', this.props.iso);
   }
 
   render() {
     if (this.props.config.loading) return <LoadingSpinner />;
 
-    let countryName = '';
-    if (this.props.countriesList.length) {
-      countryName = this.props.countriesList.find((elem) => (elem.iso === this.props.iso)).name;
-    }
+    const country = this.props.countriesList && this.props.countriesList.find((c) => c.iso === this.props.iso);
+    const categories = [...this.props.config.categories].sort(
+      (a, b) => categoriesOrder.indexOf(a.slug) > categoriesOrder.indexOf(b.slug)
+    );
+
+    if (!country) return null;
 
     return (
       <div>
@@ -39,60 +31,26 @@ class CountriesDetailPage extends Component {
           <div className="row">
             <div className="column">
               <div className="c-breadcrumbs -inv"><Link to="/countries"> &lt; Select a new country </Link> </div>
-              <div className="c-txt-title -inv">{countryName}</div>
+              <div className="c-txt-title -inv">{country.name}</div>
             </div>
           </div>
         </div>
         <div className="l-page-content">
-          <div className="row">
-            <div className="column">
-              <h2>Climate Impact & variables</h2>
-            </div>
-          </div>
-          <div className="row">
-            <div className="column small-12 medium-6">
-              <InterQuartileRangeChart
-                iso={this.props.iso}
-                chart="crop_yield_change_baseline"
-                title={`Projected changes in crop yields relative to 1981–2010 base-level for ${countryName}`}
-                info={(m, i) => `These data were created using the ${m} models of the ${i}. All yield values are relative to average yields over a baseline period of 1981–2010.`}
-                variables={maizeVariables}
-              />
-            </div>
-            <div className="column small-12 medium-6">
-              <InterQuartileRangeChart
-                iso={this.props.iso}
-                chart="crop_yield_change_irrigation"
-                info={(m, i) => `These data were created using the ${m} models of the ${i}. All yield values are relative to average yields over a baseline period of 1981–2010.`}
-                title={`Change in crop yields (relative to 1981-2010 base levels) avoided under different warming scenarios due to Irrigation for ${countryName}`}
-                variables={irrigationVariables}
-              />
-            </div>
-          </div>
-          <div className="row">
-            <div className="column small-12 medium-6">
-              <RegularBarChart
-                iso={this.props.iso}
-                chart="annual_expected_flood_damage"
-                info={(m, i) => `These data were produced by the ${m} model, of the ${i}. Values are relative to avearges over the 1976–2005 period. Expected damages are annual estimated cost of flooding, estimated in millions of € (relative to 2010 value).`}
-                title="Annual expected flood damages relative to 1976–2005 levels"
-              />
-            </div>
-          </div>
-          {climatologicalEcologicalVariables.map((variable) => (
-            <div className="row" key={variable}>
-              {statisticValues.map((value) => (
-                <div className="column small-3 medium-3" key={`${variable}_${value}`}>
-                  <BoxAndWhiskersChart
-                    iso={this.props.iso}
-                    chart="climatological_ecological"
-                    info={(a, b, c, d, e) => `${a} of ${b} over the country wide area: ${c}. These data are obtained from ${d} models, processed by ${e}.`}
-                    title={(v, i) => `${v} country-wide ${i} value`}
-                    variable={variable}
-                    value={value}
+          {categories.map((category, index) => (
+            <div className="c-country-page-chart" key={index}>
+              <div className="row">
+                <div className="column">
+                  <h2>{category.name}</h2>
+                </div>
+              </div>
+              <div className="row">
+                <div className="column small-12">
+                  <DisplayCharts
+                    country={country}
+                    charts={getChartsByCategory(category)}
                   />
                 </div>
-              ))}
+              </div>
             </div>
           ))}
         </div>
@@ -114,8 +72,6 @@ class CountriesDetailPage extends Component {
 CountriesDetailPage.propTypes = {
   config: React.PropTypes.object.isRequired,
   fetchCountryData: React.PropTypes.func.isRequired,
-  fetchInterQuartileRange: React.PropTypes.func.isRequired,
-  fetchRegularBar: React.PropTypes.func.isRequired,
   fetchBoxAndWhiskers: React.PropTypes.func.isRequired,
   countryData: React.PropTypes.any,
   countriesList: React.PropTypes.array,

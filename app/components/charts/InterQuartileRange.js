@@ -1,10 +1,12 @@
 import React from 'react';
-import * as d3 from 'd3';
-import flatMap from 'lodash/flatMap';
-import uniqBy from 'lodash/uniqBy';
 
-import InfoButton from './InfoButton';
+import { axisBottom, axisLeft } from 'd3-axis';
+import { extent } from 'd3-array';
+import { scaleLinear, scalePoint } from 'd3-scale';
+import { select } from 'd3-selection';
+
 import BaseChart from './BaseChart';
+import { formatSI } from 'utils/format';
 
 class InterQuartileRange extends BaseChart {
   drawChart() {
@@ -15,7 +17,7 @@ class InterQuartileRange extends BaseChart {
     const {
       margin,
       scenarios,
-      remote,
+      data,
       yTicks,
       variables
     } = this.props;
@@ -29,35 +31,36 @@ class InterQuartileRange extends BaseChart {
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
 
     const domain = {
-      x: remote.data.map((d) => d.swl).filter(uniq),
-      y: d3.extent(remote.data, (d) => d.median)
+      x: data.map((d) => d.swl).filter(uniq),
+      y: extent(data, (d) => d.median)
     };
 
     const scale = {
-      x: d3.scalePoint()
+      x: scalePoint()
         .domain(domain.x)
         .range([0, width])
         .padding(1),
-      y: d3.scaleLinear()
+      y: scaleLinear()
         .domain(domain.y)
         .nice()
         .range([height, 0])
     };
 
     const axes = {
-      x: d3.axisBottom()
+      x: axisBottom()
         .scale(scale.x)
         .tickFormat(tickFormat)
         .tickSizeOuter(0),
-      y: d3.axisLeft()
+      y: axisLeft()
         .scale(scale.y)
         .ticks(yTicks)
+        .tickFormat((d) => formatSI(d, 2))
         .tickSizeInner(-width)
         .tickSizeOuter(0)
         .tickPadding(10)
     };
 
-    const chart = d3.select(this.chart);
+    const chart = select(this.chart);
     chart.selectAll('svg').remove();
 
     const svg = chart.append('svg')
@@ -76,7 +79,7 @@ class InterQuartileRange extends BaseChart {
       .call(axes.y);
 
     svg.selectAll('.dot')
-      .data(remote.data)
+      .data(data)
       .enter()
       .append('circle')
       .attr('r', 5)
@@ -85,7 +88,7 @@ class InterQuartileRange extends BaseChart {
       .attr('cy', (d) => scale.y(d.median));
 
     svg.selectAll('.dot')
-      .data(remote.data)
+      .data(data)
       .enter()
       .append('line')
       .attr('stroke', (d) => colorFor(d.variable))
@@ -118,37 +121,14 @@ class InterQuartileRange extends BaseChart {
       .attr('y', height + 55)
       .text((d) => d.label);
   }
-
-  render() {
-    const models = uniqBy(flatMap(this.props.remote.data, (d) => d.models)).join(', ');
-    const institutions = uniqBy(flatMap(this.props.remote.data, (d) => d.institutions)).join(', ');
-    const infoText = this.props.info(models, institutions);
-
-    return (
-      <div className="c-chart">
-        <InfoButton text={infoText} />
-        <div className="title">{this.props.title}</div>
-        {!this.props.remote.loading ?
-          (<div className="chart" ref={(ref) => { this.chart = ref; }}></div>) :
-          (<div className="content subtitle">Loading</div>)}
-      </div>
-    );
-  }
 }
 
 InterQuartileRange.propTypes = {
   ...BaseChart.propTypes,
-  iso: React.PropTypes.string.isRequired,
-  title: React.PropTypes.string.isRequired,
-  info: React.PropTypes.func.isRequired,
   variables: React.PropTypes.array,
   scenarios: React.PropTypes.array,
   yTicks: React.PropTypes.number,
-  chart: React.PropTypes.string.isRequired,
-  remote: React.PropTypes.shape({
-    loading: React.PropTypes.bool.isRequired,
-    data: React.PropTypes.array.isRequired
-  }).isRequired
+  chart: React.PropTypes.string.isRequired
 };
 
 InterQuartileRange.defaultProps = {
@@ -162,8 +142,7 @@ InterQuartileRange.defaultProps = {
   meta: {},
   variables: [],
   scenarios: [],
-  yTicks: 5,
-  remote: { loading: true, data: [] }
+  yTicks: 5
 };
 
 export default InterQuartileRange;

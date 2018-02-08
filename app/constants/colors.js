@@ -1,12 +1,14 @@
 /* eslint-disable quote-props */
 import chroma from 'chroma-js';
-import { MAP_NUMBER_BUCKETS } from './map';
 
-function generateScheme(...colors) {
+function generateColorScale(colors) {
   return chroma.bezier(colors)
     .scale()
-    .correctLightness()
-    .colors(MAP_NUMBER_BUCKETS);
+    .correctLightness();
+}
+
+function generateScheme(...colors) {
+  return (nColors) => generateColorScale(colors).colors(nColors);
 }
 
 export const categoryColorScheme = {
@@ -23,3 +25,9 @@ export const modelColors = [
   '#8d43da',
   '#fbd24c'
 ];
+
+// export const summaryLineColors = {
+//   min: '#FCE64D',
+//   mean: '#F29C30',
+//   max: '#DD4414'
+// };

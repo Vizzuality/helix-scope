@@ -1,16 +1,25 @@
 import { connect } from 'react-redux';
+import get from 'lodash/get';
 
 import InterQuartileRange from 'components/charts/InterQuartileRange';
+import withFetching from 'components/charts/withFetching';
+import { fetchInterQuartileRange } from 'actions/charts';
 
 const mapStateToProps = ({ charts, config }, { chart, iso }) => {
-  if (!charts[chart]) {
-    return {};
-  }
+  const chartData = get(charts, `[${chart}][${iso}]`);
+  if (!chartData) return {};
 
   return {
-    remote: charts[chart][iso],
+    loading: chartData.loading,
+    data: chartData.data,
     scenarios: config.scenarios
   };
 };
 
-export default connect(mapStateToProps)(InterQuartileRange);
+const mapDispatchToProps = (dispatch, { chart, iso, variable }) => ({
+  fetchData: () => {
+    dispatch(fetchInterQuartileRange(chart, iso, variable));
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withFetching(InterQuartileRange));

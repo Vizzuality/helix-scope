@@ -1,7 +1,33 @@
 import cartoQuery from 'utils/cartoQuery';
+import flatMap from 'lodash/flatMap';
 
 export const LOAD_CHART = 'LOAD_CHART';
 export const RECEIVE_CHART = 'RECEIVE_CHART';
+
+function fetchChartData(chart, sql, iso, transform) {
+  return (dispatch) => {
+    dispatch({
+      type: LOAD_CHART,
+      payload: {
+        chart,
+        iso
+      }
+    });
+
+    return cartoQuery(sql)
+      .then((response) => response.json())
+      .then((response) => response.rows)
+      .then((response) => (transform ? transform(response) : response))
+      .then((data) => dispatch({
+        type: RECEIVE_CHART,
+        payload: {
+          chart,
+          iso,
+          data
+        }
+      }));
+  };
+}
 
 export function fetchInterQuartileRange(chart, iso, variable) {
   const sql = `
@@ -21,57 +47,20 @@ export function fetchInterQuartileRange(chart, iso, variable) {
     GROUP BY swl, variable
   `;
 
-  return (dispatch) => {
-    dispatch({
-      type: LOAD_CHART,
-      payload: {
-        chart,
-        iso
-      }
-    });
-
-    return cartoQuery(sql)
-      .then((response) => response.json())
-      .then((response) => dispatch({
-        type: RECEIVE_CHART,
-        payload: {
-          chart,
-          iso,
-          data: response.rows
-        }
-      }));
-  };
+  return fetchChartData(chart, sql, iso);
 }
 
 export function fetchRegularBar(chart, iso, variable) {
   const sql = `
-    SELECT mean / 10e6 as value, swl_info as swl, variable, institution, model_short_name AS model
+    SELECT mean as value, swl_info as swl, variable, institution, model_short_name AS model
     FROM master_admin0
     WHERE variable = '${variable}'
     AND iso = '${iso}'
     AND swl_info < 6
+    ORDER BY swl
   `;
 
-  return (dispatch) => {
-    dispatch({
-      type: LOAD_CHART,
-      payload: {
-        chart,
-        iso
-      }
-    });
-
-    return cartoQuery(sql)
-      .then((response) => response.json())
-      .then((response) => dispatch({
-        type: RECEIVE_CHART,
-        payload: {
-          chart,
-          iso,
-          data: response.rows
-        }
-      }));
-  };
+  return fetchChartData(chart, sql, iso);
 }
 
 export function fetchBoxAndWhiskers(chart, iso) {
@@ -109,10 +98,10 @@ export function fetchBoxAndWhiskers(chart, iso) {
              model_short_name,
              institution,
              variable,
-      		 CASE WHEN variable LIKE '%biodiversity' THEN min*100 ELSE min END AS min,
-      		 CASE WHEN variable LIKE '%biodiversity' THEN max*100 ELSE max END AS max,
-      		 CASE WHEN variable LIKE '%biodiversity' THEN mean*100 ELSE mean END AS mean,
-      		 CASE WHEN variable LIKE '%biodiversity' THEN std*100 ELSE std END AS std
+           CASE WHEN variable LIKE '%biodiversity' THEN min*100 ELSE min END AS min,
+           CASE WHEN variable LIKE '%biodiversity' THEN max*100 ELSE max END AS max,
+           CASE WHEN variable LIKE '%biodiversity' THEN mean*100 ELSE mean END AS mean,
+           CASE WHEN variable LIKE '%biodiversity' THEN std*100 ELSE std END AS std
       FROM master_admin0
       WHERE iso = '${iso}'
       AND swl_info < 6
@@ -121,24 +110,61 @@ export function fetchBoxAndWhiskers(chart, iso) {
     GROUP BY swl, variable
   `;
 
-  return (dispatch) => {
-    dispatch({
-      type: LOAD_CHART,
-      payload: {
-        chart,
-        iso
-      }
-    });
+  return fetchChartData(chart, sql, iso);
+}
 
-    return cartoQuery(sql)
-      .then((response) => response.json())
-      .then((response) => dispatch({
-        type: RECEIVE_CHART,
-        payload: {
-          chart,
-          iso,
-          data: response.rows
-        }
-      }));
-  };
+export function fetchSummary(chart, iso, variable) {
+  const sql = `
+    SELECT
+      AVG(min) AS min,
+      AVG(mean) AS mean,
+      AVG(max) AS max,
+      ARRAY_AGG(DISTINCT model_short_name) as models,
+      ARRAY_AGG(DISTINCT institution) as institutions,
+      swl_info AS swl
+    FROM master_admin0
+    WHERE variable = '${variable}'
+      AND iso = '${iso}'
+      AND swl_info < 6
+    GROUP BY swl
+    ORDER BY swl
+  `;
+
+  return fetchChartData(chart, sql, iso, (data) => (
+    flatMap(data, (v) => ([
+      { line: 'min', value: v.min, ...v },
+      { line: 'mean', value: v.mean, ...v },
+      { line: 'max', value: v.max, ...v }
+    ]))
+  ));
+}
+
+export function fetchTemperatureSummary(chart, iso) {
+  const sql = `
+    SELECT
+      AVG(mean) AS value,
+      ARRAY_AGG(DISTINCT model_short_name) as models,
+      ARRAY_AGG(DISTINCT institution) as institutions,
+      swl_info AS swl,
+      variable AS line
+    FROM master_admin0
+    WHERE variable IN ('tx', 'tn', 'ts')
+      AND iso = '${iso}'
+      AND swl_info < 6
+    GROUP BY swl_info, variable
+    ORDER BY swl
+  `;
+
+  return fetchChartData(chart, sql, iso, (data) => {
+    const lineMap = {
+      tn: 'min',
+      ts: 'mean',
+      tx: 'max'
+    };
+
+    return data.map((v) => ({
+      ...v,
+      line: lineMap[v.line]
+    }));
+  });
 }

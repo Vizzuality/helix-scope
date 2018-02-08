@@ -1,0 +1,114 @@
+.c-display-chart {
+  position: relative;
+  margin: $margin-medium 0;
+  padding: $margin-small;
+  background-color: $color-base;
+  box-shadow: 0 0 4px 0 rgba(81, 81, 83, 0.2);
+
+  .header {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: center;
+
+    .c-react-select {
+      width: auto;
+      min-width: 300px;
+      margin-bottom: 10px;
+      margin-right: 40px;
+
+      .Select-menu-outer {
+        text-align: left;
+      }
+
+      .Select-placeholder,
+      &.Select--single > .Select-control .Select-value {
+        display: block;
+        position: relative;
+        padding-left: 0;
+        margin-right: 40px;
+      }
+
+      .Select-value-label {
+        white-space: normal;
+      }
+
+      .Select-clear-zone {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+      }
+
+      .Select-arrow-zone {
+        position: absolute;
+        top: 10px;
+        right: 0;
+      }
+
+      .Select-option {
+        padding: 15px 20px;
+        height: 50px;
+      }
+
+      .Select-multi-value-wrapper {
+        display: block;
+      }
+    }
+
+    .c-step-selector {
+      max-width: 240px;
+      margin: auto;
+      padding-top: 20px;
+      padding-right: 40px;
+    }
+
+    .c-info {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+
+      .infobox {
+        position: absolute;
+        right: 45px;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: $color-base;
+        box-shadow: 0 0 4px 0 rgba(81, 81, 83, 0.2);
+        font-family: $font-body;
+        color: $font-grey;
+        font-size: $font-size-x-small;
+        margin-left: -500px;
+        padding: $margin-small;
+        z-index: 2;
+
+        @media (--small-viewport) {
+          margin-left: -80vw;
+        }
+
+        &::before {
+          content: " ";
+          position: absolute;
+          width: 12px;
+          height: 20px;
+          right: 1px;
+          top: calc(50% - 20px / 2);
+          background-color: $color-base;
+          z-index: 2;
+        }
+
+        &::after {
+          content: " ";
+          position: absolute;
+          width: 15px;
+          height: 15px;
+          right: -7px;
+          top: calc(50% - 15px / 2);
+          transform: rotate(45deg);
+          box-shadow: 0 0 4px 0 rgba(81, 81, 83, 0.2);
+          background-color: $color-base;
+          z-index: 1;
+        }
+      }
+    }
+  }
+}
