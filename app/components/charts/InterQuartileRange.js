@@ -6,6 +6,7 @@ import { scaleLinear, scalePoint } from 'd3-scale';
 import { select } from 'd3-selection';
 
 import BaseChart from './BaseChart';
+import { formatSI } from 'utils/format';
 
 class InterQuartileRange extends BaseChart {
   drawChart() {
@@ -53,6 +54,7 @@ class InterQuartileRange extends BaseChart {
       y: axisLeft()
         .scale(scale.y)
         .ticks(yTicks)
+        .tickFormat((d) => formatSI(d, 2))
         .tickSizeInner(-width)
         .tickSizeOuter(0)
         .tickPadding(10)

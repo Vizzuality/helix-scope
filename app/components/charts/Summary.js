@@ -54,7 +54,7 @@ class Summary extends BaseChart {
       y: axisLeft()
         .scale(scale.y)
         .ticks(yTicks)
-        .tickFormat(formatSI)
+        .tickFormat((d) => formatSI(d, 3))
         .tickSizeInner(-width)
         .tickSizeOuter(0)
         .tickPadding(10)
