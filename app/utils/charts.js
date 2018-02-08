@@ -1,6 +1,7 @@
 import get from 'lodash/get';
 import uniq from 'lodash/uniqBy';
 import flatMap from 'lodash/flatMap';
+import flatten from 'lodash/flatten';
 
 function removeLastDot(str) {
   return str.replace(/\.\s*$/, '');
@@ -99,13 +100,15 @@ export function getChartsByCategory(category) {
     case 'cl':
     case 'eco':
     case 'bd':
-      return (getClimatologicalCharts(category) || [])
-        .concat([{
+      return flatten([
+        getClimatologicalCharts(category),
+        {
           slug: 'temperature_summary',
           label: 'Average Temperature - Summary (°C)',
           info: () => {}
-        }])
-        .concat(getSummaryCharts(category));
+        },
+        getSummaryCharts(category)
+      ]);
     case 'w':
       return [
         {

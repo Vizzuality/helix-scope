@@ -44,7 +44,7 @@ class CountriesDetailPage extends Component {
                 </div>
               </div>
               <div className="row">
-                <div className="column">
+                <div className="column small-12">
                   <DisplayCharts
                     country={country}
                     charts={getChartsByCategory(category)}

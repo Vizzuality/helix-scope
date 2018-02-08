@@ -96,18 +96,18 @@ class DisplayCharts extends Component {
     );
 
     return (
-      <div className="c-chart-box">
+      <div className="c-display-chart">
         <div className="header">
           {charts.length > 1 ? (
             <Select
-              className="c-react-select -flexible-width -white"
+              className="c-react-select -white"
               options={charts}
               value={selectedChart}
               onChange={this.handleChartChange}
               clearable={false}
               searchable={false}
               labelKey="label"
-              valueKey="slug"
+              valueKey="label"
             />
           ) : (
              selectedChart.label
