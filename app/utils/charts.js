@@ -15,6 +15,13 @@ function capitalize(str) {
 
 const onlyForCountry = (i) => i.section === 'country';
 
+function getModelsInstitutions(data) {
+  return {
+    models: uniq(flatMap(data, (d) => d.models)).join(', '),
+    institutions: uniq(flatMap(data, (d) => d.institutions)).join(', ')
+  };
+}
+
 function cropYieldDynamicInfo(data) {
   const models = get(data, '[0].models');
   const institutions = get(data, '[0].institutions');
@@ -27,8 +34,7 @@ function cropYieldDynamicInfo(data) {
 
 function climatologicalDynamicInfo(variable, data, measurement) {
   const filtered = (data || []).filter((d) => d.variable === variable.slug);
-  const models = uniq(flatMap(filtered, (d) => d.models)).join(', ');
-  const institutions = uniq(flatMap(filtered, (d) => d.institutions)).join(', ');
+  const { models, institutions } = getModelsInstitutions(filtered);
 
   return `
     ${capitalize(measurement)} of ${variable.name} over the country wide area: ${removeLastDot(variable.name_long)}.
@@ -37,8 +43,7 @@ function climatologicalDynamicInfo(variable, data, measurement) {
 }
 
 function floodCostDynamicInfo(data) {
-  const models = uniq(flatMap(data, (d) => d.model)).join(', ');
-  const institutions = uniq(flatMap(data, (d) => d.institution)).join(', ');
+  const { models, institutions } = getModelsInstitutions(data);
 
   return `
     These data were produced by the ${models} model, of the ${institutions}. Values are relative to avearges over the 1976–2005 period.
@@ -47,12 +52,29 @@ function floodCostDynamicInfo(data) {
 }
 
 function floodAffDynamicInfo(data) {
-  const models = uniq(flatMap(data, (d) => d.model)).join(', ');
-  const institutions = uniq(flatMap(data, (d) => d.institution)).join(', ');
+  const { models, institutions } = getModelsInstitutions(data);
 
   return `
     These data were produced by the ${models}, of the ${institutions}. Values are relative to avearges over the 1976–2005 period.
     The data show the estimated number of people affected annually by river flooding, relative to 1976–2010 values.
+  `;
+}
+
+function temperatureSummaryInfo(data) {
+  const { models, institutions } = getModelsInstitutions(data);
+
+  return `
+    Minimum, mean, and maximum average temparatues over the country wide area (°C).
+    These data are obtained from ${models} models, processed by ${institutions}
+  `;
+}
+
+function climatologicalSummaryInfo(variable, data) {
+  const { models, institutions } = getModelsInstitutions(data);
+
+  return `
+    Minimum, mean, and maximum average ${variable.name} over the country wide area (${variable.unit}).
+    These data are obtained from ${models} models, processed by ${institutions}
   `;
 }
 
@@ -68,7 +90,17 @@ function getClimatologicalCharts(category) {
 
 function getSummaryCharts(category) {
   const notTemperature = (i) => !['tn', 'tx', 'ts'].includes(i.slug);
-  const charts = category
+  let charts = [];
+  if (category.slug === 'cl') {
+    charts.push({
+      slug: 'temperature_summary',
+      label: 'Average Temperature - Summary (°C)',
+      colors: categoryColorScheme[category.slug](3),
+      info: temperatureSummaryInfo
+    });
+  }
+
+  charts = charts.concat(category
     .indicators
     .filter(onlyForCountry)
     .filter(notTemperature)
@@ -77,17 +109,8 @@ function getSummaryCharts(category) {
       label: `${i.name} - Summary (${i.unit})`,
       variable: i.slug,
       colors: categoryColorScheme[category.slug](3),
-      info: () => {}
-    }));
-
-  if (category.slug === 'cl') {
-    charts.push({
-      slug: 'temperature_summary',
-      label: 'Average Temperature - Summary (°C)',
-      colors: categoryColorScheme[category.slug](3),
-      info: () => {}
-    });
-  }
+      info: climatologicalSummaryInfo.bind(null, i)
+    })));
 
   return charts;
 }
@@ -113,8 +136,8 @@ export function getChartsByCategory(category) {
     case 'eco':
     case 'bd':
       return flatten([
-        getClimatologicalCharts(category),
-        getSummaryCharts(category)
+        getSummaryCharts(category),
+        getClimatologicalCharts(category)
       ]);
     case 'w':
       return [

@@ -119,6 +119,8 @@ export function fetchSummary(chart, iso, variable) {
       AVG(min) AS min,
       AVG(mean) AS mean,
       AVG(max) AS max,
+      ARRAY_AGG(DISTINCT model_short_name) as models,
+      ARRAY_AGG(DISTINCT institution) as institutions,
       swl_info AS swl
     FROM master_admin0
     WHERE variable = '${variable}'
@@ -130,9 +132,9 @@ export function fetchSummary(chart, iso, variable) {
 
   return fetchChartData(chart, sql, iso, (data) => (
     flatMap(data, (v) => ([
-      { line: 'min', value: v.min, swl: v.swl },
-      { line: 'mean', value: v.mean, swl: v.swl },
-      { line: 'max', value: v.max, swl: v.swl }
+      { line: 'min', value: v.min, ...v },
+      { line: 'mean', value: v.mean, ...v },
+      { line: 'max', value: v.max, ...v }
     ]))
   ));
 }
@@ -141,6 +143,8 @@ export function fetchTemperatureSummary(chart, iso) {
   const sql = `
     SELECT
       AVG(mean) AS value,
+      ARRAY_AGG(DISTINCT model_short_name) as models,
+      ARRAY_AGG(DISTINCT institution) as institutions,
       swl_info AS swl,
       variable AS line
     FROM master_admin0
