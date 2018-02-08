@@ -9,7 +9,6 @@ import forEach from 'lodash/forEach';
 
 import BaseChart from './BaseChart';
 import { formatSI } from 'utils/format';
-import { summaryLineColors } from 'constants/colors';
 
 class Summary extends BaseChart {
   drawChart() {
@@ -17,11 +16,17 @@ class Summary extends BaseChart {
       return;
     }
     const {
-      margin,
+      colors,
       data,
+      margin,
       yTicks
     } = this.props;
 
+    const lineColor = {
+      min: colors[0],
+      mean: colors[1],
+      max: colors[2]
+    };
     const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
 
     const width = this.chart.offsetWidth - (margin.left + margin.right);
@@ -80,7 +85,7 @@ class Summary extends BaseChart {
     const lines = groupBy(data, (v) => v.line);
 
     forEach(lines, (lineData, l) => {
-      const color = summaryLineColors[l];
+      const color = lineColor[l];
       // line
       svg.append('path')
         .datum(lineData)
@@ -113,7 +118,7 @@ class Summary extends BaseChart {
       .attr('r', 5)
       .attr('cx', (d, i) => i * 60)
       .attr('cy', height + 50)
-      .attr('fill', (d) => summaryLineColors[d]);
+      .attr('fill', (d) => lineColor[d]);
 
     legend.selectAll('text')
       .data(Object.keys(lines))
@@ -127,6 +132,7 @@ class Summary extends BaseChart {
 
 Summary.propTypes = {
   ...BaseChart.propTypes,
+  colors: React.PropTypes.array.isRequired,
   iso: React.PropTypes.string.isRequired,
   yTicks: React.PropTypes.number,
   chart: React.PropTypes.string.isRequired

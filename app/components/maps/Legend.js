@@ -28,7 +28,7 @@ class Legend extends React.Component {
 
   render() {
     const { mapData } = this.props;
-    const colors = categoryColorScheme[mapData.category.slug];
+    const colors = categoryColorScheme[mapData.category.slug](MAP_NUMBER_BUCKETS);
 
     if (!mapData || !mapData.bucket || !mapData.bucket.length) {
       return <div></div>;

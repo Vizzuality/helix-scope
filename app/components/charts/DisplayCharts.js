@@ -77,7 +77,7 @@ class DisplayCharts extends Component {
         );
       default:
         if (chart.slug.endsWith('_summary')) {
-          return <SummaryChart {...props} />;
+          return <SummaryChart {...props} colors={chart.colors} />;
         }
 
         return null;

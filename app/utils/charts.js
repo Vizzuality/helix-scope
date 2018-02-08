@@ -2,6 +2,7 @@ import get from 'lodash/get';
 import uniq from 'lodash/uniqBy';
 import flatMap from 'lodash/flatMap';
 import flatten from 'lodash/flatten';
+import { categoryColorScheme } from 'constants/colors';
 
 function removeLastDot(str) {
   return str.replace(/\.\s*$/, '');
@@ -67,8 +68,7 @@ function getClimatologicalCharts(category) {
 
 function getSummaryCharts(category) {
   const notTemperature = (i) => !['tn', 'tx', 'ts'].includes(i.slug);
-
-  return category
+  const charts = category
     .indicators
     .filter(onlyForCountry)
     .filter(notTemperature)
@@ -76,8 +76,20 @@ function getSummaryCharts(category) {
       slug: `${i.slug}_summary`,
       label: `${i.name} - Summary (${i.unit})`,
       variable: i.slug,
+      colors: categoryColorScheme[category.slug](3),
       info: () => {}
     }));
+
+  if (category.slug === 'cl') {
+    charts.push({
+      slug: 'temperature_summary',
+      label: 'Average Temperature - Summary (°C)',
+      colors: categoryColorScheme[category.slug](3),
+      info: () => {}
+    });
+  }
+
+  return charts;
 }
 
 export function getChartsByCategory(category) {
@@ -102,11 +114,6 @@ export function getChartsByCategory(category) {
     case 'bd':
       return flatten([
         getClimatologicalCharts(category),
-        {
-          slug: 'temperature_summary',
-          label: 'Average Temperature - Summary (°C)',
-          info: () => {}
-        },
         getSummaryCharts(category)
       ]);
     case 'w':
