@@ -1,5 +1,4 @@
 import React from 'react';
-import get from 'lodash/get';
 
 import { mapListToQueryString } from 'utils/maps';
 import MapsListContainer from 'containers/maps/MapsListContainer';

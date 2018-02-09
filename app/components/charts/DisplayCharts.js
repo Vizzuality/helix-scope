@@ -99,21 +99,25 @@ class DisplayCharts extends Component {
     return (
       <div className="c-display-chart">
         <div className="header">
-          {charts.length > 1 ? (
-            <Select
-              className="c-react-select -white"
-              options={charts}
-              value={selectedChart}
-              onChange={this.handleChartChange}
-              clearable={false}
-              searchable={false}
-              labelKey="label"
-              valueKey="label"
-            />
-          ) : (
-             selectedChart.label
-          )}
-          {selectedChart.mapViewLink && <Link to={selectedChart.mapViewLink}>MAP VIEW</Link>}
+          <div className="title">
+            {charts.length > 1 ? (
+              <Select
+                className="c-react-select -white"
+                options={charts}
+                value={selectedChart}
+                onChange={this.handleChartChange}
+                clearable={false}
+                searchable={false}
+                labelKey="label"
+                valueKey="label"
+              />
+            ) : (
+               selectedChart.label
+            )}
+            {selectedChart.mapViewLink && (
+              <Link className="map-view-link" to={selectedChart.mapViewLink}>MAP VIEW</Link>
+            )}
+          </div>
           {availableMeasurements && (
             <MeasureSelector
               measure={selectedMeasure}
