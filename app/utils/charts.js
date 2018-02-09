@@ -2,7 +2,7 @@ import get from 'lodash/get';
 import uniq from 'lodash/uniqBy';
 import flatMap from 'lodash/flatMap';
 import flatten from 'lodash/flatten';
-import { categoryColorScheme } from 'constants/colors';
+import { getColorScheme } from './colors';
 
 function removeLastDot(str) {
   return str.replace(/\.\s*$/, '');
@@ -97,7 +97,7 @@ function getSummaryCharts(category) {
       slug: 'temperature_summary',
       label: 'Average Temperature - Summary (°C)',
       mapViewLink: '/global-scenarios/0/0/3?maps=1.5,cl,ts',
-      colors: categoryColorScheme[category.slug](3),
+      colors: getColorScheme(category.slug, null, 3),
       info: temperatureSummaryInfo
     });
   }
@@ -111,7 +111,7 @@ function getSummaryCharts(category) {
       label: `${i.name} - Summary (${i.unit})`,
       variable: i.slug,
       mapViewLink: `/global-scenarios/0/0/3?maps=1.5,${category.slug},${i.slug}`,
-      colors: categoryColorScheme[category.slug](3),
+      colors: getColorScheme(category.slug, i.slug, 3),
       info: climatologicalSummaryInfo.bind(null, i)
     })));
 

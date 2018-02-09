@@ -1,6 +1,6 @@
 import React from 'react';
 import { formatSI } from 'utils/format';
-import { categoryColorScheme } from 'constants/colors';
+import { getColorScheme } from 'utils/colors';
 import {
   MAP_NUMBER_BUCKETS,
   MAP_LEGEND_MAX_TICKS
@@ -28,14 +28,13 @@ class Legend extends React.Component {
 
   render() {
     const { mapData } = this.props;
-    const colors = categoryColorScheme[mapData.category.slug](MAP_NUMBER_BUCKETS);
+    const colors = getColorScheme(mapData.category.slug, mapData.indicator.slug, MAP_NUMBER_BUCKETS);
 
     if (!mapData || !mapData.bucket || !mapData.bucket.length) {
       return <div></div>;
     }
 
     const colorWidth = 100 / MAP_NUMBER_BUCKETS;
-    // const background = `linear-gradient(to right, ${colors.map((c, index) => `${c} ${colorWidth * index}%`).join(', ')})`; // gradient
     const background = `linear-gradient(to right, ${colors.map((c, index) => `${c} ${colorWidth * index}%, ${c} ${colorWidth * (index + 1)}%`).join(', ')})`;
 
     const rangeStyle = {
