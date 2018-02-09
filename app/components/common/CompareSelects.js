@@ -8,7 +8,7 @@ class CompareSelects extends Component {
     this.state = {
       /* Select value settings */
       disabled: false,
-      searchable: false,
+      searchable: true,
       clearable: false,
       country1: '',
       country2: ''

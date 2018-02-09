@@ -85,10 +85,10 @@ class CountriesPage extends Component {
     this.props.updateCompareUrl(this.state.selectedCountry1.iso, this.state.selectedCountry2.iso);
   }
 
-  renderChart(chart, country, column) {
+  renderChart(charts, country, column) {
     return (
       <div className={`column small-12 medium-6 country-${column}`}>
-        <DisplayCharts country={country} charts={[chart]} />
+        <DisplayCharts country={country} charts={charts} />
       </div>
     );
   }
@@ -97,31 +97,47 @@ class CountriesPage extends Component {
     const categories = [...this.props.config.categories].sort(
       (a, b) => categoriesOrder.indexOf(a.slug) > categoriesOrder.indexOf(b.slug)
     );
-    const charts = flatMap(
-      categories,
-      (c) => flatMap(getChartsByCategory(c), (chart) => {
-        if (chart.measurements && chart.measurements.length) {
-          const eachAsSeparateChart = (m) => ({
-            ...chart,
-            label: `${chart.label} - ${m} value`,
-            measurements: null,
-            measurement: m
-          });
-          return chart.measurements.map(eachAsSeparateChart);
-        }
 
-        return chart;
-      })
-    );
+    const getCharts = (category) => {
+      const charts = flatMap(
+        getChartsByCategory(category),
+        (chart) => {
+          if (chart.measurements && chart.measurements.length) {
+            const eachAsSeparateChart = (m) => ({
+              ...chart,
+              label: `${chart.label} - ${m} value`,
+              measurements: null,
+              measurement: m
+            });
+            return chart.measurements.map(eachAsSeparateChart);
+          }
+
+          return chart;
+        }
+      );
+
+      return charts;
+    };
 
     return (
       <div>
-        {charts.map((chart, index) => (
-          <div key={index} className={`row l-compare -index-${this.state.indexSelected}`}>
-          {this.renderChart(chart, this.state.selectedCountry1, 1)}
-          {this.renderChart(chart, this.state.selectedCountry2, 2)}
-          </div>
-        ))}
+        {categories.map((category) => {
+          const charts = getCharts(category);
+
+          return (
+            <div>
+              <div className="row">
+                <div className="column">
+                  <h2>{category.name}</h2>
+                </div>
+              </div>
+              <div className={`row l-compare -index-${this.state.indexSelected}`}>
+                {this.renderChart(charts, this.state.selectedCountry1, 1)}
+                {this.renderChart(charts, this.state.selectedCountry2, 2)}
+              </div>
+            </div>
+          );
+        })}
       </div>
     );
   }
