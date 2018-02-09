@@ -3,7 +3,7 @@
 const fetch = require('node-fetch');
 const colors = require('cli-colors');
 
-const cartodb = require('./cartodb.json');
+const cartodb = require('./cartodb.json'); // eslint-disable-line import/no-unresolved
 const metadata = require('./metadata.js');
 
 const DEFAULT_COLORSCHEME = ['#FFEEAE', '#FFB148', '#FF8324', '#F54B21', '#D90A54', '#8700AE'];
