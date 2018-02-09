@@ -22,7 +22,7 @@ class Map extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: true
+      loading: false
     };
     this.onTileLoaded = this.onTileLoaded.bind(this);
   }
@@ -65,7 +65,10 @@ class Map extends React.Component {
       props.mapConfig.latLng.lng !== this.props.mapConfig.latLng.lng ||
       props.mapConfig.zoom !== this.props.mapConfig.zoom);
     const bucketChanged = JSON.stringify(props.mapData.bucket) !== JSON.stringify(this.bucket);
-    const bucketEmpty = props.mapData.bucket && !props.mapData.bucket.length;
+    const newBucketEmpty = !Array.isArray(props.mapData.bucket) || !props.mapData.bucket.length;
+    const newBucketLoaded = (!this.bucket && this.state.loading) &&
+          props.mapData.bucket &&
+          props.mapData.bucket.length;
 
     if (paramsChanged) {
       this.map.panTo([props.mapConfig.latLng.lat, props.mapConfig.latLng.lng], {
@@ -76,7 +79,7 @@ class Map extends React.Component {
       this.invalidateSize();
     }
 
-    if (bucketChanged && bucketEmpty) {
+    if (!this.state.loading && !props.mapData.bucket && (!this.bucket || bucketChanged)) {
       this.bucket = props.mapData.bucket;
       this.setLoadingStatus(true);
       props.getMapBuckets(props.mapData);
@@ -87,8 +90,8 @@ class Map extends React.Component {
       this.updateLayer(props.mapData.layer);
     }
 
-    if ((!this.bucket && props.mapData.bucket) ||
-        (bucketChanged && !bucketEmpty)) {
+    if (newBucketLoaded ||
+        (bucketChanged && !newBucketEmpty)) {
       this.getLayer(props.mapData);
     }
 

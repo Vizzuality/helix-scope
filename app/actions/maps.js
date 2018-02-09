@@ -7,6 +7,7 @@ import {
   MAP_NUMBER_BUCKETS,
   MAX_MAPS
 } from 'constants/map';
+import { mapListToQueryString } from 'utils/maps';
 
 export const MAP_UPDATE_DATA = 'MAP_UPDATE_DATA';
 export const MAP_UPDATE_PAN = 'MAP_UPDATE_PAN';
@@ -76,19 +77,8 @@ export function updateURL() {
   return (dispatch, state) => {
     const maps = state().maps;
     const params = `${maps.latLng.lat}/${maps.latLng.lng}/${maps.zoom}`;
-    let query = '';
+    const query = mapListToQueryString(maps.mapsList);
 
-    if (maps.mapsList.length) {
-      query = '?maps=';
-
-      maps.mapsList.forEach((map, index) => {
-        query += `${map.scenario.slug},${map.category.slug},${map.indicator.slug}`;
-
-        if (index < maps.mapsList.length - 1) {
-          query += '/';
-        }
-      });
-    }
     dispatch(push(`/global-scenarios/${params}${query}`));
   };
 }
@@ -106,7 +96,7 @@ export function setMap(map) {
         elem.id === map.id
       ));
       if (selectedMap) {
-        selectedMap = Object.assign(selectedMap, map, { bucket: [] });
+        selectedMap = Object.assign(selectedMap, map, { bucket: null });
       } else {
         const newMap = map;
         newMap.id = uuid();
