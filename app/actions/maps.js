@@ -7,6 +7,7 @@ import {
   MAP_NUMBER_BUCKETS,
   MAX_MAPS
 } from 'constants/map';
+import { mapListToQueryString } from 'utils/maps';
 
 export const MAP_UPDATE_DATA = 'MAP_UPDATE_DATA';
 export const MAP_UPDATE_PAN = 'MAP_UPDATE_PAN';
@@ -76,19 +77,8 @@ export function updateURL() {
   return (dispatch, state) => {
     const maps = state().maps;
     const params = `${maps.latLng.lat}/${maps.latLng.lng}/${maps.zoom}`;
-    let query = '';
+    const query = mapListToQueryString(maps.mapsList);
 
-    if (maps.mapsList.length) {
-      query = '?maps=';
-
-      maps.mapsList.forEach((map, index) => {
-        query += `${map.scenario.slug},${map.category.slug},${map.indicator.slug}`;
-
-        if (index < maps.mapsList.length - 1) {
-          query += '/';
-        }
-      });
-    }
     dispatch(push(`/global-scenarios/${params}${query}`));
   };
 }
@@ -96,29 +86,24 @@ export function updateURL() {
 export function setMap(map) {
   return (dispatch, state) => {
     const maps = state().maps.mapsList;
-    const mapsList = [];
-    if (maps.length <= MAX_MAPS) {
-      maps.forEach(mapItem => {
-        mapsList.push(mapItem);
-      });
+    const isUpdate = maps.some((m) => m.id === map.id);
 
-      let selectedMap = mapsList.find((elem) => (
-        elem.id === map.id
-      ));
-      if (selectedMap) {
-        selectedMap = Object.assign(selectedMap, map, { bucket: [] });
-      } else {
-        const newMap = map;
-        newMap.id = uuid();
-        mapsList.push(newMap);
-      }
+    if (!isUpdate && maps.length >= MAX_MAPS) return;
 
-      dispatch({
-        type: MAP_UPDATE_DATA,
-        payload: mapsList
-      });
-      dispatch(updateURL());
+    const mapsList = maps.map((m) => {
+      if (m.id === map.id) return { ...m, ...map, bucket: null };
+      return m;
+    });
+
+    if (!isUpdate) {
+      mapsList.push({ ...map, id: uuid() });
     }
+
+    dispatch({
+      type: MAP_UPDATE_DATA,
+      payload: mapsList
+    });
+    dispatch(updateURL());
   };
 }
 
@@ -147,13 +132,11 @@ export function panMaps(panParams) {
 function setMapData(mapData, newData) {
   return (dispatch, state) => {
     const maps = state().maps.mapsList;
-    const mapsList = [];
-    maps.forEach(map => {
-      let currentMap = map;
-      if (currentMap.id === mapData.id) {
-        currentMap = Object.assign(currentMap, newData);
+    const mapsList = maps.map((map) => {
+      if (map.id === mapData.id) {
+        return { ...map, ...newData };
       }
-      mapsList.push(currentMap);
+      return map;
     });
 
     dispatch({
@@ -202,15 +185,23 @@ export function getMapBuckets(mapData) {
       min(data.value) as "minValue"
       FROM data`;
 
+    dispatch(setMapData(mapData, {
+      bucketLoading: true
+    }));
+
     axios.get(ENDPOINT_SQL, {
       params: {
         q: query
       }
     }).then(({ data }) => {
       dispatch(setMapData(mapData, {
-        bucket: data.rows
+        bucket: data.rows,
+        bucketLoading: false
       }));
     }).catch((error) => {
+      dispatch(setMapData(mapData, {
+        bucketLoading: false
+      }));
       console.error(error);
     });
   };

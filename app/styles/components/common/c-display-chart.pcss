@@ -11,11 +11,32 @@
     justify-content: space-between;
     align-items: center;
 
+    .title {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+
+      .map-view-link {
+        text-decoration: inherit;
+        font-family: $font-heading;
+        font-size: $font-size;
+        color: $color-main;
+        cursor: pointer;
+        border-bottom: solid 3px transparent;
+        margin-top: 3px;
+        margin-left: 5px;
+
+        &:hover {
+          border-bottom: solid 3px $color-main;
+        }
+      }
+    }
+
     .c-react-select {
       width: auto;
       min-width: 300px;
-      margin-bottom: 10px;
-      margin-right: 40px;
+      margin-bottom: 0;
+      margin-right: 0;
 
       .Select-menu-outer {
         text-align: left;
@@ -58,7 +79,6 @@
     .c-step-selector {
       max-width: 240px;
       margin: auto;
-      padding-top: 20px;
       padding-right: 40px;
     }
 

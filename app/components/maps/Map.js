@@ -16,14 +16,12 @@ import {
   MAP_LAYER_SPEC,
   MAP_VECTOR_CSS
 } from 'constants/map';
-import { categoryColorScheme } from 'constants/colors';
+import { getColorScheme } from 'utils/colors';
 
 class Map extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      loading: true
-    };
+    this.state = { tileLoading: false };
     this.onTileLoaded = this.onTileLoaded.bind(this);
   }
 
@@ -64,8 +62,8 @@ class Map extends React.Component {
       props.mapConfig.latLng.lat !== this.props.mapConfig.latLng.lat ||
       props.mapConfig.latLng.lng !== this.props.mapConfig.latLng.lng ||
       props.mapConfig.zoom !== this.props.mapConfig.zoom);
-    const bucketChanged = JSON.stringify(props.mapData.bucket) !== JSON.stringify(this.bucket);
-    const bucketEmpty = props.mapData.bucket && !props.mapData.bucket.length;
+    const bucketChanged = JSON.stringify(props.mapData.bucket) !== JSON.stringify(this.props.mapData.bucket);
+    const newBucketEmpty = !Array.isArray(props.mapData.bucket) || !props.mapData.bucket.length;
 
     if (paramsChanged) {
       this.map.panTo([props.mapConfig.latLng.lat, props.mapConfig.latLng.lng], {
@@ -76,9 +74,8 @@ class Map extends React.Component {
       this.invalidateSize();
     }
 
-    if (bucketChanged && bucketEmpty) {
+    if (!props.mapData.bucket && bucketChanged) {
       this.bucket = props.mapData.bucket;
-      this.setLoadingStatus(true);
       props.getMapBuckets(props.mapData);
     }
 
@@ -87,8 +84,7 @@ class Map extends React.Component {
       this.updateLayer(props.mapData.layer);
     }
 
-    if ((!this.bucket && props.mapData.bucket) ||
-        (bucketChanged && !bucketEmpty)) {
+    if (bucketChanged && !newBucketEmpty) {
       this.getLayer(props.mapData);
     }
 
@@ -102,7 +98,8 @@ class Map extends React.Component {
       props.mapData.scenario !== this.props.mapData.scenario ||
       props.mapData.category !== this.props.mapData.category ||
       props.mapData.indicator !== this.props.mapData.indicator ||
-      state.loading !== this.state.loading;
+      props.mapData.bucketLoading !== this.props.mapData.bucketLoading ||
+      state.tileLoading !== this.state.tileLoading;
 
     return shouldUpdate;
   }
@@ -112,13 +109,11 @@ class Map extends React.Component {
   }
 
   onTileLoaded() {
-    this.setLoadingStatus(false);
+    this.setTileLoadingStatus(false);
   }
 
-  setLoadingStatus(status) {
-    this.setState({
-      loading: status
-    });
+  setTileLoadingStatus(status) {
+    this.setState({ tileLoading: status });
   }
 
   setListeners() {
@@ -222,6 +217,8 @@ class Map extends React.Component {
   }
 
   getLayer(mapData) {
+    this.setTileLoadingStatus(true);
+
     this.bucket = mapData.bucket;
     this.generateCartoCSS(mapData);
     const layer = this.getLayerData({
@@ -300,8 +297,8 @@ class Map extends React.Component {
     }
   }
 
-  generateCartoCSS(mapData) {
-    const colorscheme = [...categoryColorScheme[mapData.category.slug](MAP_NUMBER_BUCKETS)].reverse();
+  generateCartoCSS({ category, indicator }) {
+    const colorscheme = [...getColorScheme(category.slug, indicator.slug, MAP_NUMBER_BUCKETS)].reverse();
     const bucketList = [...this.bucket].reverse();
 
     const cssProps = {
@@ -328,11 +325,12 @@ class Map extends React.Component {
   }
 
   render() {
-    const { id } = this.props.mapData;
+    const { id, bucketLoading } = this.props.mapData;
+    const isLoading = this.state.tileLoading || bucketLoading;
     return (
       <div className="c-map">
         <div id={`map${id}`}></div>
-        {this.state.loading && <LoadingSpinner inner />}
+        {isLoading && <LoadingSpinner inner />}
       </div>
     );
   }
@@ -345,7 +343,8 @@ Map.propTypes = {
     scenario: React.PropTypes.object,
     category: React.PropTypes.object,
     indicator: React.PropTypes.object,
-    bucket: React.PropTypes.array
+    bucket: React.PropTypes.array,
+    bucketLoading: React.PropTypes.bool
   }).isRequired,
   mapConfig: React.PropTypes.shape({
     latLng: React.PropTypes.object,
