@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Select from 'react-select';
 import get from 'lodash/get';
 import { Link } from 'react-router';
@@ -138,10 +139,10 @@ class DisplayCharts extends Component {
 }
 
 DisplayCharts.propTypes = {
-  charts: React.PropTypes.array.isRequired,
-  chartData: React.PropTypes.any,
-  country: React.PropTypes.object.isRequired,
-  measurements: React.PropTypes.array
+  charts: PropTypes.array.isRequired,
+  chartData: PropTypes.any,
+  country: PropTypes.object.isRequired,
+  measurements: PropTypes.array
 };
 
 export default DisplayCharts;

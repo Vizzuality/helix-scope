@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
+import PropTypes from 'prop-types';
+
 import Button from 'components/common/Button';
 
 class CompareSelects extends Component {
@@ -94,9 +96,9 @@ class CompareSelects extends Component {
 }
 
 CompareSelects.propTypes = {
-  goToCompareDetail: React.PropTypes.func,
-  countriesList: React.PropTypes.array,
-  inline: React.PropTypes.bool
+  goToCompareDetail: PropTypes.func,
+  countriesList: PropTypes.array,
+  inline: PropTypes.bool
 };
 
 export default CompareSelects;

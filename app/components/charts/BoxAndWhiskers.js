@@ -1,5 +1,4 @@
-import React from 'react';
-
+import PropTypes from 'prop-types';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { select } from 'd3-selection';
@@ -138,12 +137,12 @@ class BoxAndWhiskers extends BaseChart {
 
 BoxAndWhiskers.propTypes = {
   ...BaseChart.propTypes,
-  iso: React.PropTypes.string.isRequired,
-  scenarios: React.PropTypes.array,
-  yTicks: React.PropTypes.number,
-  chart: React.PropTypes.string,
-  variable: React.PropTypes.string.isRequired,
-  value: React.PropTypes.string.isRequired
+  iso: PropTypes.string.isRequired,
+  scenarios: PropTypes.array,
+  yTicks: PropTypes.number,
+  chart: PropTypes.string,
+  variable: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired
 };
 
 BoxAndWhiskers.defaultProps = {

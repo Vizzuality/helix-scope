@@ -1,5 +1,7 @@
 import React from 'react';
 import Select from 'react-select';
+import PropTypes from 'prop-types';
+
 import Button from 'components/common/Button';
 
 class SearchBox extends React.Component {
@@ -40,8 +42,8 @@ class SearchBox extends React.Component {
 }
 
 SearchBox.propTypes = {
-  countriesList: React.PropTypes.array,
-  goToCountry: React.PropTypes.func.isRequired
+  countriesList: PropTypes.array,
+  goToCountry: PropTypes.func.isRequired
 };
 
 export default SearchBox;

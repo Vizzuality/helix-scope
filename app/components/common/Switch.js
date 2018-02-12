@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 function Switch(props) {
   return (
@@ -17,9 +18,9 @@ function Switch(props) {
 }
 
 Switch.propTypes = {
-  options: React.PropTypes.array.isRequired,
-  indexSelected: React.PropTypes.number.isRequired,
-  onSwitch: React.PropTypes.func.isRequired
+  options: PropTypes.array.isRequired,
+  indexSelected: PropTypes.number.isRequired,
+  onSwitch: PropTypes.func.isRequired
 };
 
 export default Switch;

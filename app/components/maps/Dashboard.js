@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Button from 'components/common/Button';
 import Legend from './Legend';
 
@@ -29,18 +31,18 @@ const Dashboard = (props) => {
 };
 
 Dashboard.propTypes = {
-  mapData: React.PropTypes.shape({
-    id: React.PropTypes.string,
-    layer: React.PropTypes.object,
-    scenario: React.PropTypes.object,
-    category: React.PropTypes.object,
-    indicator: React.PropTypes.object,
-    measure: React.PropTypes.object
+  mapData: PropTypes.shape({
+    id: PropTypes.string,
+    layer: PropTypes.object,
+    scenario: PropTypes.object,
+    category: PropTypes.object,
+    indicator: PropTypes.object,
+    measure: PropTypes.object
   }).isRequired,
-  deleteMap: React.PropTypes.func,
-  setMapState: React.PropTypes.func,
-  handleMapConfig: React.PropTypes.func,
-  showDeleteBtn: React.PropTypes.bool
+  deleteMap: PropTypes.func,
+  setMapState: PropTypes.func,
+  handleMapConfig: PropTypes.func,
+  showDeleteBtn: PropTypes.bool
 };
 
 export default Dashboard;

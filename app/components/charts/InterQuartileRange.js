@@ -1,5 +1,4 @@
-import React from 'react';
-
+import PropTypes from 'prop-types';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { extent } from 'd3-array';
 import { scaleLinear, scalePoint } from 'd3-scale';
@@ -125,10 +124,10 @@ class InterQuartileRange extends BaseChart {
 
 InterQuartileRange.propTypes = {
   ...BaseChart.propTypes,
-  variables: React.PropTypes.array,
-  scenarios: React.PropTypes.array,
-  yTicks: React.PropTypes.number,
-  chart: React.PropTypes.string.isRequired
+  variables: PropTypes.array,
+  scenarios: PropTypes.array,
+  yTicks: PropTypes.number,
+  chart: PropTypes.string.isRequired
 };
 
 InterQuartileRange.defaultProps = {

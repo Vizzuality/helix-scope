@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Select from 'react-select';
 import { StickyContainer, Sticky } from 'react-sticky';
 import flatMap from 'lodash/flatMap';
@@ -224,16 +225,16 @@ class CountriesPage extends Component {
 }
 
 CountriesPage.propTypes = {
-  config: React.PropTypes.shape({
-    categories: React.PropTypes.array,
-    loading: React.PropTypes.bool,
-    measurements: React.PropTypes.array
+  config: PropTypes.shape({
+    categories: PropTypes.array,
+    loading: PropTypes.bool,
+    measurements: PropTypes.array
   }).isRequired,
-  countriesList: React.PropTypes.array,
-  updateCompareUrl: React.PropTypes.func,
-  fetchBoxAndWhiskers: React.PropTypes.func.isRequired,
-  iso1: React.PropTypes.string,
-  iso2: React.PropTypes.string
+  countriesList: PropTypes.array,
+  updateCompareUrl: PropTypes.func,
+  fetchBoxAndWhiskers: PropTypes.func.isRequired,
+  iso1: PropTypes.string,
+  iso2: PropTypes.string
 };
 
 export default CountriesPage;

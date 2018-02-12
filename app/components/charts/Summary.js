@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { extent } from 'd3-array';
 import { scaleLinear, scalePoint } from 'd3-scale';
@@ -132,10 +132,10 @@ class Summary extends BaseChart {
 
 Summary.propTypes = {
   ...BaseChart.propTypes,
-  colors: React.PropTypes.array.isRequired,
-  iso: React.PropTypes.string.isRequired,
-  yTicks: React.PropTypes.number,
-  chart: React.PropTypes.string.isRequired
+  colors: PropTypes.array.isRequired,
+  iso: PropTypes.string.isRequired,
+  yTicks: PropTypes.number,
+  chart: PropTypes.string.isRequired
 };
 
 Summary.defaultProps = {

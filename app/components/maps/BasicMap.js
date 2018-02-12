@@ -1,5 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import L from 'leaflet';
+
 import { BASEMAP_GEOM_TILE, BASEMAP_LABELS_TILE, MAP_MIN_ZOOM } from 'constants/map';
 
 class Map extends React.Component {
@@ -33,9 +35,9 @@ class Map extends React.Component {
 }
 
 Map.propTypes = {
-  mapConfig: React.PropTypes.shape({
-    latLng: React.PropTypes.object,
-    zoom: React.PropTypes.number
+  mapConfig: PropTypes.shape({
+    latLng: PropTypes.object,
+    zoom: PropTypes.number
   }).isRequired
 };
 

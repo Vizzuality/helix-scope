@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import Modal from 'components/common/Modal';
 import Button from 'components/common/Button';
 import NavLink from 'components/common/NavLink';
@@ -41,23 +43,23 @@ MenuModal.propTypes = {
   /**
   * Define whether modal is open or not
   **/
-  menuModalOpen: React.PropTypes.bool,
+  menuModalOpen: PropTypes.bool,
   /**
   * Callback when closing or opening modal
   **/
-  setMenuModal: React.PropTypes.func,
+  setMenuModal: PropTypes.func,
   /**
   * Callback when closing or opening modal
   **/
-  setShareModal: React.PropTypes.func,
+  setShareModal: PropTypes.func,
   /**
   * Title for Modal component
   **/
-  title: React.PropTypes.string,
+  title: PropTypes.string,
   /**
   * Route of current location
   **/
-  shareUrl: React.PropTypes.string
+  shareUrl: PropTypes.string
 };
 
 export default MenuModal;

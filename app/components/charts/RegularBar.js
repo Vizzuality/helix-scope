@@ -1,4 +1,5 @@
-import React from 'react';
+import PropTypes from 'prop-types';
+
 import { axisBottom, axisLeft } from 'd3-axis';
 import { extent } from 'd3-array';
 import { scaleLinear, scalePoint } from 'd3-scale';
@@ -90,11 +91,11 @@ class RegularBar extends BaseChart {
 
 RegularBar.propTypes = {
   ...BaseChart.propTypes,
-  iso: React.PropTypes.string.isRequired,
-  variable: React.PropTypes.string.isRequired,
-  scenarios: React.PropTypes.array,
-  yTicks: React.PropTypes.number,
-  chart: React.PropTypes.string.isRequired
+  iso: PropTypes.string.isRequired,
+  variable: PropTypes.string.isRequired,
+  scenarios: PropTypes.array,
+  yTicks: PropTypes.number,
+  chart: PropTypes.string.isRequired
 };
 
 RegularBar.defaultProps = {

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { mapListToQueryString } from 'utils/maps';
 import MapsListContainer from 'containers/maps/MapsListContainer';
@@ -132,16 +133,16 @@ class MapsPage extends React.Component {
 }
 
 MapsPage.contextTypes = {
-  location: React.PropTypes.object
+  location: PropTypes.object
 };
 
 MapsPage.propTypes = {
-  initializeMaps: React.PropTypes.func,
-  updateURL: React.PropTypes.func,
-  saveParamsFromURL: React.PropTypes.func,
-  maps: React.PropTypes.array,
-  config: React.PropTypes.object,
-  createLayer: React.PropTypes.func
+  initializeMaps: PropTypes.func,
+  updateURL: PropTypes.func,
+  saveParamsFromURL: PropTypes.func,
+  maps: PropTypes.array,
+  config: PropTypes.object,
+  createLayer: PropTypes.func
 };
 
 export default MapsPage;

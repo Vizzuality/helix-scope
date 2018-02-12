@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 function withFetching(ChartComponent) {
   class WithFetching extends Component {
@@ -26,9 +27,9 @@ function withFetching(ChartComponent) {
   }
 
   WithFetching.propTypes = {
-    data: React.PropTypes.array,
-    loading: React.PropTypes.bool,
-    fetchData: React.PropTypes.func.isRequired
+    data: PropTypes.array,
+    loading: PropTypes.bool,
+    fetchData: PropTypes.func.isRequired
   };
 
   return WithFetching;

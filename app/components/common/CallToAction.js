@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Button from 'components/common/Button';
 
 function CallToAction(props) {
@@ -36,9 +37,9 @@ CallToAction.propTypes = {
     - news
     - about
   */
-  type: React.PropTypes.string.isRequired,
-  title: React.PropTypes.string.isRequired,
-  content: React.PropTypes.string
+  type: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  content: PropTypes.string
 };
 
 export default CallToAction;

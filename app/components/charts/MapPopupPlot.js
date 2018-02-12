@@ -1,10 +1,9 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import { axisBottom } from 'd3-axis';
 import { scaleLinear } from 'd3-scale';
 import { select } from 'd3-selection';
 import { quantile } from 'd3-array';
-
 import flatMap from 'lodash/flatMap';
 import uniqBy from 'lodash/uniqBy';
 
@@ -175,7 +174,7 @@ class MapPopupPlot extends BaseChart {
 
 MapPopupPlot.propTypes = {
   ...BaseChart.propTypes,
-  unit: React.PropTypes.string.isRequired
+  unit: PropTypes.string.isRequired
 };
 
 MapPopupPlot.defaultProps = {

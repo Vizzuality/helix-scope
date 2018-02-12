@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import Button from 'components/common/Button';
 import Modal from 'components/common/Modal';
 
@@ -104,19 +106,19 @@ ShareModal.propTypes = {
   /**
   * Define whether modal is open or not
   **/
-  shareModalOpen: React.PropTypes.bool,
+  shareModalOpen: PropTypes.bool,
   /**
   * Callback when closing or opening modal
   **/
-  setShareModal: React.PropTypes.func,
+  setShareModal: PropTypes.func,
   /**
   * Title for Modal component
   **/
-  title: React.PropTypes.string,
+  title: PropTypes.string,
   /**
   * Route of current location
   **/
-  shareUrl: React.PropTypes.string
+  shareUrl: PropTypes.string
 };
 
 export default ShareModal;

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
 import { getChartsByCategory } from 'utils/charts';
@@ -70,12 +71,12 @@ class CountriesDetailPage extends Component {
 }
 
 CountriesDetailPage.propTypes = {
-  config: React.PropTypes.object.isRequired,
-  fetchCountryData: React.PropTypes.func.isRequired,
-  fetchBoxAndWhiskers: React.PropTypes.func.isRequired,
-  countryData: React.PropTypes.any,
-  countriesList: React.PropTypes.array,
-  iso: React.PropTypes.string
+  config: PropTypes.object.isRequired,
+  fetchCountryData: PropTypes.func.isRequired,
+  fetchBoxAndWhiskers: PropTypes.func.isRequired,
+  countryData: PropTypes.any,
+  countriesList: PropTypes.array,
+  iso: PropTypes.string
 };
 
 export default CountriesDetailPage;

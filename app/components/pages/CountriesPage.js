@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import SearchBox from 'containers/common/SearchBox';
 import ExploreScenarios from 'components/common/ExploreScenarios';
 import GetUpdates from 'components/common/GetUpdates';
@@ -47,7 +49,7 @@ class CountriesPage extends Component {
 }
 
 CountriesPage.propTypes = {
-  countriesList: React.PropTypes.array
+  countriesList: PropTypes.array
 };
 
 export default CountriesPage;
