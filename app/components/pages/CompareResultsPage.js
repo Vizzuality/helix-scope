@@ -19,11 +19,13 @@ class CompareResultsPage extends Component {
     super(props);
     this.state = {
       ...this.getSelectedCountries(this.props),
+      selectedChartByCategory: {},
       indexSelected: 1
     };
     this.handleCountry1Change = this.handleCountryChange.bind(this, 'selectedCountry1');
     this.handleCountry2Change = this.handleCountryChange.bind(this, 'selectedCountry2');
     this.handleIndexCountryChange = this.handleIndexCountryChange.bind(this);
+    this.handleChartChange = this.handleChartChange.bind(this);
   }
 
   componentDidMount() {
@@ -61,14 +63,28 @@ class CompareResultsPage extends Component {
     }
   }
 
+  handleChartChange(category, chart) {
+    this.setState((state) => ({
+      selectedChartByCategory: {
+        ...state.selectedChartByCategory,
+        [category.slug]: chart
+      }
+    }));
+  }
+
   updateCountryParams() {
     this.props.updateCompareUrl(this.state.selectedCountry1.iso, this.state.selectedCountry2.iso);
   }
 
-  renderChart(charts, country, column) {
+  renderChart(charts, category, country, column) {
     return (
       <div className={`column small-12 medium-6 country-${column}`}>
-        <DisplayCharts country={country} charts={charts} />
+        <DisplayCharts
+          country={country}
+          charts={charts}
+          selectedChart={this.state.selectedChartByCategory[category.slug]}
+          onChartChange={(chart) => this.handleChartChange(category, chart)}
+        />
       </div>
     );
   }
@@ -112,8 +128,8 @@ class CompareResultsPage extends Component {
                 </div>
               </div>
               <div className={`row l-compare -index-${this.state.indexSelected}`}>
-                {this.renderChart(charts, this.state.selectedCountry1, 1)}
-                {this.renderChart(charts, this.state.selectedCountry2, 2)}
+                {this.renderChart(charts, category, this.state.selectedCountry1, 1)}
+                {this.renderChart(charts, category, this.state.selectedCountry2, 2)}
               </div>
             </div>
           );

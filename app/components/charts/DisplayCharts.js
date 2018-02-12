@@ -16,46 +16,14 @@ import InfoButton from 'components/charts/InfoButton';
 import MeasureSelector from 'components/maps/MeasureSelector';
 
 class DisplayCharts extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = { ...this.getInitialState(props) };
-
-    this.handleChartChange = this.handleChartChange.bind(this);
-    this.handleMeasureChange = this.handleMeasureChange.bind(this);
-  }
-
-  getInitialState(props) {
-    const selectedChart = get(props, 'charts[0]');
-    const selectedMeasure = this.getDefaultMeasure(selectedChart);
-
-    return {
-      selectedChart,
-      selectedMeasure
-    };
-  }
-
   getDefaultMeasure(chart) {
+    if (!chart) return null;
     const chartMeasures = (chart.measurements || [chart.measurement]).filter(m => m);
     const measurementSlug = chartMeasures.find((m) => m === 'mean') || chartMeasures[0];
     return this.props.measurements.find((m) => m.slug === measurementSlug);
   }
 
-  handleChartChange(chart) {
-    const selectedMeasure = this.getDefaultMeasure(chart);
-
-    this.setState({
-      selectedChart: chart,
-      selectedMeasure
-    });
-  }
-
-  handleMeasureChange(measure) {
-    this.setState({ selectedMeasure: measure });
-  }
-
-  renderChart(chart, country) {
-    const { selectedMeasure } = this.state;
+  renderChart(chart, measure, country) {
     const props = {
       chart: chart.slug,
       iso: country.iso,
@@ -74,7 +42,7 @@ class DisplayCharts extends Component {
         return (
           <BoxAndWhiskersChart
             {...props}
-            value={selectedMeasure.slug}
+            value={measure.slug}
           />
         );
       default:
@@ -87,11 +55,12 @@ class DisplayCharts extends Component {
   }
 
   render() {
-    const { charts, chartData, measurements, country } = this.props;
-    const { selectedChart, selectedMeasure } = this.state;
+    const { charts, chartData, measurements, country, onChartChange, onMeasureChange } = this.props;
 
     if (!charts || !charts.length) return null;
 
+    const selectedChart = this.props.selectedChart || charts[0];
+    const selectedMeasure = this.props.selectedMeasure || this.getDefaultMeasure(selectedChart);
     const selectedChartData = get(chartData, `[${selectedChart.slug}][${country.iso}].data`);
     const availableMeasurements = get(selectedChart, 'measurements.length') && measurements.filter(
       (m) => selectedChart.measurements.includes(m.slug)
@@ -106,7 +75,7 @@ class DisplayCharts extends Component {
                 className="c-react-select -white"
                 options={charts}
                 value={selectedChart}
-                onChange={this.handleChartChange}
+                onChange={onChartChange}
                 clearable={false}
                 searchable={false}
                 labelKey="label"
@@ -123,7 +92,7 @@ class DisplayCharts extends Component {
             <MeasureSelector
               measure={selectedMeasure}
               measurements={availableMeasurements}
-              onChange={this.handleMeasureChange}
+              onChange={onMeasureChange}
             />
           )}
           {selectedChart.info && (
@@ -131,7 +100,7 @@ class DisplayCharts extends Component {
           )}
         </div>
         <div className="content">
-          {this.renderChart(selectedChart, country)}
+          {this.renderChart(selectedChart, selectedMeasure, country)}
         </div>
       </div>
     );
@@ -139,10 +108,14 @@ class DisplayCharts extends Component {
 }
 
 DisplayCharts.propTypes = {
-  charts: PropTypes.array.isRequired,
   chartData: PropTypes.any,
+  charts: PropTypes.array.isRequired,
   country: PropTypes.object.isRequired,
-  measurements: PropTypes.array
+  measurements: PropTypes.array,
+  onChartChange: PropTypes.func,
+  onMeasureChange: PropTypes.func,
+  selectedChart: PropTypes.object,
+  selectedMeasure: PropTypes.object
 };
 
 export default DisplayCharts;
