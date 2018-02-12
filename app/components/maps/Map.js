@@ -149,8 +149,6 @@ class Map extends React.Component {
     const query = `
       SELECT
         m.model_short_name,
-        m.model_long_name,
-        run,
         mean as value
       FROM onedegintermod s
         INNER JOIN ${getTableName(category.slug, indicator.slug)} m on m.shape_id = s.id_val
