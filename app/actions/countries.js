@@ -12,10 +12,9 @@ export function fetchCountryList() {
     });
 
     cartoQuery(sql)
-      .then(response => response.json())
-      .then(data => dispatch({
+      .then((response) => dispatch({
         type: RECEIVE_COUNTRY_LIST,
-        payload: data.rows
+        payload: response.data.rows
       }));
   };
 }

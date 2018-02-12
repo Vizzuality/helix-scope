@@ -20,10 +20,6 @@ class CountriesDetailPage extends Component {
     };
   }
 
-  componentDidMount() {
-    this.props.fetchBoxAndWhiskers('climatological_ecological', this.props.iso);
-  }
-
   setSelectedChartByCategory(category, property, value) {
     this.setState((state) => ({
       selectedChartByCategory: {

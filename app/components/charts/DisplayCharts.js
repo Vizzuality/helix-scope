@@ -30,28 +30,24 @@ class DisplayCharts extends Component {
       variable: chart.variable
     };
 
-    switch (chart.slug) {
-      case 'crop_yield_change_baseline':
-        return <InterQuartileRangeChart {...props} variables={maizeVariables} />;
-      case 'crop_yield_change_irrigation':
-        return <InterQuartileRangeChart {...props} variables={irrigationVariables} />;
-      case 'annual_expected_flood_damage':
-      case 'population_affected_anually':
-        return <RegularBarChart {...props} />;
-      case 'climatological_ecological':
-        return (
-          <BoxAndWhiskersChart
-            {...props}
-            value={measure.slug}
-          />
-        );
-      default:
-        if (chart.slug.endsWith('_summary')) {
-          return <SummaryChart {...props} colors={chart.colors} />;
-        }
-
-        return null;
+    if (chart.slug === 'crop_yield_change_baseline') {
+      return <InterQuartileRangeChart {...props} variables={maizeVariables} />;
+    } else if (chart.slug === 'crop_yield_change_irrigation') {
+      return <InterQuartileRangeChart {...props} variables={irrigationVariables} />;
+    } else if (['annual_expected_flood_damage', 'population_affected_anually'].includes(chart.slug)) {
+      return <RegularBarChart {...props} />;
+    } else if (chart.slug.startsWith('climatological_ecological')) {
+      return (
+        <BoxAndWhiskersChart
+          {...props}
+          value={measure.slug}
+        />
+      );
+    } else if (chart.slug.endsWith('_summary')) {
+      return <SummaryChart {...props} colors={chart.colors} />;
     }
+
+    return null;
   }
 
   render() {

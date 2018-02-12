@@ -28,11 +28,6 @@ class CompareResultsPage extends Component {
     this.handleChartChange = this.handleChartChange.bind(this);
   }
 
-  componentDidMount() {
-    this.props.fetchBoxAndWhiskers('climatological_ecological', this.props.iso1);
-    this.props.fetchBoxAndWhiskers('climatological_ecological', this.props.iso2);
-  }
-
   componentWillReceiveProps(nextProps) {
     if (nextProps.countriesList !== this.props.countriesList) {
       this.setState(this.getSelectedCountries(nextProps));
