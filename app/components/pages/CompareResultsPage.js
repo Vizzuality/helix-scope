@@ -14,26 +14,15 @@ import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
 import LoadingSpinner from 'components/common/LoadingSpinner';
 
-class CountriesPage extends Component {
+class CompareResultsPage extends Component {
   constructor(props) {
     super(props);
-    if (props.countriesList && props.countriesList.length) {
-      this.state = {
-        selectedCountry1: this.props.countriesList.find(elem => elem.iso === this.props.iso1),
-        selectedCountry2: this.props.countriesList.find(elem => elem.iso === this.props.iso2),
-        indexSelected: 1
-      };
-    } else {
-      this.state = {
-        selectedCountry1: { iso: '', name: '' },
-        selectedCountry2: { iso: '', name: '' },
-        indexSelected: 1
-      };
-    }
-    this.handleCountry1Change = this.handleCountry1Change.bind(this);
-    this.handleCountry2Change = this.handleCountry2Change.bind(this);
-    this.excludeSelectedOptions1 = this.excludeSelectedOptions1.bind(this);
-    this.excludeSelectedOptions2 = this.excludeSelectedOptions2.bind(this);
+    this.state = {
+      ...this.getSelectedCountries(this.props),
+      indexSelected: 1
+    };
+    this.handleCountry1Change = this.handleCountryChange.bind(this, 'selectedCountry1');
+    this.handleCountry2Change = this.handleCountryChange.bind(this, 'selectedCountry2');
     this.handleIndexCountryChange = this.handleIndexCountryChange.bind(this);
   }
 
@@ -44,11 +33,16 @@ class CountriesPage extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.countriesList !== this.props.countriesList) {
-      this.setState({
-        selectedCountry1: nextProps.countriesList.find(elem => elem.iso === this.props.iso1),
-        selectedCountry2: nextProps.countriesList.find(elem => elem.iso === this.props.iso2)
-      });
+      this.setState(this.getSelectedCountries(nextProps));
     }
+  }
+
+  getSelectedCountries(props) {
+    const notFound = { iso: '', name: '' };
+    return {
+      selectedCountry1: props.countriesList.find(elem => elem.iso === this.props.iso1) || notFound,
+      selectedCountry2: props.countriesList.find(elem => elem.iso === this.props.iso2) || notFound
+    };
   }
 
   handleIndexCountryChange(newIndex) {
@@ -59,27 +53,12 @@ class CountriesPage extends Component {
     }
   }
 
-  handleCountry1Change(newValue) {
+  handleCountryChange(country, newValue) {
     if (newValue) {
       this.setState({
-        selectedCountry1: newValue
+        [country]: newValue
       }, () => this.updateCountryParams());
     }
-  }
-
-  handleCountry2Change(newValue) {
-    if (newValue) {
-      this.setState({
-        selectedCountry2: newValue
-      }, () => this.updateCountryParams());
-    }
-  }
-
-  excludeSelectedOptions1(option) {
-    return option.iso !== this.state.selectedCountry2.iso;
-  }
-  excludeSelectedOptions2(option) {
-    return option.iso !== this.state.selectedCountry1.iso;
   }
 
   updateCountryParams() {
@@ -122,11 +101,11 @@ class CountriesPage extends Component {
 
     return (
       <div>
-        {categories.map((category) => {
+        {categories.map((category, index) => {
           const charts = getCharts(category);
 
           return (
-            <div>
+            <div key={index}>
               <div className="row">
                 <div className="column">
                   <h2>{category.name}</h2>
@@ -224,7 +203,7 @@ class CountriesPage extends Component {
   }
 }
 
-CountriesPage.propTypes = {
+CompareResultsPage.propTypes = {
   config: PropTypes.shape({
     categories: PropTypes.array,
     loading: PropTypes.bool,
@@ -237,4 +216,4 @@ CountriesPage.propTypes = {
   iso2: PropTypes.string
 };
 
-export default CountriesPage;
+export default CompareResultsPage;
