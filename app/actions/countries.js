@@ -24,26 +24,6 @@ export function fetchCountryList() {
   };
 }
 
-export function fetchCountryDetail(iso) {
-  const sql = `SELECT * FROM get_country('${iso}')`;
-  return dispatch => {
-    dispatch({
-      type: LOAD_COUNTRY_DETAIL
-    });
-
-    cartoQuery(sql)
-      .then(response => response.json())
-      .then(data => ({
-        indicators: data.rows[0].get_country,
-        iso
-      }))
-      .then(data => dispatch({
-        type: RECEIVE_COUNTRY_DETAIL,
-        payload: data
-      }));
-  };
-}
-
 export function goToCountry(slug) {
   return (dispatch) => {
     dispatch(push(`/countries/${slug}`));

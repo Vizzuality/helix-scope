@@ -72,9 +72,7 @@ class CountriesDetailPage extends Component {
 
 CountriesDetailPage.propTypes = {
   config: PropTypes.object.isRequired,
-  fetchCountryData: PropTypes.func.isRequired,
   fetchBoxAndWhiskers: PropTypes.func.isRequired,
-  countryData: PropTypes.any,
   countriesList: PropTypes.array,
   iso: PropTypes.string
 };
