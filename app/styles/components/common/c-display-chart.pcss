@@ -13,6 +13,7 @@
 
     .title {
       margin-bottom: 10px;
+      margin-right: 30px;
       display: flex;
       align-items: center;
 
@@ -37,6 +38,10 @@
       min-width: 300px;
       margin-bottom: 0;
       margin-right: 0;
+
+      @media (--small-viewport) {
+        min-width: unset;
+      }
 
       .Select-menu-outer {
         text-align: left;
