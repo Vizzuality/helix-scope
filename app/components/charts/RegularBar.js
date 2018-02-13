@@ -14,7 +14,7 @@ class RegularBar extends BaseChart {
     }
     const {
       data,
-      getDomain,
+      domain,
       margin,
       scenarios,
       yTicks
@@ -26,7 +26,6 @@ class RegularBar extends BaseChart {
 
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
-    const domain = getDomain(data);
 
     const scale = {
       x: scalePoint()

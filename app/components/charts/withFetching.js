@@ -34,7 +34,7 @@ function withFetching(ChartComponent) {
     fetchData: PropTypes.func.isRequired
   };
 
-  const mapStateToProps = ({ charts, config }, { chart, iso, measure }) => {
+  const mapStateToProps = ({ charts, config }, { chart, iso, measure, domain, getDomain }) => {
     const chartId = measure ? `${chart}_${measure}` : chart;
     const chartData = get(charts, `[${chartId}][${iso}]`);
 
@@ -42,7 +42,8 @@ function withFetching(ChartComponent) {
 
     return {
       loading: chartData.loading,
-      data: chartData.data
+      data: chartData.data,
+      domain: domain || getDomain(chartData.data)
     };
   };
 

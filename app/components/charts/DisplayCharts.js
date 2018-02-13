@@ -26,6 +26,7 @@ class DisplayCharts extends Component {
   renderChart(chart, measure, country) {
     const props = {
       chart: chart.slug,
+      domain: this.props.fixedDomain,
       getDomain: chart.getDomain,
       iso: country.iso,
       variable: chart.variable
@@ -108,7 +109,10 @@ DisplayCharts.propTypes = {
   chartData: PropTypes.any,
   charts: PropTypes.array.isRequired,
   country: PropTypes.object.isRequired,
-  fixedYScale: PropTypes.array,
+  fixedDomain: PropTypes.shape({
+    x: PropTypes.array,
+    y: PropTypes.array
+  }),
   measurements: PropTypes.array,
   onChartChange: PropTypes.func,
   onMeasureChange: PropTypes.func,

@@ -13,9 +13,9 @@ const mapStateToProps = ({ config }) => ({
   }))
 });
 
-const mapDispatchToProps = (dispatch, { chart, iso, variable, value }) => ({
+const mapDispatchToProps = (dispatch, { chart, iso, variable, measure }) => ({
   fetchData: () => {
-    dispatch(fetchBoxAndWhiskers(chart, iso, variable, value));
+    dispatch(fetchBoxAndWhiskers(chart, iso, variable, measure));
   }
 });
 

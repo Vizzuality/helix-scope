@@ -8,7 +8,7 @@ function Switch(props) {
         <div
           key={index}
           onClick={() => props.onSwitch(index + 1)}
-          className={`option ${index + 1 === props.indexSelected ? '-active' : ''}`}
+          className={`option ${index + 1 === props.selectedIndex ? '-active' : ''}`}
         >
           {option}
         </div>
@@ -19,7 +19,7 @@ function Switch(props) {
 
 Switch.propTypes = {
   options: PropTypes.array.isRequired,
-  indexSelected: PropTypes.number.isRequired,
+  selectedIndex: PropTypes.number.isRequired,
   onSwitch: PropTypes.func.isRequired
 };
 

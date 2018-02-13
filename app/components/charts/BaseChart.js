@@ -66,6 +66,10 @@ BaseChart.propTypes = {
   }),
   loading: PropTypes.bool.isRequired,
   data: PropTypes.array.isRequired,
+  domain: PropTypes.shape({
+    x: PropTypes.array,
+    y: PropTypes.array
+  }),
   getDomain: PropTypes.func
 };
 

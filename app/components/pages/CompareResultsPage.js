@@ -2,13 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 import { StickyContainer, Sticky } from 'react-sticky';
-import flatMap from 'lodash/flatMap';
-import get from 'lodash/get';
-import { extent } from 'd3-array';
 
-import { getChartsByCategory } from 'utils/charts';
 import { categoriesOrder } from 'constants/country';
-import DisplayCharts from 'containers/charts/DisplayCharts';
+import ChartComparer from 'components/charts/ChartComparer';
 import Switch from 'components/common/Switch';
 import CallToAction from 'components/common/CallToAction';
 import ExploreScenarios from 'components/common/ExploreScenarios';
@@ -22,12 +18,11 @@ class CompareResultsPage extends Component {
     this.state = {
       ...this.getSelectedCountries(this.props),
       selectedChartByCategory: {},
-      indexSelected: 1
+      selectedIndex: 1
     };
     this.handleCountry1Change = this.handleCountryChange.bind(this, 'selectedCountry1');
     this.handleCountry2Change = this.handleCountryChange.bind(this, 'selectedCountry2');
     this.handleIndexCountryChange = this.handleIndexCountryChange.bind(this);
-    this.handleChartChange = this.handleChartChange.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -45,9 +40,9 @@ class CompareResultsPage extends Component {
   }
 
   handleIndexCountryChange(newIndex) {
-    if (newIndex && newIndex !== this.state.indexSelected) {
+    if (newIndex && newIndex !== this.state.selectedIndex) {
       this.setState({
-        indexSelected: newIndex
+        selectedIndex: newIndex
       });
     }
   }
@@ -60,112 +55,19 @@ class CompareResultsPage extends Component {
     }
   }
 
-  handleChartChange(chart) {
-    this.setState((state) => ({
-      selectedChartByCategory: {
-        ...state.selectedChartByCategory,
-        [chart.category]: chart
-      }
-    }));
-  }
-
   updateCountryParams() {
     this.props.updateCompareUrl(this.state.selectedCountry1.iso, this.state.selectedCountry2.iso);
-  }
-
-  renderChart(charts, selectedChart, country, column) {
-    return (
-      <div className={`column small-12 medium-6 country-${column}`}>
-        <DisplayCharts
-          country={country}
-          charts={charts}
-          selectedChart={selectedChart}
-          onChartChange={this.handleChartChange}
-        />
-      </div>
-    );
-  }
-
-  renderCharts() {
-    const categories = [...this.props.config.categories].sort(
-      (a, b) => categoriesOrder.indexOf(a.slug) > categoriesOrder.indexOf(b.slug)
-    );
-
-    const getCharts = (category) => {
-      const charts = flatMap(
-        getChartsByCategory(category),
-        (chart) => {
-          if (chart.measurements && chart.measurements.length) {
-            const eachAsSeparateChart = (m) => ({
-              ...chart,
-              label: `${chart.label} - ${m} value`,
-              measurements: null,
-              measurement: m
-            });
-            return chart.measurements.map(eachAsSeparateChart);
-          }
-
-          return chart;
-        }
-      );
-
-      return charts;
-    };
-    const commonYScaleDomain = (selectedChart, iso1, iso2) => {
-      const { chartData } = this.props;
-      const chartId = selectedChart.measurement
-            ? `${selectedChart.slug}_${selectedChart.variable}_${selectedChart.measurement}`
-            : selectedChart.slug;
-      const country1ChartData = get(chartData, `[${chartId}][${iso1}].data`);
-      const country2ChartData = get(chartData, `[${chartId}][${iso2}].data`);
-
-      if (!country1ChartData || !country2ChartData) return selectedChart.getDomain;
-
-      const domain1 = selectedChart.getDomain(country1ChartData);
-      const domain2 = selectedChart.getDomain(country2ChartData);
-
-      return () => ({
-        x: domain1.x || domain2.x,
-        y: extent([...domain1.y, ...domain2.y].sort())
-      });
-    };
-
-    return (
-      <div>
-        {categories.map((category, index) => {
-          const charts = getCharts(category);
-          const { selectedCountry1, selectedCountry2, indexSelected } = this.state;
-          const sChart = this.state.selectedChartByCategory[category.slug];
-          let selectedChart;
-          if (sChart) {
-            selectedChart = {
-              ...sChart,
-              getDomain: commonYScaleDomain(sChart, selectedCountry1.iso, selectedCountry2.iso)
-            };
-          }
-
-          return (
-            <div key={index}>
-              <div className="row">
-                <div className="column">
-                  <h2>{category.name}</h2>
-                </div>
-              </div>
-              <div className={`row l-compare -index-${indexSelected}`}>
-                {this.renderChart(charts, selectedChart, selectedCountry1, 1)}
-                {this.renderChart(charts, selectedChart, selectedCountry2, 2)}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
   }
 
   render() {
     if (this.props.config.loading) return <LoadingSpinner />;
 
-    const countriesSelected = [this.state.selectedCountry1.name, this.state.selectedCountry2.name];
+    const { selectedCountry1, selectedCountry2, selectedIndex } = this.state;
+
+    const countriesSelected = [selectedCountry1.name, selectedCountry2.name];
+    const categories = [...this.props.config.categories].sort(
+      (a, b) => categoriesOrder.indexOf(a.slug) > categoriesOrder.indexOf(b.slug)
+    );
 
     return (
       <div>
@@ -218,14 +120,25 @@ class CompareResultsPage extends Component {
                 <div className="column small-12">
                   <Switch
                     options={countriesSelected}
-                    indexSelected={this.state.indexSelected}
+                    selectedIndex={this.state.selectedIndex}
                     onSwitch={this.handleIndexCountryChange}
                   />
                 </div>
               </div>
             </Sticky>
             <div className="l-split">
-              {this.renderCharts()}
+              <div>
+                {categories.map((category, index) => (
+                  <ChartComparer
+                    key={index}
+                    category={category}
+                    chartData={this.props.chartData}
+                    country1={selectedCountry1}
+                    country2={selectedCountry2}
+                    selectedIndex={selectedIndex}
+                  />
+                ))}
+              </div>
             </div>
           </StickyContainer>
         </div>
