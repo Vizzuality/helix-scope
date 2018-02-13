@@ -26,6 +26,7 @@ class DisplayCharts extends Component {
   renderChart(chart, measure, country) {
     const props = {
       chart: chart.slug,
+      getDomain: chart.getDomain,
       iso: country.iso,
       variable: chart.variable
     };
@@ -91,8 +92,8 @@ class DisplayCharts extends Component {
               onChange={onMeasureChange}
             />
           )}
-          {selectedChart.info && (
-            <InfoButton text={selectedChart.info(selectedChartData, get(selectedMeasure, 'name'))} />
+          {selectedChart.getInfo && (
+            <InfoButton text={selectedChart.getInfo(selectedChartData, get(selectedMeasure, 'name'))} />
           )}
         </div>
         <div className="content">
@@ -107,6 +108,7 @@ DisplayCharts.propTypes = {
   chartData: PropTypes.any,
   charts: PropTypes.array.isRequired,
   country: PropTypes.object.isRequired,
+  fixedYScale: PropTypes.array,
   measurements: PropTypes.array,
   onChartChange: PropTypes.func,
   onMeasureChange: PropTypes.func,

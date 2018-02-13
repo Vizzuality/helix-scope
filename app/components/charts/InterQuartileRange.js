@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { axisBottom, axisLeft } from 'd3-axis';
-import { extent } from 'd3-array';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { select } from 'd3-selection';
 
@@ -14,25 +13,21 @@ class InterQuartileRange extends BaseChart {
     }
 
     const {
+      data,
+      getDomain,
       margin,
       scenarios,
-      data,
-      yTicks,
-      variables
+      variables,
+      yTicks
     } = this.props;
 
-    const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
     const colorFor = (variable) => (variables.find((v) => v.variable === variable) || { color: 'black' }).color;
     const findScenario = (slug) => (scenarios.find((s) => slug.toString() === s.slug) || {});
     const tickFormat = (val) => (findScenario(val).name);
 
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
-
-    const domain = {
-      x: data.map((d) => d.swl).filter(uniq),
-      y: extent(data, (d) => d.median)
-    };
+    const domain = getDomain(data);
 
     const scale = {
       x: scalePoint()

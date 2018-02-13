@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { axisBottom, axisLeft } from 'd3-axis';
-import { extent } from 'd3-array';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { select } from 'd3-selection';
 import { line } from 'd3-shape';
@@ -18,6 +17,7 @@ class Summary extends BaseChart {
     const {
       colors,
       data,
+      getDomain,
       margin,
       yTicks
     } = this.props;
@@ -27,14 +27,9 @@ class Summary extends BaseChart {
       mean: colors[1],
       max: colors[2]
     };
-    const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
-
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
-    const domain = {
-      x: data.map((d) => d.swl).filter(uniq),
-      y: extent(data, (d) => d.value)
-    };
+    const domain = getDomain(data);
 
     const scale = {
       x: scalePoint()
@@ -50,6 +45,7 @@ class Summary extends BaseChart {
     const axes = {
       x: axisBottom()
         .scale(scale.x)
+        .tickFormat((d) => d.swlName)
         .tickSizeOuter(0),
       y: axisLeft()
         .scale(scale.y)

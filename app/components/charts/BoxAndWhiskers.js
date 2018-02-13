@@ -13,26 +13,20 @@ class BoxAndWhiskers extends BaseChart {
     }
 
     const {
+      data,
+      getDomain,
       margin,
       scenarios,
-      data,
       yTicks
     } = this.props;
 
-    const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
     const findScenario = (slug) => (scenarios.find((s) => slug.toString() === s.slug) || {});
     const tickFormat = (slug) => findScenario(slug).label;
     const colorFor = (slug) => findScenario(slug).color;
 
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
-    const domain = {
-      x: data.map((d) => d.swl).filter(uniq),
-      y: [
-        Math.min.apply(null, data.map((d) => d.minimum)),
-        Math.max.apply(null, data.map((d) => d.maximum))
-      ]
-    };
+    const domain = getDomain(data);
 
     const scale = {
       x: scalePoint()

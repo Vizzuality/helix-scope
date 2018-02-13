@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import Select from 'react-select';
 import { StickyContainer, Sticky } from 'react-sticky';
 import flatMap from 'lodash/flatMap';
+import get from 'lodash/get';
+import { extent } from 'd3-array';
 
 import { getChartsByCategory } from 'utils/charts';
 import { categoriesOrder } from 'constants/country';
@@ -58,11 +60,11 @@ class CompareResultsPage extends Component {
     }
   }
 
-  handleChartChange(category, chart) {
+  handleChartChange(chart) {
     this.setState((state) => ({
       selectedChartByCategory: {
         ...state.selectedChartByCategory,
-        [category.slug]: chart
+        [chart.category]: chart
       }
     }));
   }
@@ -71,14 +73,14 @@ class CompareResultsPage extends Component {
     this.props.updateCompareUrl(this.state.selectedCountry1.iso, this.state.selectedCountry2.iso);
   }
 
-  renderChart(charts, category, country, column) {
+  renderChart(charts, selectedChart, country, column) {
     return (
       <div className={`column small-12 medium-6 country-${column}`}>
         <DisplayCharts
           country={country}
           charts={charts}
-          selectedChart={this.state.selectedChartByCategory[category.slug]}
-          onChartChange={(chart) => this.handleChartChange(category, chart)}
+          selectedChart={selectedChart}
+          onChartChange={this.handleChartChange}
         />
       </div>
     );
@@ -109,11 +111,38 @@ class CompareResultsPage extends Component {
 
       return charts;
     };
+    const commonYScaleDomain = (selectedChart, iso1, iso2) => {
+      const { chartData } = this.props;
+      const chartId = selectedChart.measurement
+            ? `${selectedChart.slug}_${selectedChart.variable}_${selectedChart.measurement}`
+            : selectedChart.slug;
+      const country1ChartData = get(chartData, `[${chartId}][${iso1}].data`);
+      const country2ChartData = get(chartData, `[${chartId}][${iso2}].data`);
+
+      if (!country1ChartData || !country2ChartData) return selectedChart.getDomain;
+
+      const domain1 = selectedChart.getDomain(country1ChartData);
+      const domain2 = selectedChart.getDomain(country2ChartData);
+
+      return () => ({
+        x: domain1.x || domain2.x,
+        y: extent([...domain1.y, ...domain2.y].sort())
+      });
+    };
 
     return (
       <div>
         {categories.map((category, index) => {
           const charts = getCharts(category);
+          const { selectedCountry1, selectedCountry2, indexSelected } = this.state;
+          const sChart = this.state.selectedChartByCategory[category.slug];
+          let selectedChart;
+          if (sChart) {
+            selectedChart = {
+              ...sChart,
+              getDomain: commonYScaleDomain(sChart, selectedCountry1.iso, selectedCountry2.iso)
+            };
+          }
 
           return (
             <div key={index}>
@@ -122,9 +151,9 @@ class CompareResultsPage extends Component {
                   <h2>{category.name}</h2>
                 </div>
               </div>
-              <div className={`row l-compare -index-${this.state.indexSelected}`}>
-                {this.renderChart(charts, category, this.state.selectedCountry1, 1)}
-                {this.renderChart(charts, category, this.state.selectedCountry2, 2)}
+              <div className={`row l-compare -index-${indexSelected}`}>
+                {this.renderChart(charts, selectedChart, selectedCountry1, 1)}
+                {this.renderChart(charts, selectedChart, selectedCountry2, 2)}
               </div>
             </div>
           );
@@ -222,7 +251,7 @@ CompareResultsPage.propTypes = {
   }).isRequired,
   countriesList: PropTypes.array,
   updateCompareUrl: PropTypes.func,
-  fetchBoxAndWhiskers: PropTypes.func.isRequired,
+  chartData: PropTypes.any,
   iso1: PropTypes.string,
   iso2: PropTypes.string
 };

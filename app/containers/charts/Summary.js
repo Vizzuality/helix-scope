@@ -17,7 +17,7 @@ const mapStateToProps = ({ charts, config }, { chart, iso }) => {
     loading: chartData.loading,
     data: chartData.data.map((d) => ({
       ...d,
-      swl: config.scenarios.find((s) => s.slug === d.swl.toString()).short_name
+      swlName: config.scenarios.find((s) => s.slug === d.swl.toString()).short_name
     }))
   };
 };

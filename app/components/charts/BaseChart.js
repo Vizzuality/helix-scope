@@ -65,7 +65,8 @@ BaseChart.propTypes = {
     bottom: PropTypes.number
   }),
   loading: PropTypes.bool.isRequired,
-  data: PropTypes.array.isRequired
+  data: PropTypes.array.isRequired,
+  getDomain: PropTypes.func
 };
 
 export default BaseChart;
