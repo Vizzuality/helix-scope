@@ -107,7 +107,7 @@ export function fetchBoxAndWhiskers(chart, iso, variable, measure) {
     GROUP BY swl
   `;
 
-  return fetchChartData(`${chart}_${variable}_${measure}`, sql, iso);
+  return fetchChartData(`${chart}_${measure}`, sql, iso);
 }
 
 export function fetchSummary(chart, iso, variable) {

@@ -41,7 +41,7 @@ class DisplayCharts extends Component {
       return (
         <BoxAndWhiskersChart
           {...props}
-          value={measure.slug}
+          measure={measure.slug}
         />
       );
     } else if (chart.slug.endsWith('_summary')) {

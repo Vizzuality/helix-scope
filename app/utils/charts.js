@@ -112,7 +112,7 @@ function summaryDomain(data) {
 
 function getClimatologicalCharts(category) {
   return category.indicators.filter(onlyForCountry).map((i) => ({
-    slug: 'climatological_ecological',
+    slug: `climatological_ecological_${i.slug}`,
     measurements: i.measurements,
     label: `${i.name} (${i.unit})`,
     variable: i.slug,

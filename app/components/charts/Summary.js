@@ -19,9 +19,12 @@ class Summary extends BaseChart {
       data,
       getDomain,
       margin,
+      scenarios,
       yTicks
     } = this.props;
 
+    const findScenario = (slug) => (scenarios.find((s) => slug.toString() === s.slug) || {});
+    const tickFormat = (slug) => findScenario(slug).name;
     const lineColor = {
       min: colors[0],
       mean: colors[1],
@@ -45,7 +48,7 @@ class Summary extends BaseChart {
     const axes = {
       x: axisBottom()
         .scale(scale.x)
-        .tickFormat((d) => d.swlName)
+        .tickFormat(tickFormat)
         .tickSizeOuter(0),
       y: axisLeft()
         .scale(scale.y)
@@ -128,10 +131,11 @@ class Summary extends BaseChart {
 
 Summary.propTypes = {
   ...BaseChart.propTypes,
+  chart: PropTypes.string.isRequired,
   colors: PropTypes.array.isRequired,
   iso: PropTypes.string.isRequired,
-  yTicks: PropTypes.number,
-  chart: PropTypes.string.isRequired
+  scenarios: PropTypes.array,
+  yTicks: PropTypes.number
 };
 
 Summary.defaultProps = {
@@ -142,7 +146,7 @@ Summary.defaultProps = {
     top: 30,
     bottom: 60
   },
-  meta: {},
+  scenarios: [],
   yTicks: 5
 };
 

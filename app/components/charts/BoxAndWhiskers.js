@@ -136,7 +136,7 @@ BoxAndWhiskers.propTypes = {
   yTicks: PropTypes.number,
   chart: PropTypes.string,
   variable: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired
+  measure: PropTypes.string.isRequired
 };
 
 BoxAndWhiskers.defaultProps = {

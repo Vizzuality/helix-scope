@@ -133,7 +133,6 @@ InterQuartileRange.defaultProps = {
     top: 30,
     bottom: 60
   },
-  meta: {},
   variables: [],
   scenarios: [],
   yTicks: 5

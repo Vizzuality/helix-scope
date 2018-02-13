@@ -96,7 +96,6 @@ RegularBar.propTypes = {
 
 RegularBar.defaultProps = {
   ...BaseChart.defaultProps,
-  meta: {},
   scenarios: [],
   yTicks: 5
 };
