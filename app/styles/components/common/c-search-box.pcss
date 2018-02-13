@@ -1,56 +1,55 @@
+$search-box-small-height: 80px;
+$search-box-big-height: 124px;
+
 .c-search-box {
   .c-react-select {
-    height: 80px;
+    height: $search-box-small-height;
 
     @media (--medium-viewport) {
-      height: 124px;
+      height: $search-box-big-height;
     }
-  }
 
-  .Select-value-label,
-  .Select-placeholder,
-  .Select-input > input {
-    font-family: $font-body;
-    font-style: italic;
-    font-size: $font-size;
-    line-height: 1;
-    color: $font-main;
-    padding-left: 10px;
-    margin: 0;
-
-    @media (--medium-viewport) {
-      padding-left: 45px;
-      font-size: $font-size-medium-large;
+    &.is-focused {
+      .Select-placeholder {
+        align-items: flex-start;
+        padding-top: 20px;
+        font-size: $font-size-small;
+        line-height: 1;
+      }
     }
-  }
 
-  .Select-placeholder {
-    padding-left: 15px;
-    color: $font-box-grey;
-    top: 0;
-    left: 0;
-    display: flex;
-    align-items: center;
+    .Select-value-label,
+    .Select-placeholder,
+    .Select-input > input {
+      font-family: $font-body;
+      font-style: italic;
+      font-size: $font-size;
+      color: $font-main;
+      line-height: $search-box-small-height;
+      height: $search-box-small-height;
+      margin: 0;
 
-    @media (--medium-viewport) {
-      padding-left: 50px;
-      font-size: $font-size-medium-large;
+      @media (--medium-viewport) {
+        line-height: $search-box-big-height;
+        height: $search-box-big-height;
+        font-size: $font-size-medium-large;
+      }
     }
-  }
 
-  .Select-input {
-    height: 100%;
+    .Select-placeholder {
+      color: $font-box-grey;
 
-    > input {
-      height: 100%;
+      @media (--medium-viewport) {
+        font-size: $font-size-medium-large;
+      }
     }
-  }
 
-  .Select-arrow-zone {
-    padding-right: $margin-small;
+    .Select-arrow-zone {
+      padding-right: $margin-small;
 
-    @media (--medium-viewport) {
-      padding-right: $margin-extra-large;
+      @media (--medium-viewport) {
+        padding-right: $margin-extra-large;
+      }
     }
   }
 }
