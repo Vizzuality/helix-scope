@@ -76,32 +76,40 @@ export function fetchRegularBar(chart, iso, variable) {
 export function fetchBoxAndWhiskers(chart, iso, variable, measure) {
   const sql = `
     SELECT
-      swl_info as swl,
+      swl,
       ARRAY_AGG(model_short_name) as models,
       ARRAY_AGG(institution) as institutions,
-      PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY ${measure}) AS q1,
-      PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY ${measure}) AS median,
-      PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY ${measure}) AS q3,
-      MAX(${measure}) AS maximum,
-      MIN(${measure}) AS minimum,
-      ARRAY_AGG(${measure} ORDER BY ${measure} ASC) AS values
-    FROM master_admin0
-    WHERE iso = '${iso}'
-      AND variable = '${variable}'
-      AND swl_info < 6
+      PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY value) AS q1,
+      PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY value) AS median,
+      PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY value) AS q3,
+      MAX(value) AS maximum,
+      MIN(value) AS minimum,
+      ARRAY_AGG(value ORDER BY value ASC) AS values
+    FROM (
+      SELECT
+        swl_info as swl,
+        model_short_name,
+        institution,
+        CASE WHEN variable LIKE '%biodiversity' THEN ${measure}*100 ELSE ${measure} END as value
+      FROM master_admin0
+      WHERE iso = '${iso}'
+        AND variable = '${variable}'
+        AND swl_info < 6
+      ORDER BY swl
+    ) as data
     GROUP BY swl
-    ORDER BY swl
   `;
 
   return fetchChartData(`${chart}_${variable}_${measure}`, sql, iso);
 }
 
 export function fetchSummary(chart, iso, variable) {
+  const convertToPercent = variable.includes('biodiversity');
   const sql = `
     SELECT
-      AVG(min) AS min,
-      AVG(mean) AS mean,
-      AVG(max) AS max,
+      AVG(min${convertToPercent ? '*100' : ''}) AS min,
+      AVG(mean${convertToPercent ? '*100' : ''}) AS mean,
+      AVG(max${convertToPercent ? '*100' : ''}) AS max,
       ARRAY_AGG(DISTINCT model_short_name) as models,
       ARRAY_AGG(DISTINCT institution) as institutions,
       swl_info AS swl
