@@ -97,7 +97,7 @@ class CompareResultsPage extends Component {
                     options={this.props.countriesList}
                     value={this.state.selectedCountry1.iso}
                     onChange={this.handleCountry1Change}
-                    searchable={false}
+                    searchable
                     clearable={false}
                     labelKey="name"
                     valueKey="iso"
@@ -109,7 +109,7 @@ class CompareResultsPage extends Component {
                     options={this.props.countriesList}
                     value={this.state.selectedCountry2.iso}
                     onChange={this.handleCountry2Change}
-                    searchable={false}
+                    searchable
                     clearable={false}
                     labelKey="name"
                     valueKey="iso"

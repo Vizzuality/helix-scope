@@ -9,9 +9,6 @@ class CompareSelects extends Component {
     super(props);
     this.state = {
       /* Select value settings */
-      disabled: false,
-      searchable: true,
-      clearable: false,
       country1: '',
       country2: ''
     };
@@ -56,11 +53,10 @@ class CompareSelects extends Component {
           <Select
             className="c-react-select"
             options={this.props.countriesList.filter(this.excludeSelectedOptions1)}
-            clearable={this.state.clearable}
-            disabled={this.state.disabled}
             value={this.state.country1.iso}
             onChange={this.handleCountry1}
-            searchable={this.state.searchable}
+            clearable={false}
+            searchable
             labelKey="name"
             valueKey="iso"
             placeholder="Choose country"
@@ -70,11 +66,10 @@ class CompareSelects extends Component {
           <Select
             className="c-react-select"
             options={this.props.countriesList.filter(this.excludeSelectedOptions2)}
-            clearable={this.state.clearable}
-            disabled={this.state.disabled}
             value={this.state.country2.iso}
             onChange={this.handleCountry2}
-            searchable={this.state.searchable}
+            clearable={false}
+            searchable
             labelKey="name"
             valueKey="iso"
             placeholder="Choose country"
