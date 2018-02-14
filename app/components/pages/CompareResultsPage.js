@@ -136,6 +136,7 @@ class CompareResultsPage extends Component {
                     country1={selectedCountry1}
                     country2={selectedCountry2}
                     selectedIndex={selectedIndex}
+                    measurements={this.props.config.measurements}
                   />
                 ))}
               </div>

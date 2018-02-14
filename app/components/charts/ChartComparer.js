@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { extent } from 'd3-array';
 import get from 'lodash/get';
-import flatMap from 'lodash/flatMap';
 
 import DisplayCharts from 'containers/charts/DisplayCharts';
 import { getChartsByCategory } from 'utils/charts';
@@ -13,39 +12,27 @@ class ChartComparer extends Component {
     super(props);
 
     this.state = {
-      selectedChart: null
+      selectedChart: null,
+      selectedMeasure: null
     };
 
     this.handleChartChange = this.handleChartChange.bind(this);
+    this.handleMeasureChange = this.handleMeasureChange.bind(this);
   }
 
-  getCharts(category) {
-    const charts = flatMap(
-      getChartsByCategory(category),
-      (chart) => {
-        if (chart.measurements && chart.measurements.length) {
-          const eachAsSeparateChart = (m) => ({
-            ...chart,
-            label: `${chart.label} - ${m} value`,
-            measurements: null,
-            measurement: m
-          });
-          return chart.measurements.map(eachAsSeparateChart);
-        }
-
-        return chart;
-      }
-    );
-
-    return charts;
+  getDefaultMeasure(chart) {
+    if (!chart) return null;
+    const chartMeasures = (chart.measurements || [chart.measurement]).filter(m => m);
+    const measurementSlug = chartMeasures.find((m) => m === 'mean') || chartMeasures[0];
+    return this.props.measurements.find((m) => m.slug === measurementSlug);
   }
 
-  computeCommonDomain(selectedChart, iso1, iso2) {
+  computeCommonDomain(selectedChart, selectedMeasure, iso1, iso2) {
     if (!selectedChart) return null;
 
     const { chartData } = this.props;
-    const chartId = selectedChart.measurement
-          ? `${selectedChart.slug}_${selectedChart.measurement}`
+    const chartId = selectedMeasure
+          ? `${selectedChart.slug}_${selectedMeasure.slug}`
           : selectedChart.slug;
     const country1ChartData = get(chartData, `[${chartId}][${iso1}].data`);
     const country2ChartData = get(chartData, `[${chartId}][${iso2}].data`);
@@ -70,15 +57,23 @@ class ChartComparer extends Component {
     });
   }
 
-  renderChart(charts, selectedChart, country, commonDomain, column) {
+  handleMeasureChange(measure) {
+    this.setState({
+      selectedMeasure: measure
+    });
+  }
+
+  renderChart(charts, selectedChart, selectedMeasure, country, commonDomain, column) {
     return (
       <div className={`column small-12 medium-6 country-${column}`}>
         <DisplayCharts
           country={country}
           charts={charts}
           selectedChart={selectedChart}
+          selectedMeasure={selectedMeasure}
           fixedDomain={commonDomain}
           onChartChange={this.handleChartChange}
+          onMeasureChange={this.handleMeasureChange}
         />
       </div>
     );
@@ -87,9 +82,10 @@ class ChartComparer extends Component {
   render() {
     const { category, country1, country2, selectedIndex } = this.props;
 
-    const charts = this.getCharts(category);
+    const charts = getChartsByCategory(category);
     const selectedChart = this.state.selectedChart || charts[0];
-    const commonDomain = this.computeCommonDomain(selectedChart, country1.iso, country2.iso);
+    const selectedMeasure = this.state.selectedMeasure || this.getDefaultMeasure(selectedChart);
+    const commonDomain = this.computeCommonDomain(selectedChart, selectedMeasure, country1.iso, country2.iso);
 
     return (
       <div>
@@ -99,8 +95,8 @@ class ChartComparer extends Component {
           </div>
         </div>
         <div className={`row l-compare -index-${selectedIndex}`}>
-          {this.renderChart(charts, selectedChart, country1, commonDomain, 1)}
-          {this.renderChart(charts, selectedChart, country2, commonDomain, 2)}
+          {this.renderChart(charts, selectedChart, selectedMeasure, country1, commonDomain, 1)}
+          {this.renderChart(charts, selectedChart, selectedMeasure, country2, commonDomain, 2)}
         </div>
       </div>
     );
@@ -112,6 +108,7 @@ ChartComparer.propTypes = {
   chartData: PropTypes.object,
   country1: PropTypes.object,
   country2: PropTypes.object,
+  measurements: PropTypes.array,
   selectedIndex: PropTypes.number
 };
 
