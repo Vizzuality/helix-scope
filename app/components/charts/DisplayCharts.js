@@ -59,7 +59,8 @@ class DisplayCharts extends Component {
 
     const selectedChart = this.props.selectedChart || charts[0];
     const selectedMeasure = this.props.selectedMeasure || this.getDefaultMeasure(selectedChart);
-    const selectedChartData = get(chartData, `[${selectedChart.slug}][${country.iso}].data`);
+    const chartId = selectedMeasure ? `${selectedChart.slug}_${selectedMeasure.slug}` : selectedChart.slug;
+    const selectedChartData = get(chartData, `[${chartId}][${country.iso}].data`);
     const availableMeasurements = get(selectedChart, 'measurements.length') && measurements.filter(
       (m) => selectedChart.measurements.includes(m.slug)
     );

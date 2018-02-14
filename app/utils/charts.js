@@ -34,8 +34,7 @@ function cropYieldDynamicInfo(data) {
 }
 
 function climatologicalDynamicInfo(variable, data, measurement) {
-  const filtered = (data || []).filter((d) => d.variable === variable.slug);
-  const { models, institutions } = getModelsInstitutions(filtered);
+  const { models, institutions } = getModelsInstitutions(data);
 
   return `
     ${capitalize(measurement)} of ${variable.name} over the country wide area: ${removeLastDot(variable.name_long)}.

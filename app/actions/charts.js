@@ -84,8 +84,8 @@ export function fetchBoxAndWhiskers(chart, iso, variable, measure) {
   const sql = `
     SELECT
       swl,
-      ARRAY_AGG(model_short_name) as models,
-      ARRAY_AGG(institution) as institutions,
+      ARRAY_AGG(DISTINCT model_short_name) as models,
+      ARRAY_AGG(DISTINCT institution) as institutions,
       PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY value) AS q1,
       PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY value) AS median,
       PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY value) AS q3,
