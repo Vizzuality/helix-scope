@@ -40,6 +40,7 @@ class Map extends React.Component {
     this.map.scrollWheelZoom.disable();
     this.tileLayer = L.tileLayer(BASEMAP_GEOM_TILE).addTo(this.map).setZIndex(0);
     this.tileLayerLabels = L.tileLayer(BASEMAP_LABELS_TILE).addTo(this.map).setZIndex(3);
+    this.addCartoLogo(this.map);
 
     // Set listeners
     this.setListeners();
@@ -139,6 +140,18 @@ class Map extends React.Component {
       this.getPopupData(wLng, wLat)
         .then(this.createPopup.bind(this, lng, lat));
     });
+  }
+
+  addCartoLogo(map) {
+    const cartoLogo = new L.Control({ position: 'bottomleft' });
+    cartoLogo.onAdd = () => {
+      const link = L.DomUtil.create('a');
+      link.href = 'https://carto.com';
+      link.style = 'cursor: pointer';
+      link.innerHTML = '<img src="/images/carto.svg" alt="CARTO" />';
+      return link;
+    };
+    cartoLogo.addTo(map);
   }
 
   getPopupData(lng, lat) {
@@ -283,9 +296,7 @@ class Map extends React.Component {
       this.layer.setUrl(layer.tileUrl);
       this.currentLayer = layer.slug;
     } else {
-      this.layer = L.tileLayer(layer.tileUrl, {
-        attribution: 'CARTO <a href="https://carto.com/attributions" target="_blank">attribution</a>'
-      }).setZIndex(2);
+      this.layer = L.tileLayer(layer.tileUrl).setZIndex(2);
       this.layer.on('load', this.onTileLoaded);
       this.layer.addTo(this.map);
       this.currentLayer = layer.slug;
