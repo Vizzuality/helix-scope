@@ -127,9 +127,9 @@ class Map extends React.Component {
       this.props.onMapDrag(this.getMapParams());
     });
     this.map.on('popupclose', ({ popup }) => {
-      unmountComponentAtNode(
-        document.querySelector(`.${popup.options.className} .leaflet-popup-content`)
-      );
+      const element = popup.getElement().getElementsByClassName('leaflet-popup-content')[0];
+
+      if (element) unmountComponentAtNode(element);
     });
     this.map.on('click', (e) => {
       const { lng, lat } = e.latlng;
@@ -140,18 +140,6 @@ class Map extends React.Component {
       this.getPopupData(wLng, wLat)
         .then(this.createPopup.bind(this, lng, lat));
     });
-  }
-
-  addCartoLogo(map) {
-    const cartoLogo = new L.Control({ position: 'bottomleft' });
-    cartoLogo.onAdd = () => {
-      const link = L.DomUtil.create('a');
-      link.href = 'https://carto.com';
-      link.style = 'cursor: pointer';
-      link.innerHTML = '<img src="/images/carto.svg" alt="CARTO" />';
-      return link;
-    };
-    cartoLogo.addTo(map);
   }
 
   getPopupData(lng, lat) {
@@ -259,6 +247,18 @@ class Map extends React.Component {
     `;
 
     return query;
+  }
+
+  addCartoLogo(map) {
+    const cartoLogo = new L.Control({ position: 'bottomleft' });
+    cartoLogo.onAdd = () => {
+      const link = L.DomUtil.create('a');
+      link.href = 'https://carto.com';
+      link.style = 'cursor: pointer';
+      link.innerHTML = '<img src="/images/carto.svg" alt="CARTO" />';
+      return link;
+    };
+    cartoLogo.addTo(map);
   }
 
   createPopup(lng, lat, data) {
