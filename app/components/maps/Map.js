@@ -2,6 +2,7 @@ import React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import axios from 'axios';
 import L from 'leaflet';
+import uuid from 'uuid';
 import LoadingSpinner from 'components/common/LoadingSpinner';
 import Popup from 'components/common/Popup';
 import MapPopupPlot from 'components/charts/MapPopupPlot';
@@ -249,12 +250,9 @@ class Map extends React.Component {
   createPopup(lng, lat, data) {
     if (!data || !data.length) return;
 
-    const {
-      id,
-      scenario,
-      indicator
-    } = this.props.mapData;
+    const { scenario, indicator } = this.props.mapData;
 
+    const id = uuid();
     const title = `${indicator.name} under ${scenario.name}`;
     const mean = data.map((d) => d.value).reduce((acc, v) => acc + v, 0) / data.length;
     const popupClassName = `details-popup-${id}`;
@@ -263,9 +261,7 @@ class Map extends React.Component {
       closeButton: false,
       maxWidth: 400,
       minWidth: 400
-    })
-      .setLatLng(L.latLng(lat, lng))
-      .openOn(this.map);
+    }).setLatLng(L.latLng(lat, lng)).openOn(this.map);
 
     render(
       <Popup title={title} onCloseClick={() => this.map.closePopup(popup)}>
