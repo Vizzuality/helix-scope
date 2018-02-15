@@ -1,24 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { metadataInfoText } from 'constants/map';
 import Button from 'components/common/Button';
+import InfoButton from 'components/charts/InfoButton';
 import Legend from './Legend';
 
 const Dashboard = (props) => {
-  const deleteBtn = props.showDeleteBtn ?
-    <Button onClick={() => props.deleteMap(props.mapData.id)} icon="close" style="light" size="small" /> :
-    null;
+  const deleteBtn = props.showDeleteBtn
+        ? <Button onClick={() => props.deleteMap(props.mapData.id)} icon="close" style="light" size="small" />
+        : null;
+  const infoText = metadataInfoText[props.mapData.indicator.slug];
 
   return (
     <div className="c-dashboard">
       <div className="control">
         <div className="scenario">
           {props.mapData.scenario.name}
-          <Button
-            icon="settings" style="none" size="small" position="right"
-            onClick={() => props.handleMapConfig(props.mapData.id)}
-          />
         </div>
+        <Button
+          icon="settings" style="none" size="small" position="right"
+          onClick={() => props.handleMapConfig(props.mapData.id)}
+        />
+        <InfoButton
+          className="hidden-small-viewport-down"
+          popoverPosition="right"
+          text={infoText}
+        />
+        <InfoButton
+          className="hidden-small-viewport-up"
+          popoverPosition="left"
+          text={infoText}
+        />
         {deleteBtn}
       </div>
       <div className="legend">
