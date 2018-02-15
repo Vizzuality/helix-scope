@@ -1,20 +1,12 @@
 import { connect } from 'react-redux';
-import get from 'lodash/get';
 
 import InterQuartileRange from 'components/charts/InterQuartileRange';
 import withFetching from 'components/charts/withFetching';
 import { fetchInterQuartileRange } from 'actions/charts';
 
-const mapStateToProps = ({ charts, config }, { chart, iso }) => {
-  const chartData = get(charts, `[${chart}][${iso}]`);
-  if (!chartData) return {};
-
-  return {
-    loading: chartData.loading,
-    data: chartData.data,
-    scenarios: config.scenarios
-  };
-};
+const mapStateToProps = ({ config }) => ({
+  scenarios: config.scenarios
+});
 
 const mapDispatchToProps = (dispatch, { chart, iso, variable }) => ({
   fetchData: () => {

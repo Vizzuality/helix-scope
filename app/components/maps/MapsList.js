@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Map from 'containers/maps/Map';
 import Dashboard from 'containers/maps/DashboardContainer';
 
@@ -48,8 +50,8 @@ class MapsList extends React.Component {
 }
 
 MapsList.propTypes = {
-  maps: React.PropTypes.array,
-  handleMapConfig: React.PropTypes.func
+  maps: PropTypes.array,
+  handleMapConfig: PropTypes.func
 };
 
 export default MapsList;

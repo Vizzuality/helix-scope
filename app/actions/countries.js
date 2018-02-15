@@ -4,10 +4,6 @@ import cartoQuery from 'utils/cartoQuery';
 export const LOAD_COUNTRY_LIST = 'LOAD_COUNTRY_LIST';
 export const RECEIVE_COUNTRY_LIST = 'RECEIVE_COUNTRY_LIST';
 
-export const LOAD_COUNTRY_DETAIL = 'LOAD_COUNTRY_DETAIL';
-export const RECEIVE_COUNTRY_DETAIL = 'RECEIVE_COUNTRY_DETAIL';
-
-
 export function fetchCountryList() {
   const sql = 'SELECT name_engli AS name, iso FROM country_geoms ORDER BY name ASC';
   return dispatch => {
@@ -16,30 +12,9 @@ export function fetchCountryList() {
     });
 
     cartoQuery(sql)
-      .then(response => response.json())
-      .then(data => dispatch({
+      .then((response) => dispatch({
         type: RECEIVE_COUNTRY_LIST,
-        payload: data.rows
-      }));
-  };
-}
-
-export function fetchCountryDetail(iso) {
-  const sql = `SELECT * FROM get_country('${iso}')`;
-  return dispatch => {
-    dispatch({
-      type: LOAD_COUNTRY_DETAIL
-    });
-
-    cartoQuery(sql)
-      .then(response => response.json())
-      .then(data => ({
-        indicators: data.rows[0].get_country,
-        iso
-      }))
-      .then(data => dispatch({
-        type: RECEIVE_COUNTRY_DETAIL,
-        payload: data
+        payload: response.data.rows
       }));
   };
 }

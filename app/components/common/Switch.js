@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 function Switch(props) {
   return (
@@ -7,7 +8,7 @@ function Switch(props) {
         <div
           key={index}
           onClick={() => props.onSwitch(index + 1)}
-          className={`option ${index + 1 === props.indexSelected ? '-active' : ''}`}
+          className={`option ${index + 1 === props.selectedIndex ? '-active' : ''}`}
         >
           {option}
         </div>
@@ -17,9 +18,9 @@ function Switch(props) {
 }
 
 Switch.propTypes = {
-  options: React.PropTypes.array.isRequired,
-  indexSelected: React.PropTypes.number.isRequired,
-  onSwitch: React.PropTypes.func.isRequired
+  options: PropTypes.array.isRequired,
+  selectedIndex: PropTypes.number.isRequired,
+  onSwitch: PropTypes.func.isRequired
 };
 
 export default Switch;

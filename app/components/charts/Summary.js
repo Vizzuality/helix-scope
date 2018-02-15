@@ -1,6 +1,5 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import { axisBottom, axisLeft } from 'd3-axis';
-import { extent } from 'd3-array';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { select } from 'd3-selection';
 import { line } from 'd3-shape';
@@ -15,26 +14,25 @@ class Summary extends BaseChart {
     if (!this.chart) {
       return;
     }
+
     const {
       colors,
       data,
+      domain,
       margin,
+      scenarios,
       yTicks
     } = this.props;
 
+    const findScenario = (slug) => (scenarios.find((s) => slug.toString() === s.slug) || {});
+    const tickFormat = (slug) => findScenario(slug).name;
     const lineColor = {
       min: colors[0],
       mean: colors[1],
       max: colors[2]
     };
-    const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
-
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
-    const domain = {
-      x: data.map((d) => d.swl).filter(uniq),
-      y: extent(data, (d) => d.value)
-    };
 
     const scale = {
       x: scalePoint()
@@ -50,6 +48,7 @@ class Summary extends BaseChart {
     const axes = {
       x: axisBottom()
         .scale(scale.x)
+        .tickFormat(tickFormat)
         .tickSizeOuter(0),
       y: axisLeft()
         .scale(scale.y)
@@ -132,10 +131,11 @@ class Summary extends BaseChart {
 
 Summary.propTypes = {
   ...BaseChart.propTypes,
-  colors: React.PropTypes.array.isRequired,
-  iso: React.PropTypes.string.isRequired,
-  yTicks: React.PropTypes.number,
-  chart: React.PropTypes.string.isRequired
+  chart: PropTypes.string.isRequired,
+  colors: PropTypes.array.isRequired,
+  iso: PropTypes.string.isRequired,
+  scenarios: PropTypes.array,
+  yTicks: PropTypes.number
 };
 
 Summary.defaultProps = {
@@ -146,7 +146,7 @@ Summary.defaultProps = {
     top: 30,
     bottom: 60
   },
-  meta: {},
+  scenarios: [],
   yTicks: 5
 };
 

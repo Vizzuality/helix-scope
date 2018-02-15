@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import uuid from 'uuid/v4';
 
 const MeasureSelector = ({ measure, measurements, onChange }) => {
@@ -36,9 +37,9 @@ const MeasureSelector = ({ measure, measurements, onChange }) => {
 };
 
 MeasureSelector.propTypes = {
-  measure: React.PropTypes.object,
-  onChange: React.PropTypes.func,
-  measurements: React.PropTypes.array
+  measure: PropTypes.object,
+  onChange: PropTypes.func,
+  measurements: PropTypes.array
 };
 
 export default MeasureSelector;

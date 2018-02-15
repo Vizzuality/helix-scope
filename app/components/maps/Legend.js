@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import { formatSI } from 'utils/format';
 import { getColorScheme } from 'utils/colors';
 import {
@@ -69,10 +71,10 @@ class Legend extends React.Component {
 }
 
 Legend.propTypes = {
-  mapData: React.PropTypes.shape({
-    indicator: React.PropTypes.object,
-    category: React.PropTypes.object,
-    bucket: React.PropTypes.array
+  mapData: PropTypes.shape({
+    indicator: PropTypes.object,
+    category: PropTypes.object,
+    bucket: PropTypes.array
   }).isRequired
 };
 

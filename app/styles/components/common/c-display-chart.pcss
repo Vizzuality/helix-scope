@@ -13,6 +13,7 @@
 
     .title {
       margin-bottom: 10px;
+      margin-right: 30px;
       display: flex;
       align-items: center;
 
@@ -38,6 +39,10 @@
       margin-bottom: 0;
       margin-right: 0;
 
+      @media (--small-viewport) {
+        min-width: unset;
+      }
+
       .Select-menu-outer {
         text-align: left;
       }
@@ -46,8 +51,9 @@
       &.Select--single > .Select-control .Select-value {
         display: block;
         position: relative;
-        padding-left: 0;
-        margin-right: 40px;
+        padding-left: 20px;
+        padding-right: 0;
+        margin-right: 30px;
       }
 
       .Select-value-label {
@@ -73,6 +79,10 @@
 
       .Select-multi-value-wrapper {
         display: block;
+      }
+
+      .Select-input {
+        display: none !important;
       }
     }
 

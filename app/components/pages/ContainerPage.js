@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Header from 'components/common/Header';
 import ShareModal from 'components/modals/ShareModal';
 import MenuModal from 'components/modals/MenuModal';
@@ -41,46 +43,46 @@ class ContainerPage extends React.Component {
 }
 
 ContainerPage.childContextTypes = {
-  location: React.PropTypes.object
+  location: PropTypes.object
 };
 
 ContainerPage.propTypes = {
   /**
   * Define required content for page
   **/
-  children: React.PropTypes.element.isRequired,
+  children: PropTypes.element.isRequired,
   /**
   * Define whether page is loading or not
   **/
-  loading: React.PropTypes.bool,
+  loading: PropTypes.bool,
   /**
   * Callback to set modal open or closed
   **/
-  setShareModal: React.PropTypes.func,
+  setShareModal: PropTypes.func,
   /**
   * Callback to set modal open or closed
   **/
-  setMenuModal: React.PropTypes.func,
+  setMenuModal: PropTypes.func,
   /**
   * Define whether modal is open or not
   **/
-  menuModalOpen: React.PropTypes.bool,
+  menuModalOpen: PropTypes.bool,
   /**
   * Define whether modal is open or not
   **/
-  shareModalOpen: React.PropTypes.bool,
+  shareModalOpen: PropTypes.bool,
   /**
   * Finds the route of current location in URL
   **/
-  location: React.PropTypes.object,
+  location: PropTypes.object,
   /**
   * Finds route pathname string for current location
   **/
-  pathname: React.PropTypes.string,
+  pathname: PropTypes.string,
   /**
   * Finds route params
   **/
-  params: React.PropTypes.object
+  params: PropTypes.object
 };
 
 export default ContainerPage;

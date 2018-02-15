@@ -1,8 +1,9 @@
-import get from 'lodash/get';
-import uniq from 'lodash/uniqBy';
+import { extent } from 'd3-array';
 import flatMap from 'lodash/flatMap';
 import flatten from 'lodash/flatten';
+import get from 'lodash/get';
 import { getColorScheme } from './colors';
+import uniq from 'lodash/uniqBy';
 
 function removeLastDot(str) {
   return str.replace(/\.\s*$/, '');
@@ -33,8 +34,7 @@ function cropYieldDynamicInfo(data) {
 }
 
 function climatologicalDynamicInfo(variable, data, measurement) {
-  const filtered = (data || []).filter((d) => d.variable === variable.slug);
-  const { models, institutions } = getModelsInstitutions(filtered);
+  const { models, institutions } = getModelsInstitutions(data);
 
   return `
     ${capitalize(measurement)} of ${variable.name} over the country wide area: ${removeLastDot(variable.name_long)}.
@@ -78,14 +78,46 @@ function climatologicalSummaryInfo(variable, data) {
   `;
 }
 
+function interQuartileDomain(data) {
+  return {
+    x: uniq(data.map((d) => d.swl)),
+    y: extent(data, (d) => d.median)
+  };
+}
+
+function boxAndWhiskersDomain(data) {
+  return {
+    x: uniq(data.map((d) => d.swl)),
+    y: [
+      Math.min.apply(null, data.map((d) => d.minimum)),
+      Math.max.apply(null, data.map((d) => d.maximum))
+    ]
+  };
+}
+
+function regularBarDomain(data) {
+  return {
+    x: uniq(data.map((d) => d.swl)),
+    y: extent(data, (d) => d.value)
+  };
+}
+
+function summaryDomain(data) {
+  return {
+    x: uniq(data.map((d) => d.swl)),
+    y: extent(data, (d) => d.value)
+  };
+}
+
 function getClimatologicalCharts(category) {
   return category.indicators.filter(onlyForCountry).map((i) => ({
-    slug: 'climatological_ecological',
+    slug: `climatological_ecological_${i.slug}`,
     measurements: i.measurements,
     label: `${i.name} (${i.unit})`,
     variable: i.slug,
     mapViewLink: `/global-scenarios/0/0/3?maps=1.5,${category.slug},${i.slug}`,
-    info: climatologicalDynamicInfo.bind(null, i)
+    getInfo: climatologicalDynamicInfo.bind(null, i),
+    getDomain: boxAndWhiskersDomain
   }));
 }
 
@@ -98,7 +130,8 @@ function getSummaryCharts(category) {
       label: 'Average Temperature - Summary (°C)',
       mapViewLink: '/global-scenarios/0/0/3?maps=1.5,cl,ts',
       colors: getColorScheme(category.slug, null, 3),
-      info: temperatureSummaryInfo
+      getInfo: temperatureSummaryInfo,
+      getDomain: summaryDomain
     });
   }
 
@@ -112,13 +145,14 @@ function getSummaryCharts(category) {
       variable: i.slug,
       mapViewLink: `/global-scenarios/0/0/3?maps=1.5,${category.slug},${i.slug}`,
       colors: getColorScheme(category.slug, i.slug, 3),
-      info: climatologicalSummaryInfo.bind(null, i)
+      getInfo: climatologicalSummaryInfo.bind(null, i),
+      getDomain: summaryDomain
     })));
 
   return charts;
 }
 
-export function getChartsByCategory(category) {
+function buildChartsByCategory(category) {
   switch (category.slug) {
     case 'ag':
       return [
@@ -126,13 +160,15 @@ export function getChartsByCategory(category) {
           slug: 'crop_yield_change_baseline',
           variable: 'yield',
           label: 'Projected changes in crop yields relative to 1981–2010 base-level (%)',
-          info: cropYieldDynamicInfo
+          getInfo: cropYieldDynamicInfo,
+          getDomain: interQuartileDomain
         },
         {
           slug: 'crop_yield_change_irrigation',
           variable: 'Irrigation',
           label: 'Change in crop yields (relative to 1981-2010 base levels) avoided under different warming scenarios due to Irrigation (%)',
-          info: cropYieldDynamicInfo
+          getInfo: cropYieldDynamicInfo,
+          getDomain: interQuartileDomain
         }
       ];
     case 'cl':
@@ -148,16 +184,26 @@ export function getChartsByCategory(category) {
           slug: 'annual_expected_flood_damage',
           label: 'Annual expected flood damages relative to 1976–2005 levels (millions of €)',
           variable: 'river_floods_ExpDam',
-          info: floodCostDynamicInfo
+          getInfo: floodCostDynamicInfo,
+          getDomain: regularBarDomain
         },
         {
           slug: 'population_affected_anually',
           label: 'Population affected annually year from river flooding relative to 1976–2005 levels',
           variable: 'river_floods_PopAff',
-          info: floodAffDynamicInfo
+          getInfo: floodAffDynamicInfo,
+          getDomain: regularBarDomain
         }
       ];
     default:
       return [];
   }
+}
+
+export function getChartsByCategory(category) {
+  return buildChartsByCategory(category)
+    .map((chart) => ({
+      ...chart,
+      category: category.slug
+    }));
 }

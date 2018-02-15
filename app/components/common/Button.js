@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { Link } from 'react-router';
 
@@ -37,13 +38,13 @@ const Button = (props) => {
 export default Button;
 
 Button.propTypes = {
-  link: React.PropTypes.string,
-  icon: React.PropTypes.string,
-  style: React.PropTypes.string,
-  text: React.PropTypes.string,
-  size: React.PropTypes.string,
-  onClick: React.PropTypes.func,
-  disabled: React.PropTypes.bool,
-  position: React.PropTypes.string,
-  color: React.PropTypes.string
+  link: PropTypes.string,
+  icon: PropTypes.string,
+  style: PropTypes.string,
+  text: PropTypes.string,
+  size: PropTypes.string,
+  onClick: PropTypes.func,
+  disabled: PropTypes.bool,
+  position: PropTypes.string,
+  color: PropTypes.string
 };

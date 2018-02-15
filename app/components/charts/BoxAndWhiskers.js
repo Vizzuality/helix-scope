@@ -1,5 +1,4 @@
-import React from 'react';
-
+import PropTypes from 'prop-types';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { select } from 'd3-selection';
@@ -14,26 +13,19 @@ class BoxAndWhiskers extends BaseChart {
     }
 
     const {
+      data,
+      domain,
       margin,
       scenarios,
-      data,
       yTicks
     } = this.props;
 
-    const uniq = (d, idx, arr) => arr.indexOf(d) === idx;
     const findScenario = (slug) => (scenarios.find((s) => slug.toString() === s.slug) || {});
     const tickFormat = (slug) => findScenario(slug).label;
     const colorFor = (slug) => findScenario(slug).color;
 
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
-    const domain = {
-      x: data.map((d) => d.swl).filter(uniq),
-      y: [
-        Math.min.apply(null, data.map((d) => d.minimum)),
-        Math.max.apply(null, data.map((d) => d.maximum))
-      ]
-    };
 
     const scale = {
       x: scalePoint()
@@ -138,12 +130,12 @@ class BoxAndWhiskers extends BaseChart {
 
 BoxAndWhiskers.propTypes = {
   ...BaseChart.propTypes,
-  iso: React.PropTypes.string.isRequired,
-  scenarios: React.PropTypes.array,
-  yTicks: React.PropTypes.number,
-  chart: React.PropTypes.string,
-  variable: React.PropTypes.string.isRequired,
-  value: React.PropTypes.string.isRequired
+  iso: PropTypes.string.isRequired,
+  scenarios: PropTypes.array,
+  yTicks: PropTypes.number,
+  chart: PropTypes.string,
+  variable: PropTypes.string.isRequired,
+  measure: PropTypes.string.isRequired
 };
 
 BoxAndWhiskers.defaultProps = {

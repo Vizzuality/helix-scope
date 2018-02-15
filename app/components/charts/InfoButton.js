@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import Button from 'components/common/Button';
 
 class InfoButton extends Component {
@@ -28,7 +30,7 @@ class InfoButton extends Component {
 }
 
 InfoButton.propTypes = {
-  text: React.PropTypes.string
+  text: PropTypes.string
 };
 
 export default InfoButton;
