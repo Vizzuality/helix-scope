@@ -13,8 +13,7 @@ export function fetchConfig() {
     });
 
     return cartoQuery(sql)
-      .then(response => response.json())
-      .then(json => json.rows[0].get_config)
+      .then(json => json.data.rows[0].get_config)
       .then(config => dispatch({
         type: RECEIVE_CONFIG,
         payload: {

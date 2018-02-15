@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Select from 'react-select';
+
 import Button from 'components/common/Button';
 import Modal from 'components/common/Modal';
 
@@ -153,35 +155,35 @@ MapsModal.propTypes = {
   /**
   * Callback when closing or opening modal
   **/
-  onSetMapModal: React.PropTypes.func,
+  onSetMapModal: PropTypes.func,
   /**
   * Define whether modal is open or not
   **/
-  mapModalOpen: React.PropTypes.bool,
+  mapModalOpen: PropTypes.bool,
   /**
   * Default config to populating modals
   **/
-  config: React.PropTypes.shape({
-    indicators: React.PropTypes.array,
-    categories: React.PropTypes.array,
-    scenarios: React.PropTypes.array
+  config: PropTypes.shape({
+    indicators: PropTypes.array,
+    categories: PropTypes.array,
+    scenarios: PropTypes.array
   }).isRequired,
   /**
   * Data of the map config
   **/
-  mapConfigData: React.PropTypes.shape({
-    indicator: React.PropTypes.object,
-    scenario: React.PropTypes.object,
-    category: React.PropTypes.object
+  mapConfigData: PropTypes.shape({
+    indicator: PropTypes.object,
+    scenario: PropTypes.object,
+    category: PropTypes.object
   }),
   /**
   * Function to supply setMap action to Maps page
   **/
-  setMapState: React.PropTypes.func,
+  setMapState: PropTypes.func,
   /**
   * Define selected map id
   **/
-  mapSelectedId: React.PropTypes.string
+  mapSelectedId: PropTypes.string
 };
 
 export default MapsModal;

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import debounce from 'lodash/debounce';
 import get from 'lodash/get';
 
@@ -57,14 +58,19 @@ BaseChart.defaultProps = {
 };
 
 BaseChart.propTypes = {
-  margin: React.PropTypes.shape({
-    left: React.PropTypes.number,
-    right: React.PropTypes.number,
-    top: React.PropTypes.number,
-    bottom: React.PropTypes.number
+  margin: PropTypes.shape({
+    left: PropTypes.number,
+    right: PropTypes.number,
+    top: PropTypes.number,
+    bottom: PropTypes.number
   }),
-  loading: React.PropTypes.bool.isRequired,
-  data: React.PropTypes.array.isRequired
+  loading: PropTypes.bool.isRequired,
+  data: PropTypes.array.isRequired,
+  domain: PropTypes.shape({
+    x: PropTypes.array,
+    y: PropTypes.array
+  }),
+  getDomain: PropTypes.func
 };
 
 export default BaseChart;

@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Button from 'components/common/Button';
 import FooterHome from 'components/common/FooterHome';
 
@@ -43,8 +45,8 @@ function TextSlide(props) {
 export default TextSlide;
 
 TextSlide.propTypes = {
-  title: React.PropTypes.string,
-  content: React.PropTypes.string,
-  buttons: React.PropTypes.array,
-  children: React.PropTypes.any
+  title: PropTypes.string,
+  content: PropTypes.string,
+  buttons: PropTypes.array,
+  children: PropTypes.any
 };

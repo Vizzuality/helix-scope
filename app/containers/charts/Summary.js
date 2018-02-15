@@ -1,5 +1,4 @@
 import { connect } from 'react-redux';
-import get from 'lodash/get';
 
 import Summary from 'components/charts/Summary';
 import withFetching from 'components/charts/withFetching';
@@ -8,19 +7,9 @@ import {
   fetchTemperatureSummary
 } from 'actions/charts';
 
-const mapStateToProps = ({ charts, config }, { chart, iso }) => {
-  const chartData = get(charts, `[${chart}][${iso}]`);
-
-  if (!chartData) return {};
-
-  return {
-    loading: chartData.loading,
-    data: chartData.data.map((d) => ({
-      ...d,
-      swl: config.scenarios.find((s) => s.slug === d.swl.toString()).short_name
-    }))
-  };
-};
+const mapStateToProps = ({ config }) => ({
+  scenarios: config.scenarios
+});
 
 const mapDispatchToProps = (dispatch, { chart, iso, variable }) => ({
   fetchData: () => {

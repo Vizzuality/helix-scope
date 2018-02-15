@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router';
+import get from 'lodash/get';
 
 import { getChartsByCategory } from 'utils/charts';
 import { categoriesOrder } from 'constants/country';
@@ -11,8 +13,31 @@ import Footer from 'components/common/Footer';
 import LoadingSpinner from 'components/common/LoadingSpinner';
 
 class CountriesDetailPage extends Component {
-  componentDidMount() {
-    this.props.fetchBoxAndWhiskers('climatological_ecological', this.props.iso);
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedChartByCategory: {}
+    };
+  }
+
+  setSelectedChartByCategory(category, property, value) {
+    this.setState((state) => ({
+      selectedChartByCategory: {
+        ...state.selectedChartByCategory,
+        [category.slug]: {
+          ...state.selectedChartByCategory[category.slug],
+          [property]: value
+        }
+      }
+    }));
+  }
+
+  handleChartChange(category, chart) {
+    this.setSelectedChartByCategory(category, 'chart', chart);
+  }
+
+  handleMeasureChange(category, measure) {
+    this.setSelectedChartByCategory(category, 'measure', measure);
   }
 
   render() {
@@ -48,6 +73,10 @@ class CountriesDetailPage extends Component {
                   <DisplayCharts
                     country={country}
                     charts={getChartsByCategory(category)}
+                    selectedChart={get(this.state.selectedChartByCategory[category.slug], 'chart')}
+                    selectedMeasure={get(this.state.selectedChartByCategory[category.slug], 'measure')}
+                    onChartChange={(chart) => this.handleChartChange(category, chart)}
+                    onMeasureChange={(measure) => this.handleMeasureChange(category, measure)}
                   />
                 </div>
               </div>
@@ -70,12 +99,10 @@ class CountriesDetailPage extends Component {
 }
 
 CountriesDetailPage.propTypes = {
-  config: React.PropTypes.object.isRequired,
-  fetchCountryData: React.PropTypes.func.isRequired,
-  fetchBoxAndWhiskers: React.PropTypes.func.isRequired,
-  countryData: React.PropTypes.any,
-  countriesList: React.PropTypes.array,
-  iso: React.PropTypes.string
+  config: PropTypes.object.isRequired,
+  fetchBoxAndWhiskers: PropTypes.func.isRequired,
+  countriesList: PropTypes.array,
+  iso: PropTypes.string
 };
 
 export default CountriesDetailPage;

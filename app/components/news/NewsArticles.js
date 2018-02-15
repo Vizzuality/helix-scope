@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 function NewsArticles(props) {
   return (
@@ -14,7 +15,7 @@ function NewsArticles(props) {
 }
 
 NewsArticles.propTypes = {
-  articles: React.PropTypes.array
+  articles: PropTypes.array
 };
 
 export default NewsArticles;

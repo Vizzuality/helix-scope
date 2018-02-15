@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Select from 'react-select';
 import { StickyContainer, Sticky } from 'react-sticky';
-import flatMap from 'lodash/flatMap';
 
-import { getChartsByCategory } from 'utils/charts';
 import { categoriesOrder } from 'constants/country';
-import DisplayCharts from 'containers/charts/DisplayCharts';
+import ChartComparer from 'components/charts/ChartComparer';
 import Switch from 'components/common/Switch';
 import CallToAction from 'components/common/CallToAction';
 import ExploreScenarios from 'components/common/ExploreScenarios';
@@ -13,123 +12,62 @@ import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
 import LoadingSpinner from 'components/common/LoadingSpinner';
 
-class CountriesPage extends Component {
+class CompareResultsPage extends Component {
   constructor(props) {
     super(props);
-    if (props.countriesList && props.countriesList.length) {
-      this.state = {
-        selectedCountry1: this.props.countriesList.find(elem => elem.iso === this.props.iso1),
-        selectedCountry2: this.props.countriesList.find(elem => elem.iso === this.props.iso2),
-        indexSelected: 1
-      };
-    } else {
-      this.state = {
-        selectedCountry1: { iso: '', name: '' },
-        selectedCountry2: { iso: '', name: '' },
-        indexSelected: 1
-      };
-    }
-    this.handleCountry1Change = this.handleCountry1Change.bind(this);
-    this.handleCountry2Change = this.handleCountry2Change.bind(this);
-    this.excludeSelectedOptions1 = this.excludeSelectedOptions1.bind(this);
-    this.excludeSelectedOptions2 = this.excludeSelectedOptions2.bind(this);
+    this.state = {
+      ...this.getSelectedCountries(this.props),
+      selectedChartByCategory: {},
+      selectedIndex: 1
+    };
+    this.handleCountry1Change = this.handleCountryChange.bind(this, 'selectedCountry1');
+    this.handleCountry2Change = this.handleCountryChange.bind(this, 'selectedCountry2');
     this.handleIndexCountryChange = this.handleIndexCountryChange.bind(this);
-  }
-
-  componentDidMount() {
-    this.props.fetchBoxAndWhiskers('climatological_ecological', this.props.iso1);
-    this.props.fetchBoxAndWhiskers('climatological_ecological', this.props.iso2);
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.countriesList !== this.props.countriesList) {
-      this.setState({
-        selectedCountry1: nextProps.countriesList.find(elem => elem.iso === this.props.iso1),
-        selectedCountry2: nextProps.countriesList.find(elem => elem.iso === this.props.iso2)
-      });
+      this.setState(this.getSelectedCountries(nextProps));
     }
+  }
+
+  getSelectedCountries(props) {
+    const notFound = { iso: '', name: '' };
+    return {
+      selectedCountry1: props.countriesList.find(elem => elem.iso === this.props.iso1) || notFound,
+      selectedCountry2: props.countriesList.find(elem => elem.iso === this.props.iso2) || notFound
+    };
   }
 
   handleIndexCountryChange(newIndex) {
-    if (newIndex && newIndex !== this.state.indexSelected) {
+    if (newIndex && newIndex !== this.state.selectedIndex) {
       this.setState({
-        indexSelected: newIndex
+        selectedIndex: newIndex
       });
     }
   }
 
-  handleCountry1Change(newValue) {
+  handleCountryChange(country, newValue) {
     if (newValue) {
       this.setState({
-        selectedCountry1: newValue
+        [country]: newValue
       }, () => this.updateCountryParams());
     }
-  }
-
-  handleCountry2Change(newValue) {
-    if (newValue) {
-      this.setState({
-        selectedCountry2: newValue
-      }, () => this.updateCountryParams());
-    }
-  }
-
-  excludeSelectedOptions1(option) {
-    return option.iso !== this.state.selectedCountry2.iso;
-  }
-  excludeSelectedOptions2(option) {
-    return option.iso !== this.state.selectedCountry1.iso;
   }
 
   updateCountryParams() {
     this.props.updateCompareUrl(this.state.selectedCountry1.iso, this.state.selectedCountry2.iso);
   }
 
-  renderChart(chart, country, column) {
-    return (
-      <div className={`column small-12 medium-6 country-${column}`}>
-        <DisplayCharts country={country} charts={[chart]} />
-      </div>
-    );
-  }
-
-  renderCharts() {
-    const categories = [...this.props.config.categories].sort(
-      (a, b) => categoriesOrder.indexOf(a.slug) > categoriesOrder.indexOf(b.slug)
-    );
-    const charts = flatMap(
-      categories,
-      (c) => flatMap(getChartsByCategory(c), (chart) => {
-        if (chart.measurements && chart.measurements.length) {
-          const eachAsSeparateChart = (m) => ({
-            ...chart,
-            label: `${chart.label} - ${m} value`,
-            measurements: null,
-            measurement: m
-          });
-          return chart.measurements.map(eachAsSeparateChart);
-        }
-
-        return chart;
-      })
-    );
-
-    return (
-      <div>
-        {charts.map((chart, index) => (
-          <div key={index} className={`row l-compare -index-${this.state.indexSelected}`}>
-          {this.renderChart(chart, this.state.selectedCountry1, 1)}
-          {this.renderChart(chart, this.state.selectedCountry2, 2)}
-          </div>
-        ))}
-      </div>
-    );
-  }
-
   render() {
     if (this.props.config.loading) return <LoadingSpinner />;
 
-    const countriesSelected = [this.state.selectedCountry1.name, this.state.selectedCountry2.name];
+    const { selectedCountry1, selectedCountry2, selectedIndex } = this.state;
+
+    const countriesSelected = [selectedCountry1.name, selectedCountry2.name];
+    const categories = [...this.props.config.categories].sort(
+      (a, b) => categoriesOrder.indexOf(a.slug) > categoriesOrder.indexOf(b.slug)
+    );
 
     return (
       <div>
@@ -159,7 +97,7 @@ class CountriesPage extends Component {
                     options={this.props.countriesList}
                     value={this.state.selectedCountry1.iso}
                     onChange={this.handleCountry1Change}
-                    searchable={false}
+                    searchable
                     clearable={false}
                     labelKey="name"
                     valueKey="iso"
@@ -171,7 +109,7 @@ class CountriesPage extends Component {
                     options={this.props.countriesList}
                     value={this.state.selectedCountry2.iso}
                     onChange={this.handleCountry2Change}
-                    searchable={false}
+                    searchable
                     clearable={false}
                     labelKey="name"
                     valueKey="iso"
@@ -182,14 +120,26 @@ class CountriesPage extends Component {
                 <div className="column small-12">
                   <Switch
                     options={countriesSelected}
-                    indexSelected={this.state.indexSelected}
+                    selectedIndex={this.state.selectedIndex}
                     onSwitch={this.handleIndexCountryChange}
                   />
                 </div>
               </div>
             </Sticky>
             <div className="l-split">
-              {this.renderCharts()}
+              <div>
+                {categories.map((category, index) => (
+                  <ChartComparer
+                    key={index}
+                    category={category}
+                    chartData={this.props.chartData}
+                    country1={selectedCountry1}
+                    country2={selectedCountry2}
+                    selectedIndex={selectedIndex}
+                    measurements={this.props.config.measurements}
+                  />
+                ))}
+              </div>
             </div>
           </StickyContainer>
         </div>
@@ -207,17 +157,17 @@ class CountriesPage extends Component {
   }
 }
 
-CountriesPage.propTypes = {
-  config: React.PropTypes.shape({
-    categories: React.PropTypes.array,
-    loading: React.PropTypes.bool,
-    measurements: React.PropTypes.array
+CompareResultsPage.propTypes = {
+  config: PropTypes.shape({
+    categories: PropTypes.array,
+    loading: PropTypes.bool,
+    measurements: PropTypes.array
   }).isRequired,
-  countriesList: React.PropTypes.array,
-  updateCompareUrl: React.PropTypes.func,
-  fetchBoxAndWhiskers: React.PropTypes.func.isRequired,
-  iso1: React.PropTypes.string,
-  iso2: React.PropTypes.string
+  countriesList: PropTypes.array,
+  updateCompareUrl: PropTypes.func,
+  chartData: PropTypes.any,
+  iso1: PropTypes.string,
+  iso2: PropTypes.string
 };
 
-export default CountriesPage;
+export default CompareResultsPage;

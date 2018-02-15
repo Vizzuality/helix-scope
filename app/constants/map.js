@@ -55,3 +55,29 @@ export const MAP_RASTER_CSS = {
 };
 
 export const getTableName = (category, indicator) => `table_${category}_${indicator}`;
+
+export const metadataInfoText = {
+  'pr': 'Lorem ipsum dolor',
+  'tx': 'Lorem ipsum dolor',
+  'tn': 'Lorem ipsum dolor',
+  'ts': 'Lorem ipsum dolor',
+  'amphibianobiodiversity': 'Lorem ipsum dolor',
+  'birdrealbiodiversity': 'Lorem ipsum dolor',
+  'reptilerealbiodiversity': 'Lorem ipsum dolor',
+  'reptilenobiodiversity': 'Lorem ipsum dolor',
+  'mammalnobiodiversity': 'Lorem ipsum dolor',
+  'birdnobiodiversity': 'Lorem ipsum dolor',
+  'amphibiarealbiodiversity': 'Lorem ipsum dolor',
+  'mammalrealbiodiversity': 'Lorem ipsum dolor',
+  'nbp': 'Lorem ipsum dolor',
+  'evap': 'Lorem ipsum dolor',
+  'gpp': 'Lorem ipsum dolor',
+  'cVeg': 'Lorem ipsum dolor',
+  'cSoil': 'Lorem ipsum dolor',
+  'time_perc_change_SPI6': 'Lorem ipsum dolor',
+  'perc_change_low_roff': 'Lorem ipsum dolor',
+  'time_perc_change_SRI6': 'Lorem ipsum dolor',
+  'perc_change_roff': 'Lorem ipsum dolor',
+  'time_perc_change_SPI48': 'Lorem ipsum dolor',
+  'time_perc_change_SRI48': 'Lorem ipsum dolor'
+};

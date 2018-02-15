@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Button from 'components/common/Button';
 
@@ -15,9 +16,9 @@ const Popup = (props) => (
 );
 
 Popup.propTypes = {
-  onCloseClick: React.PropTypes.func,
-  children: React.PropTypes.any,
-  title: React.PropTypes.string
+  onCloseClick: PropTypes.func,
+  children: PropTypes.any,
+  title: PropTypes.string
 };
 
 export default Popup;

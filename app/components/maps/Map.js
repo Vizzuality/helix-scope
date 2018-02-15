@@ -3,6 +3,7 @@ import { render, unmountComponentAtNode } from 'react-dom';
 import axios from 'axios';
 import L from 'leaflet';
 import uuid from 'uuid';
+import PropTypes from 'prop-types';
 import LoadingSpinner from 'components/common/LoadingSpinner';
 import Popup from 'components/common/Popup';
 import MapPopupPlot from 'components/charts/MapPopupPlot';
@@ -331,23 +332,23 @@ class Map extends React.Component {
 }
 
 Map.propTypes = {
-  mapData: React.PropTypes.shape({
-    id: React.PropTypes.string,
-    layer: React.PropTypes.object,
-    scenario: React.PropTypes.object,
-    category: React.PropTypes.object,
-    indicator: React.PropTypes.object,
-    bucket: React.PropTypes.array,
-    bucketLoading: React.PropTypes.bool
+  mapData: PropTypes.shape({
+    id: PropTypes.string,
+    layer: PropTypes.object,
+    scenario: PropTypes.object,
+    category: PropTypes.object,
+    indicator: PropTypes.object,
+    bucket: PropTypes.array,
+    bucketLoading: PropTypes.bool
   }).isRequired,
-  mapConfig: React.PropTypes.shape({
-    latLng: React.PropTypes.object,
-    zoom: React.PropTypes.number
+  mapConfig: PropTypes.shape({
+    latLng: PropTypes.object,
+    zoom: PropTypes.number
   }).isRequired,
-  onMapDrag: React.PropTypes.func,
-  createLayer: React.PropTypes.func,
-  getMapBuckets: React.PropTypes.func,
-  invalidateSize: React.PropTypes.bool
+  onMapDrag: PropTypes.func,
+  createLayer: PropTypes.func,
+  getMapBuckets: PropTypes.func,
+  invalidateSize: PropTypes.bool
 };
 
 export default Map;

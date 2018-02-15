@@ -1,7 +1,10 @@
 import React from 'react';
+import ReactGA from 'react-ga';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { useScroll } from 'react-router-scroll';
 import { IndexRoute, Router, Route, applyRouterMiddleware } from 'react-router';
+
 import ContainerPage from './containers/pages/ContainerPage';
 import HomePage from './components/pages/HomePage';
 import MapsPage from './containers/pages/MapsPage';
@@ -13,7 +16,7 @@ import PartnersPage from './components/pages/PartnersPage';
 import AboutPage from './containers/pages/AboutPage';
 import NewsPage from './components/pages/NewsPage';
 import ContactPage from './components/pages/ContactPage';
-import ReactGA from 'react-ga';
+
 
 function shouldUpdateScroll(prevRouterProps, { location }) {
   /**
@@ -125,7 +128,7 @@ const Routes = ({ history }) => (
 );
 
 Routes.propTypes = {
-  history: React.PropTypes.object
+  history: PropTypes.object
 };
 
 export default connect()(Routes);

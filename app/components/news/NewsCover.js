@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 function NewsCover(props) {
   return (
@@ -15,8 +16,8 @@ function NewsCover(props) {
 }
 
 NewsCover.propTypes = {
-  title: React.PropTypes.string.isRequired,
-  content: React.PropTypes.string
+  title: PropTypes.string.isRequired,
+  content: PropTypes.string
 };
 
 export default NewsCover;

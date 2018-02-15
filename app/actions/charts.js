@@ -15,8 +15,7 @@ function fetchChartData(chart, sql, iso, transform) {
     });
 
     return cartoQuery(sql)
-      .then((response) => response.json())
-      .then((response) => response.rows)
+      .then((response) => response.data.rows)
       .then((response) => (transform ? transform(response) : response))
       .then((data) => dispatch({
         type: RECEIVE_CHART,
@@ -25,13 +24,26 @@ function fetchChartData(chart, sql, iso, transform) {
           iso,
           data
         }
-      }));
+      }))
+      .catch((error) => {
+        console.error(error);
+        dispatch({
+          type: RECEIVE_CHART,
+          payload: {
+            chart,
+            iso,
+            data: []
+          }
+        });
+      });
   };
 }
 
 export function fetchInterQuartileRange(chart, iso, variable) {
   const sql = `
-    SELECT swl, variable,
+    SELECT
+      swl,
+      variable,
       PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY value) AS median,
       PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY value) - PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY value) AS iqr,
       ARRAY_AGG(value ORDER BY value ASC) AS values,
@@ -52,7 +64,12 @@ export function fetchInterQuartileRange(chart, iso, variable) {
 
 export function fetchRegularBar(chart, iso, variable) {
   const sql = `
-    SELECT mean as value, swl_info as swl, variable, institution, model_short_name AS model
+    SELECT
+      mean as value,
+      swl_info as swl,
+      variable,
+      institution,
+      model_short_name AS model
     FROM master_admin0
     WHERE variable = '${variable}'
     AND iso = '${iso}'
@@ -63,62 +80,43 @@ export function fetchRegularBar(chart, iso, variable) {
   return fetchChartData(chart, sql, iso);
 }
 
-export function fetchBoxAndWhiskers(chart, iso) {
+export function fetchBoxAndWhiskers(chart, iso, variable, measure) {
   const sql = `
-    SELECT swl, variable,
-      ARRAY_AGG(model_short_name) as models,
-      ARRAY_AGG(institution) as institutions,
-      PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY min) AS min_q1,
-      PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY min) AS min_median,
-      PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY min) AS min_q3,
-      MAX(min) AS min_maximum,
-      MIN(min) AS min_minimum,
-      ARRAY_AGG(min ORDER BY min ASC) AS min_values,
-      PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY max) AS max_q1,
-      PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY max) AS max_median,
-      PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY max) AS max_q3,
-      MAX(max) AS max_maximum,
-      MIN(max) AS max_minimum,
-      ARRAY_AGG(max ORDER BY max ASC) AS max_values,
-      PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY mean) AS mean_q1,
-      PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY mean) AS mean_median,
-      PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY mean) AS mean_q3,
-      MAX(mean) AS mean_maximum,
-      MIN(mean) AS mean_minimum,
-      ARRAY_AGG(mean ORDER BY mean ASC) AS mean_values,
-      PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY std) AS std_q1,
-      PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY std) AS std_median,
-      PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY std) AS std_q3,
-      MAX(std) AS std_maximum,
-      MIN(std) AS std_minimum,
-      ARRAY_AGG(std ORDER BY std ASC) AS std_values
+    SELECT
+      swl,
+      ARRAY_AGG(DISTINCT model_short_name) as models,
+      ARRAY_AGG(DISTINCT institution) as institutions,
+      PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY value) AS q1,
+      PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY value) AS median,
+      PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY value) AS q3,
+      MAX(value) AS maximum,
+      MIN(value) AS minimum,
+      ARRAY_AGG(value ORDER BY value ASC) AS values
     FROM (
-      SELECT swl_info AS swl,
-             run,
-             model_short_name,
-             institution,
-             variable,
-           CASE WHEN variable LIKE '%biodiversity' THEN min*100 ELSE min END AS min,
-           CASE WHEN variable LIKE '%biodiversity' THEN max*100 ELSE max END AS max,
-           CASE WHEN variable LIKE '%biodiversity' THEN mean*100 ELSE mean END AS mean,
-           CASE WHEN variable LIKE '%biodiversity' THEN std*100 ELSE std END AS std
+      SELECT
+        swl_info as swl,
+        model_short_name,
+        institution,
+        CASE WHEN variable LIKE '%biodiversity' THEN ${measure}*100 ELSE ${measure} END as value
       FROM master_admin0
       WHERE iso = '${iso}'
-      AND swl_info < 6
+        AND variable = '${variable}'
+        AND swl_info < 6
       ORDER BY swl
-    ) data
-    GROUP BY swl, variable
+    ) as data
+    GROUP BY swl
   `;
 
-  return fetchChartData(chart, sql, iso);
+  return fetchChartData(`${chart}_${measure}`, sql, iso);
 }
 
 export function fetchSummary(chart, iso, variable) {
+  const convertToPercent = variable.includes('biodiversity');
   const sql = `
     SELECT
-      AVG(min) AS min,
-      AVG(mean) AS mean,
-      AVG(max) AS max,
+      AVG(min${convertToPercent ? '*100' : ''}) AS min,
+      AVG(mean${convertToPercent ? '*100' : ''}) AS mean,
+      AVG(max${convertToPercent ? '*100' : ''}) AS max,
       ARRAY_AGG(DISTINCT model_short_name) as models,
       ARRAY_AGG(DISTINCT institution) as institutions,
       swl_info AS swl

@@ -1,9 +1,11 @@
+import axios from 'axios';
+
 import { ENDPOINT_SQL } from 'constants/map';
 
-const cartoQuery = (sql) => fetch(`${ENDPOINT_SQL}`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-  body: `q=${encodeURIComponent(sql)}`
+const cartoQuery = (sql) => axios.get(ENDPOINT_SQL, {
+  params: {
+    q: sql
+  }
 });
 
 export default cartoQuery;
