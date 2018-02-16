@@ -5,6 +5,7 @@ import { select } from 'd3-selection';
 import { line } from 'd3-shape';
 import groupBy from 'lodash/groupBy';
 import forEach from 'lodash/forEach';
+import tippy from 'tippy.js';
 
 import BaseChart from './BaseChart';
 import { formatSI } from 'utils/format';
@@ -102,6 +103,18 @@ class Summary extends BaseChart {
         .attr('fill', color)
         .attr('cx', (d) => scale.x(d.swl))
         .attr('cy', (d) => scale.y(d.value));
+
+      // hover circles
+      svg.selectAll('.dot')
+        .data(data)
+        .enter()
+        .append('circle')
+        .attr('class', 'hover-box')
+        .attr('title', (d) => formatSI(d.value, 2))
+        .attr('r', 20)
+        .attr('fill', color)
+        .attr('cx', (d) => scale.x(d.swl))
+        .attr('cy', (d) => scale.y(d.value));
     });
 
     const legend = svg.append('g')
@@ -126,6 +139,11 @@ class Summary extends BaseChart {
       .attr('x', (d, i) => (i * 60) + 8)
       .attr('y', height + 55)
       .text((d) => d);
+
+    tippy(this.chart.querySelectorAll('.hover-box'), {
+      arrow: true,
+      theme: 'light'
+    });
   }
 }
 

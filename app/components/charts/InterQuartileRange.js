@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { select } from 'd3-selection';
+import tippy from 'tippy.js';
 
 import BaseChart from './BaseChart';
 import { formatSI } from 'utils/format';
@@ -80,6 +81,18 @@ class InterQuartileRange extends BaseChart {
       .attr('cx', (d) => scale.x(d.swl))
       .attr('cy', (d) => scale.y(d.median));
 
+    // hover circles
+    svg.selectAll('.dot')
+      .data(data)
+      .enter()
+      .append('circle')
+      .attr('class', 'hover-box')
+      .attr('title', (d) => formatSI(d.median, 2))
+      .attr('r', 20)
+      .attr('fill', (d) => colorFor(d.variable))
+      .attr('cx', (d) => scale.x(d.swl))
+      .attr('cy', (d) => scale.y(d.median));
+
     svg.selectAll('.dot')
       .data(data)
       .enter()
@@ -113,6 +126,11 @@ class InterQuartileRange extends BaseChart {
       .attr('x', (d, i) => (i * 60) + 8)
       .attr('y', height + 55)
       .text((d) => d.label);
+
+    tippy(this.chart.querySelectorAll('.hover-box'), {
+      arrow: true,
+      theme: 'light'
+    });
   }
 }
 

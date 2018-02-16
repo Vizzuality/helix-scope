@@ -15,6 +15,7 @@ import ReactGA from 'react-ga';
 
 import './styles/lib/custom-foundation.css';
 import './styles/main.pcss';
+import '../node_modules/tippy.js/dist/themes/light.css';
 
 /**
  * Reducers

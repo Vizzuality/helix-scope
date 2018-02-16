@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { select } from 'd3-selection';
+import tippy from 'tippy.js';
+import uuid from 'uuid/v4';
 
 import { formatSI } from 'utils/format';
 import BaseChart from './BaseChart';
@@ -54,6 +56,7 @@ class BoxAndWhiskers extends BaseChart {
 
     const chart = select(this.chart);
     chart.selectAll('svg').remove();
+    chart.selectAll('.hover-template').remove();
 
     const svg = chart.append('svg')
         .attr('width', width + (margin.left + margin.right))
@@ -125,6 +128,38 @@ class BoxAndWhiskers extends BaseChart {
       .attr('y', (d) => scale.y(d.median) - (mboxWidth / 2))
       .attr('width', mboxWidth)
       .attr('height', mboxWidth);
+
+    // hover box
+    const hoverBoxWidth = Math.min(100, (width / 3) - 20);
+    const hoverTemplateId = uuid();
+    bars.append('rect')
+      .attr('fill', (d) => colorFor(d.swl))
+      .attr('x', (d) => scale.x(d.swl) - (hoverBoxWidth / 2))
+      .attr('y', 0)
+      .attr('width', hoverBoxWidth)
+      .attr('height', height)
+      .attr('class', 'hover-box')
+      .attr('data-tippy-html', (d) => `#id${hoverTemplateId}_${d.swl}`.replace('.', ''));
+
+    chart.selectAll('.hover-tooltip')
+      .data(data)
+      .enter()
+      .append('div')
+      .attr('class', '.hover-tooltip')
+      .style('display', 'none')
+      .attr('id', (d) => `id${hoverTemplateId}_${d.swl}`.replace('.', ''))
+      .html((d) => (`
+          <p><b>minimum: </b>${d.minimum}</p>
+          <p><b>maximum: </b>${d.maximum}</p>
+          <p><b>q1: </b>${d.q1}</p>
+          <p><b>median: </b>${d.median}</p>
+          <p><b>q3: </b>${d.q3}</p>
+      `));
+
+    tippy(this.chart.querySelectorAll('.hover-box'), {
+      arrow: true,
+      theme: 'light'
+    });
   }
 }
 

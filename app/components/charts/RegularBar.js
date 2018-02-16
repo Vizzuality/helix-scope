@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { select } from 'd3-selection';
+import tippy from 'tippy.js';
 
 import BaseChart from './BaseChart';
 import { formatSI } from 'utils/format';
@@ -72,15 +73,32 @@ class RegularBar extends BaseChart {
       .attr('class', 'y axis')
       .call(axes.y);
 
-    svg.selectAll('.dot')
+    const hoverBoxWidth = Math.min(150, (width / 3) - 20);
+    const bar = svg.selectAll('.dot')
       .data(data)
       .enter()
-      .append('rect')
+      .append('g');
+
+    bar.append('rect')
       .attr('fill', (d) => colorFor(d.swl))
       .attr('x', (d) => scale.x(d.swl) - (barWidth / 2))
       .attr('y', (d) => scale.y(d.value))
       .attr('width', barWidth)
       .attr('height', (d) => height - scale.y(d.value));
+
+    bar.append('rect')
+      .attr('fill', (d) => colorFor(d.swl))
+      .attr('x', (d) => scale.x(d.swl) - (hoverBoxWidth / 2))
+      .attr('y', 0)
+      .attr('width', hoverBoxWidth)
+      .attr('height', height)
+      .attr('class', 'hover-box')
+      .attr('title', (d) => formatSI(d.value, 2));
+
+    tippy(this.chart.querySelectorAll('.hover-box'), {
+      arrow: true,
+      theme: 'light'
+    });
   }
 }
 
