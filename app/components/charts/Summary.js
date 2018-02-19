@@ -159,7 +159,7 @@ Summary.propTypes = {
 Summary.defaultProps = {
   ...BaseChart.defaultProps,
   margin: {
-    left: 30,
+    left: 40,
     right: 30,
     top: 30,
     bottom: 60

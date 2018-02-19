@@ -2,7 +2,7 @@ import tippy from 'tippy.js';
 import uuid from 'uuid/v4';
 
 export function renderTooltip({ appendTo, chart, data, width, height, getTooltipHtml, getPositionX, getHoverColor }) {
-  chart.selectAll('.hover-template').remove();
+  chart.selectAll('.tooltip-template').remove();
 
   const chartHoverTemplateId = uuid();
   const getHoverTemplateId = (d, index) => `id${chartHoverTemplateId}_${index}`.replace('.', '');
@@ -20,13 +20,12 @@ export function renderTooltip({ appendTo, chart, data, width, height, getTooltip
     .attr('class', 'hover-box')
     .attr('data-tippy-html', (d, index) => `#${getHoverTemplateId(d, index)}`);
 
-  chart.selectAll('.hover-tooltip')
+  chart.selectAll('.tooltip-template')
     .data(data)
     .enter()
     .append('div')
     .attr('id', getHoverTemplateId)
-    .attr('class', '.hover-tooltip')
-    .style('display', 'none')
+    .attr('class', 'tooltip-template')
     .html(getTooltipHtml);
 
   tippy(chart.node().querySelectorAll('.hover-box'), {
