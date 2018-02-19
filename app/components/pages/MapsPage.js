@@ -1,4 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
+import { mapListToQueryString } from 'utils/maps';
 import MapsListContainer from 'containers/maps/MapsListContainer';
 import Button from 'components/common/Button';
 import BasicMap from 'containers/maps/BasicMap';
@@ -19,14 +22,13 @@ class MapsPage extends React.Component {
         scenario: {},
         category: {},
         indicator: {},
-        measure: {},
         layer: null
       };
     }
   }
 
   componentDidMount() {
-    const { query, params } = this.context.location;
+    const { query, params, search } = this.context.location;
 
     if (query && query.maps) {
       this.props.saveParamsFromURL(query.maps, params);
@@ -36,11 +38,30 @@ class MapsPage extends React.Component {
         this.props.initializeMaps();
       }
     } else {
-      this.props.updateURL();
+      const queryFromMaps = mapListToQueryString(this.props.maps);
+
+      // meaning we want to load new maps not use cached ones
+      if (!!search && search !== queryFromMaps) {
+        this.props.initializeMaps();
+      } else {
+        this.props.updateURL();
+      }
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps, nextContext) {
+    // // map params has been changed in URL
+    if (nextProps.maps.length && nextContext.location.search) {
+      const queryFromMaps = mapListToQueryString(nextProps.maps);
+      const queryInURL = nextContext.location.search;
+
+      if (queryFromMaps !== queryInURL) {
+        const { query, params } = nextContext.location;
+        nextProps.saveParamsFromURL(query.maps, params);
+        this.props.initializeMaps();
+      }
+    }
+
     if (nextProps.maps.length === 0) {
       this.setMapModal(true);
     } else {
@@ -56,8 +77,7 @@ class MapsPage extends React.Component {
     this.defaultMapConfig = {
       scenario: config.scenarios[0],
       category: config.categories[0],
-      indicator: config.categories[0].indicator[0],
-      measure: config.measurements[0]
+      indicator: config.categories[0].indicators[0]
     };
   }
 
@@ -113,16 +133,16 @@ class MapsPage extends React.Component {
 }
 
 MapsPage.contextTypes = {
-  location: React.PropTypes.object
+  location: PropTypes.object
 };
 
 MapsPage.propTypes = {
-  initializeMaps: React.PropTypes.func,
-  updateURL: React.PropTypes.func,
-  saveParamsFromURL: React.PropTypes.func,
-  maps: React.PropTypes.array,
-  config: React.PropTypes.object,
-  createLayer: React.PropTypes.func
+  initializeMaps: PropTypes.func,
+  updateURL: PropTypes.func,
+  saveParamsFromURL: PropTypes.func,
+  maps: PropTypes.array,
+  config: PropTypes.object,
+  createLayer: PropTypes.func
 };
 
 export default MapsPage;

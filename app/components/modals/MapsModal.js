@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Select from 'react-select';
+
 import Button from 'components/common/Button';
 import Modal from 'components/common/Modal';
-import { DEFAULT_SEASON } from 'constants/season';
 
 class MapsModal extends Component {
   constructor(props) {
@@ -15,13 +16,11 @@ class MapsModal extends Component {
       /* initial state options for modal */
       selectedScenario: this.props.mapConfigData.scenario,
       selectedCategory: this.props.mapConfigData.category,
-      selectedIndicator: this.props.mapConfigData.indicator,
-      selectedMeasure: this.props.mapConfigData.measure
+      selectedIndicator: this.props.mapConfigData.indicator
     };
     this.handleScenarioChange = this.handleScenarioChange.bind(this);
     this.handleCategory = this.handleCategory.bind(this);
     this.handleIndicator = this.handleIndicator.bind(this);
-    this.handleMeasure = this.handleMeasure.bind(this);
     this.setMapState = this.setMapState.bind(this);
   }
 
@@ -29,18 +28,15 @@ class MapsModal extends Component {
     this.setState({
       selectedScenario: nextProps.mapConfigData.scenario,
       selectedCategory: nextProps.mapConfigData.category,
-      selectedIndicator: nextProps.mapConfigData.indicator,
-      selectedMeasure: nextProps.mapConfigData.measure
+      selectedIndicator: nextProps.mapConfigData.indicator
     });
   }
 
   setMapState() {
     const mapState = {
-      measure: this.state.selectedMeasure,
       scenario: this.state.selectedScenario,
       category: this.state.selectedCategory,
-      indicator: this.state.selectedIndicator,
-      season: this.props.mapConfigData.season || DEFAULT_SEASON
+      indicator: this.state.selectedIndicator
     };
 
     if (this.props.mapSelectedId) {
@@ -60,19 +56,13 @@ class MapsModal extends Component {
   handleCategory(newValue) {
     this.setState({
       selectedCategory: newValue,
-      selectedIndicator: newValue.indicator[0]
+      selectedIndicator: newValue.indicators[0]
     });
   }
 
   handleIndicator(newValue) {
     this.setState({
       selectedIndicator: newValue
-    });
-  }
-
-  handleMeasure(newValue) {
-    this.setState({
-      selectedMeasure: newValue
     });
   }
 
@@ -107,7 +97,7 @@ class MapsModal extends Component {
                 onChange={() => this.handleScenarioChange(scenario)}
               />
               <label htmlFor={`scenario-${index}`}>
-                {scenario.name}
+                {scenario.short_name.replace('+', '')}
               </label>
             </div>
           )}
@@ -120,10 +110,10 @@ class MapsModal extends Component {
             </div>
           </div>
           <div className="row">
-            <div className="column small-12 medium-4">
+            <div className="column small-12 medium-6">
               <Select
                 className="c-react-select"
-                options={this.props.config.categories}
+                options={this.props.config.categories.filter((c) => c.indicators.some((i) => i.section === 'map'))}
                 clearable={this.state.clearable}
                 disabled={this.state.disabled}
                 value={this.state.selectedCategory.slug}
@@ -133,27 +123,14 @@ class MapsModal extends Component {
                 valueKey="slug"
               />
             </div>
-            <div className="column small-12 medium-4">
+            <div className="column small-12 medium-6">
               <Select
                 className="c-react-select"
-                options={this.state.selectedCategory.indicator}
+                options={this.state.selectedCategory.indicators.filter((s) => s.section === 'map')}
                 clearable={this.state.clearable}
                 disabled={this.state.disabled}
                 value={this.state.selectedIndicator.slug}
                 onChange={this.handleIndicator}
-                searchable={this.state.searchable}
-                labelKey="name"
-                valueKey="slug"
-              />
-            </div>
-            <div className="column small-12 medium-4">
-              <Select
-                className="c-react-select"
-                options={this.props.config.measurements}
-                clearable={this.state.clearable}
-                disabled={this.state.disabled}
-                value={this.state.selectedMeasure.slug}
-                onChange={this.handleMeasure}
                 searchable={this.state.searchable}
                 labelKey="name"
                 valueKey="slug"
@@ -178,38 +155,35 @@ MapsModal.propTypes = {
   /**
   * Callback when closing or opening modal
   **/
-  onSetMapModal: React.PropTypes.func,
+  onSetMapModal: PropTypes.func,
   /**
   * Define whether modal is open or not
   **/
-  mapModalOpen: React.PropTypes.bool,
+  mapModalOpen: PropTypes.bool,
   /**
   * Default config to populating modals
   **/
-  config: React.PropTypes.shape({
-    measurements: React.PropTypes.array,
-    indicators: React.PropTypes.array,
-    categories: React.PropTypes.array,
-    scenarios: React.PropTypes.array
+  config: PropTypes.shape({
+    indicators: PropTypes.array,
+    categories: PropTypes.array,
+    scenarios: PropTypes.array
   }).isRequired,
   /**
   * Data of the map config
   **/
-  mapConfigData: React.PropTypes.shape({
-    measure: React.PropTypes.object,
-    indicator: React.PropTypes.object,
-    scenario: React.PropTypes.object,
-    category: React.PropTypes.object,
-    season: React.PropTypes.number
+  mapConfigData: PropTypes.shape({
+    indicator: PropTypes.object,
+    scenario: PropTypes.object,
+    category: PropTypes.object
   }),
   /**
   * Function to supply setMap action to Maps page
   **/
-  setMapState: React.PropTypes.func,
+  setMapState: PropTypes.func,
   /**
   * Define selected map id
   **/
-  mapSelectedId: React.PropTypes.string
+  mapSelectedId: PropTypes.string
 };
 
 export default MapsModal;

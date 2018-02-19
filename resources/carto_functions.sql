@@ -1,58 +1,80 @@
+DROP FUNCTION get_config();
 
--- Function prepared to give all information available
-
-DROP FUNCTION get_config(); 
-
-CREATE OR REPLACE FUNCTION get_config() 
-	RETURNS SETOF JSON as $$
-	BEGIN
-		RETURN QUERY EXECUTE 'with x as ( SELECT jsonb_build_object(''name'',indicator,''tableName'',table_name, ''slug'',indicator_slug, ''colorScheme'', color_scheme, ''units'', units) indicator, category, category_slug FROM master_table ),  f as (select  jsonb_agg(jsonb_build_object(''name'', category,''slug'',category_slug, ''indicator'', indicators)) as data from (SELECT jsonb_agg(indicator) indicators, category, category_slug FROM x group by category, category_slug) d) SELECT json_build_object(''categories'',data, ''scenarios'', json_build_array(jsonb_build_object(''name'',''1.5 °C'',''slug'',''15''),jsonb_build_object(''name'',''2 °C'',''slug'',''2''),jsonb_build_object(''name'',''4.5 °C'',''slug'',''45'')), ''measurements'',json_build_array(jsonb_build_object(''name'',''Maximum'',''slug'',''max''),jsonb_build_object(''name'',''Mean'',''slug'',''mean''),jsonb_build_object(''name'',''Minimum'',''slug'',''min''),jsonb_build_object(''name'',''Standard deviation'',''slug'',''sd''))) as data from f';
-	END
-$$ language 'plpgsql';
-
-
--- Function prepared to give all information to draw an indicator
-
-DROP FUNCTION get_buckets(table_name TEXT, is_raster BOOLEAN, measure TEXT, scenario numeric, season int); 
-
-DROP TYPE buckets;
-
-CREATE TYPE buckets AS (raster_value numeric, raster_min numeric, nodatavalue numeric, value numeric);
-
-CREATE OR REPLACE FUNCTION get_buckets(table_name TEXT, is_raster BOOLEAN, measure TEXT , scenario numeric , season int) 
-	RETURNS SETOF buckets as $$
-	DECLARE
-	measures TEXT;
-  	raster_table_name TEXT;
-	BEGIN
-		raster_table_name=table_name||'_'||measure||'_'||scenario::text||'_'||season::text||' ';
-		IF is_raster IS TRUE then
-			IF measure!='sd' then
-				measures = 'default';
-			else
-				measures = 'sd';
-			END IF;
-			RETURN query EXECUTE 'with raster_min as (select min(unnest) as raster_min from (select unnest(ST_DumpValues(the_raster_webmercator,1, true))::numeric from o_1_'|| raster_table_name ||') r), statistics as (select min(unnest), max(unnest) from (select unnest(ST_DumpValues(the_raster_webmercator,1, true))::numeric from '|| raster_table_name ||') r), stats as ( select * from statistics, raster_min), data_selection as  (select jsonb_array_elements_text(value)::numeric as value from legend_config where table_name like '''|| table_name ||''' and measure like '''|| measures||'''), t as (select value,raster_min, min::numeric, max::numeric from stats, data_selection), nodatavalue as (SELECT (ST_BandMetaData(the_raster_webmercator, 1)).nodatavalue from  o_1_'|| raster_table_name ||' limit 1) select (((value-min)/(max-min))*(255-raster_min)+raster_min)::numeric as raster_value, raster_min::numeric, nodatavalue::numeric, value::numeric from t, nodatavalue';
-		Else
-			RETURN query EXECUTE 'with r as (select value, iso from '|| table_name ||' where measure like ''' || measure || ''' and scenario = '|| scenario ||' and season='|| season ||' ) SELECT null::numeric as raster_value, null::numeric as raster_min, null::numeric as nodatavalue, unnest(CDB_JenksBins(array_agg(distinct((value::numeric))), 6)) as value  from r group by nodatavalue';
-		END IF;
-	END
-$$ language 'plpgsql';
-
--- Function prepared to give all indicators from a country
-
-DROP FUNCTION get_country(iso text);
-DROP TYPE indicators;
-CREATE TYPE indicators AS (category text, indicator text, table_name text, units text, data json);
-
-CREATE OR REPLACE FUNCTION get_country(iso text)
-	RETURNS SETOF indicators as $$
-	DECLARE
-	x text;
-	BEGIN
-		FOR x in select table_name from master_table where active is true
-		LOOP
-		RETURN query EXECUTE 'with r as (SELECT season, scenario, jsonb_object_agg(measure, value) measures FROM '||x||' where iso like '''||iso||''' group by scenario, season order by season, scenario), s as (select jsonb_object_agg(scenario, measures) as scenarios, season from r  group by season), data as ( select json_agg(jsonb_build_object(''scenarios'',scenarios, ''season'',season)) as data from s), result  as (select *, '''||x||'''::text as table_name from data) SELECT category::text, indicator::text, s.table_name::text, units::text, data FROM master_table s inner join result on result.table_name=s.table_name';
-		END LOOP;
-	END
-$$ language 'plpgsql';
+CREATE OR REPLACE FUNCTION get_config()
+RETURNS SETOF JSONB as $fn$
+BEGIN
+  RETURN QUERY EXECUTE $q$
+    WITH availability AS (
+      SELECT variable, JSON_AGG(measurement) AS measurements
+      FROM (
+        SELECT variable, UNNEST(ARRAY[
+          CASE WHEN nulls_min <> total_rows THEN 'min' END,
+          CASE WHEN nulls_max <> total_rows THEN 'max' END,
+          CASE WHEN nulls_mean <> total_rows THEN 'mean' END,
+          CASE WHEN nulls_std <> total_rows THEN 'std' END
+        ]) AS measurement
+        FROM (
+          SELECT variable,
+            COUNT(*) - COUNT(min) AS nulls_min,
+            COUNT(*) - COUNT(max) AS nulls_max,
+            COUNT(*) - COUNT(std) AS nulls_std,
+            COUNT(*) - COUNT(mean) AS nulls_mean,
+            COUNT(*) AS total_rows
+          FROM master_admin0
+          GROUP BY variable
+        ) nested
+      ) filtered
+      WHERE measurement IS NOT NULL
+      GROUP BY variable
+    )
+    SELECT JSONB_BUILD_OBJECT(
+      'scenarios', (
+        SELECT JSONB_AGG(
+          JSONB_BUILD_OBJECT(
+            'name', name,
+            'short_name', short_name,
+            'slug', slug
+          )
+        )
+        FROM meta_scenarios ms
+      ),
+      'measurements', (
+        SELECT JSONB_AGG(
+          JSONB_BUILD_OBJECT(
+            'name', name,
+            'slug', slug
+          )
+        )
+        FROM meta_measurements
+      ),
+      'categories', (
+        SELECT JSONB_AGG(sub.json)
+        FROM (
+          SELECT (JSONB_BUILD_OBJECT(
+            'name', mc.name,
+            'slug', mc.slug
+          ) || JSONB_BUILD_OBJECT(
+            'indicators', JSONB_AGG(
+              JSONB_BUILD_OBJECT(
+                'name', mi.name,
+                'slug', mi.slug,
+                'name_long', mi.name_long,
+                'unit', mi.unit,
+                'label', mi.label,
+                'colorscheme', mi.colorscheme,
+                'section', mci.section,
+                'measurements', a.measurements
+              )
+            )
+          )) AS json
+          FROM meta_categories mc
+          INNER JOIN meta_categories_indicators mci ON mc.cartodb_id = mci.category_id
+          INNER JOIN meta_indicators mi ON mi.cartodb_id = mci.indicator_id
+          INNER JOIN availability a ON a.variable = mi.slug
+          GROUP BY mc.cartodb_id
+        ) sub
+      )
+    )
+  $q$;
+END
+$fn$ LANGUAGE 'plpgsql';

@@ -1,15 +1,18 @@
-import $ from 'jquery';
+import axios from 'axios';
 import { push } from 'react-router-redux';
-import { ENDPOINT_TILES, ENDPOINT_SQL, MAX_MAPS } from 'constants/map';
+import uuid from 'uuid/v4';
+import {
+  ENDPOINT_SQL,
+  ENDPOINT_TILES,
+  MAP_NUMBER_BUCKETS,
+  MAX_MAPS
+} from 'constants/map';
+import { mapListToQueryString } from 'utils/maps';
 
 export const MAP_UPDATE_DATA = 'MAP_UPDATE_DATA';
 export const MAP_UPDATE_PAN = 'MAP_UPDATE_PAN';
 export const MAP_SAVE_PARAMS = 'MAP_SAVE_PARAMS';
 export const LOADING_MAP = 'LOADING_MAP';
-
-function getRandomId() {
-  return Math.floor(Math.random() * 100).toString();
-}
 
 export function saveParamsFromURL(queryParam, mapConfig) {
   return dispatch => {
@@ -51,18 +54,14 @@ export function initializeMaps() {
           elem.slug === params[1]
         ));
         mapsList.push({
-          id: getRandomId(),
+          id: uuid(),
           scenario: config.scenarios.find((elem) => (
             elem.slug === params[0]
           )),
           category,
-          indicator: category.indicator.find((elem) => (
+          indicator: category.indicators.find((elem) => (
             elem.slug === params[2]
-          )),
-          measure: config.measurements.find((elem) => (
-            elem.slug === params[3]
-          )),
-          season: parseInt(params[4], 10)
+          ))
         });
       }
     }
@@ -78,19 +77,8 @@ export function updateURL() {
   return (dispatch, state) => {
     const maps = state().maps;
     const params = `${maps.latLng.lat}/${maps.latLng.lng}/${maps.zoom}`;
-    let query = '';
+    const query = mapListToQueryString(maps.mapsList);
 
-    if (maps.mapsList.length) {
-      query = '?maps=';
-
-      maps.mapsList.forEach((map, index) => {
-        query += `${map.scenario.slug},${map.category.slug},${map.indicator.slug},${map.measure.slug},${map.season}`;
-
-        if (index < maps.mapsList.length - 1) {
-          query += '/';
-        }
-      });
-    }
     dispatch(push(`/global-scenarios/${params}${query}`));
   };
 }
@@ -98,30 +86,24 @@ export function updateURL() {
 export function setMap(map) {
   return (dispatch, state) => {
     const maps = state().maps.mapsList;
-    const mapsList = [];
-    if (maps.length <= MAX_MAPS) {
-      maps.forEach(mapItem => {
-        mapsList.push(mapItem);
-      });
+    const isUpdate = maps.some((m) => m.id === map.id);
 
-      let selectedMap = mapsList.find((elem) => (
-        elem.id === map.id
-      ));
-      if (selectedMap) {
-        selectedMap.bucket = [];
-        selectedMap = Object.assign(selectedMap, map);
-      } else {
-        const newMap = map;
-        newMap.id = getRandomId();
-        mapsList.push(newMap);
-      }
+    if (!isUpdate && maps.length >= MAX_MAPS) return;
 
-      dispatch({
-        type: MAP_UPDATE_DATA,
-        payload: mapsList
-      });
-      dispatch(updateURL());
+    const mapsList = maps.map((m) => {
+      if (m.id === map.id) return { ...m, ...map, bucket: null };
+      return m;
+    });
+
+    if (!isUpdate) {
+      mapsList.push({ ...map, id: uuid() });
     }
+
+    dispatch({
+      type: MAP_UPDATE_DATA,
+      payload: mapsList
+    });
+    dispatch(updateURL());
   };
 }
 
@@ -150,13 +132,11 @@ export function panMaps(panParams) {
 function setMapData(mapData, newData) {
   return (dispatch, state) => {
     const maps = state().maps.mapsList;
-    const mapsList = [];
-    maps.forEach(map => {
-      let currentMap = map;
-      if (currentMap.id === mapData.id) {
-        currentMap = Object.assign(currentMap, newData);
+    const mapsList = maps.map((map) => {
+      if (map.id === mapData.id) {
+        return { ...map, ...newData };
       }
-      mapsList.push(currentMap);
+      return map;
     });
 
     dispatch({
@@ -168,41 +148,61 @@ function setMapData(mapData, newData) {
 
 export function createLayer(mapData, layerData) {
   return (dispatch) => {
-    $.post({
-      url: ENDPOINT_TILES,
-      dataType: 'json',
-      contentType: 'application/json; charset=UTF-8',
-      data: layerData
-    }).then((res) => {
+    axios.post(ENDPOINT_TILES, layerData, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(({ data }) => {
       dispatch(setMapData(mapData, {
         layer: {
-          tileUrl: `${ENDPOINT_TILES}${res.layergroupid}/{z}/{x}/{y}@2x.png32`,
-          slug: `layer_${mapData.indicator.slug}_${mapData.measure.slug}_${mapData.scenario.slug}_${mapData.season}`
+          tileUrl: `${ENDPOINT_TILES}${data.layergroupid}/{z}/{x}/{y}@2x.png32`,
+          slug: `layer_${mapData.indicator.slug}_${uuid()}`
         }
       }));
+    }).catch((error) => {
+      console.error(error);
     });
   };
 }
 
 export function getMapBuckets(mapData) {
   return (dispatch) => {
-    let raster = false;
+    const query = `
+      WITH data AS (
+        SELECT mean AS value
+        FROM master_admin0 m
+        WHERE m.variable = '${mapData.indicator.slug}'
+        AND m.swl_info = ${mapData.scenario.slug}
+        AND mean IS NOT NULL
+      )
+      SELECT UNNEST(
+        CDB_JenksBins(
+          ARRAY_AGG(
+            DISTINCT(value::numeric)
+          ), ${MAP_NUMBER_BUCKETS}
+        )
+      ) AS value,
+      min(data.value) as "minValue"
+      FROM data`;
 
-    if (!mapData.raster) {
-      raster = true;
-    }
+    dispatch(setMapData(mapData, {
+      bucketLoading: true
+    }));
 
-    const query = `SELECT * FROM get_buckets('${mapData.indicator.tableName}', ${raster}, '${mapData.measure.slug}', ${mapData.scenario.slug}, ${mapData.season})`;
-
-    $.get({
-      url: ENDPOINT_SQL,
-      data: {
+    axios.get(ENDPOINT_SQL, {
+      params: {
         q: query
       }
-    }).then((res) => {
+    }).then(({ data }) => {
       dispatch(setMapData(mapData, {
-        bucket: res.rows
+        bucket: data.rows,
+        bucketLoading: false
       }));
+    }).catch((error) => {
+      dispatch(setMapData(mapData, {
+        bucketLoading: false
+      }));
+      console.error(error);
     });
   };
 }

@@ -4,7 +4,7 @@ env:
   node: true
   es6: true
   browser: true
-  mocha: true
+  jest: true
 globals:
   L: true,
   config: true
@@ -12,11 +12,12 @@ parserOptions:
   ecmaVersion: 7
   ecmaFeatures:
     jsx: true
+    experimentalObjectRestSpread: true
   sourceType: module
 plugins: [react]
 
 rules:
-  max-len: [1, 140, 2, {"ignoreUrls":true}]
+  max-len: [0, 140, 2, {"ignoreUrls": true, "ignoreComments": true}]
   comma-dangle: [error, never]
   no-console: [error, allow: [warn, error, info]]
 settings:

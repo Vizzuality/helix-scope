@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import Button from 'components/common/Button';
 import Modal from 'components/common/Modal';
 
@@ -59,18 +61,36 @@ class ShareModal extends Component {
           </div>
           <div className="actions">
             <input ref={ref => (this.url = ref)} defaultValue={this.props.shareUrl} className="c-input url" />
-            <Button onClick={this.handleCopyClick} icon="arrow" style="primary" size="large" text={btnText} color="dark" position="copy-link" />
+            <Button
+              onClick={this.handleCopyClick}
+              icon="arrow"
+              style="primary"
+              size="large"
+              text={btnText}
+              color="dark"
+              position="copy-link"
+            />
           </div>
           <div className="copy-text">
             {copyText}
           </div>
           <div className="share-links">
-            <a href={`http://www.facebook.com/sharer/sharer.php?u=${this.props.shareUrl}`} className="c-btn btn-link" target="_blank" rel="noopener noreferrer">
+            <a
+              href={`http://www.facebook.com/sharer/sharer.php?u=${this.props.shareUrl}`}
+              className="c-btn btn-link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <svg className={'btn-icon icon-facebook -none -size-small'}>
                 <use xlinkHref={'#icon-facebook'}></use>
               </svg>
             </a>
-            <a href={`https://twitter.com/share?url=${this.props.shareUrl}`} className="c-btn btn-link" target="_blank" rel="noopener noreferrer">
+            <a
+              href={`https://twitter.com/share?url=${this.props.shareUrl}`}
+              className="c-btn btn-link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <svg className={'btn-icon icon-twitter -none -size-small'}>
                 <use xlinkHref={'#icon-twitter'}></use>
               </svg>
@@ -86,19 +106,19 @@ ShareModal.propTypes = {
   /**
   * Define whether modal is open or not
   **/
-  shareModalOpen: React.PropTypes.bool,
+  shareModalOpen: PropTypes.bool,
   /**
   * Callback when closing or opening modal
   **/
-  setShareModal: React.PropTypes.func,
+  setShareModal: PropTypes.func,
   /**
   * Title for Modal component
   **/
-  title: React.PropTypes.string,
+  title: PropTypes.string,
   /**
   * Route of current location
   **/
-  shareUrl: React.PropTypes.string
+  shareUrl: PropTypes.string
 };
 
 export default ShareModal;

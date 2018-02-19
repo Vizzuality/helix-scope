@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import NavLink from 'components/common/NavLink';
 import Button from 'components/common/Button';
 
@@ -30,8 +32,8 @@ const Header = (props) => (
 );
 
 Header.propTypes = {
-  setMenuModal: React.PropTypes.func,
-  setShareModal: React.PropTypes.func
+  setMenuModal: PropTypes.func,
+  setShareModal: PropTypes.func
 };
 
 export default Header;

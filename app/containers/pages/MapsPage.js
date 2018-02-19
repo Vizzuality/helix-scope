@@ -7,16 +7,10 @@ const mapStateToProps = state => ({
   config: state.config
 });
 
-const mapDispatchToProps = dispatch => ({
-  saveParamsFromURL: (mapParams, mapConfig) => {
-    dispatch(saveParamsFromURL(mapParams, mapConfig));
-  },
-  initializeMaps: () => {
-    dispatch(initializeMaps());
-  },
-  updateURL: () => {
-    dispatch(updateURL());
-  }
-});
+const mapDispatchToProps = {
+  saveParamsFromURL,
+  initializeMaps,
+  updateURL
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(MapsPage);

@@ -4,12 +4,12 @@
   bottom: 0;
   z-index: 1000;
   background-color: $pale-white;
-  padding: 15px 20px;
+  padding: 10px 25px;
 
   @media (--medium-viewport) {
     top: 0;
     bottom: auto;
-    width: 261px;
+    width: 321px;
   }
 
   > .control {
@@ -28,20 +28,16 @@
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
-      width: 80px;
+      width: 100%;
+    }
+
+    .c-btn {
+      margin-left: 5px;
     }
   }
 
-  > .measure {
-    margin-top: 10px;
-  }
-
-  > .season {
-    margin-top: 15px;
-  }
-
   > .legend {
-    padding: 20px 0 45px;
+    padding: 10px 0;
 
     > h4 {
       font-family: $font-heading;

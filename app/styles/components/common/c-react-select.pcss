@@ -1,7 +1,9 @@
+$select-height: 50px;
+
 .c-react-select {
   /* Custom styles for the Select React plugin */
   width: 100%;
-  height: 50px;
+  height: $select-height;
   margin-bottom: 10px;
   outline: none;
 
@@ -12,21 +14,16 @@
     .Select-arrow {
       border-color: $color-main transparent transparent;
     }
+
+    .Select-input:focus {
+      background-color: #f7fafa;
+    }
   }
 
   &.is-focused {
     background-color: #f7fafa;
     box-shadow: 0 0 3px 0 rgba(29, 30, 30, 0.2);
     outline: none;
-
-    .Select-placeholder {
-      display: block;
-      position: absolute;
-      bottom: auto;
-      top: $margin-medium;
-      font-size: $font-size-small;
-      color: $font-main;
-    }
   }
 
   .Select-control {
@@ -44,20 +41,25 @@
   }
 
   .Select-placeholder,
-  &.Select--single > .Select-control .Select-value {
+  &.Select--single > .Select-control .Select-value,
+  .Select-input {
     font-family: $font-body;
     font-size: 13px;
     font-style: italic;
-    line-height: 1.3;
     color: #515253;
-    top: 16px;
-    left: 15px;
     text-align: left;
+    line-height: $select-height;
+    height: $select-height;
+    padding-left: 30px;
 
     @media (--medium-viewport) {
       font-size: 14px;
-      left: 20px;
     }
+  }
+
+  .Select-placeholder {
+    display: flex;
+    align-items: center;
   }
 
   .Select-arrow-zone {
@@ -100,6 +102,22 @@
 
   .Select-option {
     padding: 15px 28px;
-    height: 50px;
+    height: $select-height;
+  }
+}
+
+.-white {
+  &.is-focused:not(.is-open) {
+    box-shadow: none;
+    border: none;
+  }
+
+  .Select-control {
+    background-color: #fff !important;
+    box-shadow: none !important;
+
+    .Select-input {
+      background-color: #fff !important;
+    }
   }
 }

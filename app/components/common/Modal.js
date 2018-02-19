@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Button from 'components/common/Button';
 
 class Modal extends Component {
@@ -19,7 +20,13 @@ class Modal extends Component {
     return (
       <div className={`overlay ${this.props.className}`} onClick={this.handleClickModal}>
         <div className={`c-modal c-${this.props.className}-modal`}>
-          <Button onClick={() => this.props.onSetModal(false)} icon="close" style={this.props.btnStyle} size="medium" position="right-abs" />
+          <Button
+            onClick={() => this.props.onSetModal(false)}
+            icon="close"
+            style={this.props.btnStyle}
+            size="medium"
+            position="right-abs"
+          />
           {this.props.children}
         </div>
       </div>
@@ -31,27 +38,27 @@ Modal.propTypes = {
   /**
   * Define required content of modal
   **/
-  children: React.PropTypes.any,
+  children: PropTypes.any,
   /**
   * Define whether modal is open or not
   **/
-  modalOpen: React.PropTypes.bool,
+  modalOpen: PropTypes.bool,
   /**
   * Callback to set modal open or closed
   **/
-  onSetModal: React.PropTypes.func,
+  onSetModal: PropTypes.func,
   /**
   * Define classname for modal (share, map, mobile menu)
   **/
-  className: React.PropTypes.string,
+  className: PropTypes.string,
   /**
   * Define title for modal
   **/
-  title: React.PropTypes.string,
+  title: PropTypes.string,
   /**
   * Define btn colour for close modal
   **/
-  btnStyle: React.PropTypes.string
+  btnStyle: PropTypes.string
 };
 
 export default Modal;

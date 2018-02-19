@@ -5,37 +5,67 @@ process.env.BROWSERSLIST_CONFIG = 'browserslist';
 
 const path = require('path');
 const webpack = require('webpack');
+
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const cssnext = require('postcss-cssnext');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
-const postcssImporter = require('postcss-import');
-const postcssSimpleVars = require('postcss-simple-vars');
-const postcssNested = require('postcss-nested');
-const lost = require('lost');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const rootPath = process.cwd();
+const postcssConfigPath = path.resolve(rootPath, '.postcssrc');
+const isProduction = process.env.NODE_ENV === 'production';
 
 const webpackConfig = {
-
-  entry: [
-    path.join(rootPath, 'app/main.jsx')
-  ],
+  entry: ['./app/main.jsx'],
 
   output: {
-    path: path.join(rootPath, 'dist/'),
+    path: path.join(rootPath, '/dist/'),
     filename: '[name]-[hash].js',
     publicPath: '/'
   },
 
+  module: {
+    rules: [
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader'
+      },
+      {
+        test: /\.(css|pcss)$/,
+        exclude: /node_modules/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [
+            {
+              loader: 'css-loader',
+              options: { minimize: isProduction }
+            },
+            {
+              loader: 'postcss-loader',
+              options: { config: { path: postcssConfigPath } }
+            }
+          ]
+        })
+      },
+      {
+        test: /\.(eot|ttf|woff2|woff)$/,
+        loader: 'url-loader?prefix=fonts/&context=./app/fonts'
+      }
+    ]
+  },
+
   plugins: [
+    new ExtractTextPlugin(
+      isProduction ? '[name]-[hash].css' : '[name].css'
+    ),
     new HtmlWebpackPlugin({
       template: 'app/index.html',
       inject: 'body',
       filename: 'index.html'
     }),
-    new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       'process.env.GA': JSON.stringify(process.env.GOOGLE_ANALYTICS)
@@ -46,24 +76,10 @@ const webpackConfig = {
     })
   ],
 
-  module: {
-    loaders: [
-      { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel' },
-      {
-        test: /\.pcss$/,
-        exclude: /node_modules/,
-        loader: 'style!css!postcss'
-      },
-      {
-        test: /\.(eot|ttf|woff2|woff)$/,
-        loader: 'url-loader?prefix=fonts/&context=./app/fonts'
-      },
-      { test: /\.css$/, loader: 'style-loader!css-loader' }
-    ]
-  },
   resolve: {
-    root: [
-      rootPath
+    modules: [
+      rootPath,
+      'node_modules'
     ],
     alias: {
       actions: 'app/actions',
@@ -71,31 +87,25 @@ const webpackConfig = {
       components: 'app/components',
       containers: 'app/containers',
       constants: 'app/constants',
+      utils: 'app/utils',
       fonts: 'app/fonts'
     },
-    extensions: ['', '.js', '.jsx']
-  },
-
-  postcss: (webpackPCss) => [
-    postcssImporter({ addDependencyTo: webpackPCss }),
-    cssnext,
-    lost,
-    postcssSimpleVars,
-    postcssNested
-  ]
-
+    extensions: ['.js', '.jsx']
+  }
 };
 
 // Environment configuration
-if (process.env.NODE_ENV === 'production') {
-  webpackConfig.plugins.push(new webpack.optimize.UglifyJsPlugin({
-    compress: {
-      warnings: false,
-      dead_code: true,
-      drop_debugger: true,
-      drop_console: true
+if (isProduction) {
+  webpackConfig.plugins.push(new UglifyJsPlugin({
+    uglifyOptions: {
+      compress: {
+        warnings: false,
+        dead_code: true,
+        drop_debugger: true,
+        drop_console: true
+      }
     },
-    comments: false
+    sourceMap: false
   }));
 } else {
   webpackConfig.devtool = 'eval-source-map';
