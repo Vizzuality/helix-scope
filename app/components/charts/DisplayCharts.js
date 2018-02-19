@@ -29,7 +29,8 @@ class DisplayCharts extends Component {
       domain: this.props.fixedDomain,
       getDomain: chart.getDomain,
       iso: country.iso,
-      variable: chart.variable
+      variable: chart.variable,
+      unit: chart.unit
     };
 
     if (chart.slug === 'crop_yield_change_baseline') {

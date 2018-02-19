@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { select } from 'd3-selection';
-import tippy from 'tippy.js';
 
 import BaseChart from './BaseChart';
 import { formatSI } from 'utils/format';
+import { renderTooltip } from 'utils/chart-rendering';
 
 class RegularBar extends BaseChart {
   drawChart() {
@@ -18,6 +18,7 @@ class RegularBar extends BaseChart {
       domain,
       margin,
       scenarios,
+      unit,
       yTicks
     } = this.props;
 
@@ -73,7 +74,6 @@ class RegularBar extends BaseChart {
       .attr('class', 'y axis')
       .call(axes.y);
 
-    const hoverBoxWidth = Math.min(150, (width / 3) - 20);
     const bar = svg.selectAll('.dot')
       .data(data)
       .enter()
@@ -86,29 +86,27 @@ class RegularBar extends BaseChart {
       .attr('width', barWidth)
       .attr('height', (d) => height - scale.y(d.value));
 
-    bar.append('rect')
-      .attr('fill', (d) => colorFor(d.swl))
-      .attr('x', (d) => scale.x(d.swl) - (hoverBoxWidth / 2))
-      .attr('y', 0)
-      .attr('width', hoverBoxWidth)
-      .attr('height', height)
-      .attr('class', 'hover-box')
-      .attr('title', (d) => formatSI(d.value, 2));
+    const hoverBoxWidth = Math.min(150, (width / 3) - 20);
 
-    tippy(this.chart.querySelectorAll('.hover-box'), {
-      arrow: true,
-      theme: 'light'
+    renderTooltip(this.chart, data, {
+      appendTo: bar,
+      width: hoverBoxWidth,
+      height,
+      getHoverColor: (d) => colorFor(d.swl),
+      getX: (d) => scale.x(d.swl),
+      getTooltipHtml: (d) => (`<p> ${formatSI(d.value, 2)} ${unit}</p>`)
     });
   }
 }
 
 RegularBar.propTypes = {
   ...BaseChart.propTypes,
+  chart: PropTypes.string.isRequired,
   iso: PropTypes.string.isRequired,
-  variable: PropTypes.string.isRequired,
   scenarios: PropTypes.array,
-  yTicks: PropTypes.number,
-  chart: PropTypes.string.isRequired
+  unit: PropTypes.string,
+  variable: PropTypes.string.isRequired,
+  yTicks: PropTypes.number
 };
 
 RegularBar.defaultProps = {

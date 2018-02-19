@@ -18,6 +18,7 @@ class InterQuartileRange extends BaseChart {
       domain,
       margin,
       scenarios,
+      unit,
       variables,
       yTicks
     } = this.props;
@@ -87,7 +88,7 @@ class InterQuartileRange extends BaseChart {
       .enter()
       .append('circle')
       .attr('class', 'hover-box')
-      .attr('title', (d) => formatSI(d.median, 2))
+      .attr('title', (d) => `${formatSI(d.median, 2)} ${unit}`)
       .attr('r', 20)
       .attr('fill', (d) => colorFor(d.variable))
       .attr('cx', (d) => scale.x(d.swl))
@@ -136,10 +137,11 @@ class InterQuartileRange extends BaseChart {
 
 InterQuartileRange.propTypes = {
   ...BaseChart.propTypes,
-  variables: PropTypes.array,
+  chart: PropTypes.string.isRequired,
   scenarios: PropTypes.array,
-  yTicks: PropTypes.number,
-  chart: PropTypes.string.isRequired
+  unit: PropTypes.string,
+  variables: PropTypes.array,
+  yTicks: PropTypes.number
 };
 
 InterQuartileRange.defaultProps = {

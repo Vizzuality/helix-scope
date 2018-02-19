@@ -2,10 +2,9 @@ import PropTypes from 'prop-types';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { select } from 'd3-selection';
-import tippy from 'tippy.js';
-import uuid from 'uuid/v4';
 
 import { formatSI } from 'utils/format';
+import { renderTooltip } from 'utils/chart-rendering';
 import BaseChart from './BaseChart';
 
 class BoxAndWhiskers extends BaseChart {
@@ -19,6 +18,7 @@ class BoxAndWhiskers extends BaseChart {
       domain,
       margin,
       scenarios,
+      unit,
       yTicks
     } = this.props;
 
@@ -56,7 +56,6 @@ class BoxAndWhiskers extends BaseChart {
 
     const chart = select(this.chart);
     chart.selectAll('svg').remove();
-    chart.selectAll('.hover-template').remove();
 
     const svg = chart.append('svg')
         .attr('width', width + (margin.left + margin.right))
@@ -131,46 +130,33 @@ class BoxAndWhiskers extends BaseChart {
 
     // hover box
     const hoverBoxWidth = Math.min(100, (width / 3) - 20);
-    const hoverTemplateId = uuid();
-    bars.append('rect')
-      .attr('fill', (d) => colorFor(d.swl))
-      .attr('x', (d) => scale.x(d.swl) - (hoverBoxWidth / 2))
-      .attr('y', 0)
-      .attr('width', hoverBoxWidth)
-      .attr('height', height)
-      .attr('class', 'hover-box')
-      .attr('data-tippy-html', (d) => `#id${hoverTemplateId}_${d.swl}`.replace('.', ''));
 
-    chart.selectAll('.hover-tooltip')
-      .data(data)
-      .enter()
-      .append('div')
-      .attr('class', '.hover-tooltip')
-      .style('display', 'none')
-      .attr('id', (d) => `id${hoverTemplateId}_${d.swl}`.replace('.', ''))
-      .html((d) => (`
-          <p><b>minimum: </b>${d.minimum}</p>
-          <p><b>maximum: </b>${d.maximum}</p>
-          <p><b>q1: </b>${d.q1}</p>
-          <p><b>median: </b>${d.median}</p>
-          <p><b>q3: </b>${d.q3}</p>
-      `));
-
-    tippy(this.chart.querySelectorAll('.hover-box'), {
-      arrow: true,
-      theme: 'light'
+    renderTooltip(this.chart, data, {
+      appendTo: bars,
+      width: hoverBoxWidth,
+      height,
+      getHoverColor: (d) => colorFor(d.swl),
+      getX: (d) => scale.x(d.swl),
+      getTooltipHtml: (d) => (`
+          <p><b>minimum: </b>${formatSI(d.minimum, 2)} ${unit}</p>
+          <p><b>q1: </b>${formatSI(d.q1, 2)} ${unit}</p>
+          <p><b>median: </b>${formatSI(d.median, 2)} ${unit}</p>
+          <p><b>q3: </b>${formatSI(d.q3, 2)} ${unit}</p>
+          <p><b>maximum: </b>${formatSI(d.maximum, 2)} ${unit}</p>
+      `)
     });
   }
 }
 
 BoxAndWhiskers.propTypes = {
   ...BaseChart.propTypes,
-  iso: PropTypes.string.isRequired,
-  scenarios: PropTypes.array,
-  yTicks: PropTypes.number,
   chart: PropTypes.string,
+  iso: PropTypes.string.isRequired,
+  measure: PropTypes.string.isRequired,
+  scenarios: PropTypes.array,
+  unit: PropTypes.string,
   variable: PropTypes.string.isRequired,
-  measure: PropTypes.string.isRequired
+  yTicks: PropTypes.number
 };
 
 BoxAndWhiskers.defaultProps = {

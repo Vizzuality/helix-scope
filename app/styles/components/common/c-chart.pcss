@@ -86,6 +86,7 @@
 
     .hover-box {
       opacity: 0;
+      outline: none;
 
       &:hover,
       &:focus {
@@ -106,10 +107,12 @@
 }
 
 .tippy-popper {
-  margin: $margin-small 0;
-  text-align: left;
-  font-family: $font-heading;
-  font-size: $font-size-x-small;
-  line-height: 2;
-  color: $font-main;
+  div {
+    margin: $margin-small 0;
+    text-align: left;
+    font-family: $font-heading;
+    font-size: $font-size-x-small;
+    line-height: 2;
+    color: $font-main;
+  }
 }
