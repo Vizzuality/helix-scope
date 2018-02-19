@@ -19,7 +19,11 @@ export function renderTooltip(chartElement, data, hoverBox) {
   const chartHoverTemplateId = uuid();
   const getHoverTemplateId = (d, index) => `id${chartHoverTemplateId}_${index}`.replace('.', '');
 
-  appendTo.append('rect')
+  appendTo
+    .selectAll('.hover-box')
+    .data(data)
+    .enter()
+    .append('rect')
     .attr('fill', getHoverColor)
     .attr('x', (d) => getX(d) - (width / 2))
     .attr('y', 0)

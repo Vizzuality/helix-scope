@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { axisBottom, axisLeft } from 'd3-axis';
+import groupBy from 'lodash/groupBy';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { select } from 'd3-selection';
 
@@ -23,8 +24,10 @@ class InterQuartileRange extends BaseChart {
       yTicks
     } = this.props;
 
-    const colorFor = (variable) => (variables.find((v) => v.variable === variable) || { color: 'black' }).color;
-    const findScenario = (slug) => (scenarios.find((s) => slug.toString() === s.slug) || {});
+    const findScenario = (slug) => scenarios.find((s) => slug.toString() === s.slug) || {};
+    const findVariable = (slug) => variables.find((v) => v.variable === slug) || {};
+    const colorForScenario = (slug) => findScenario(slug).color;
+    const colorForVariable = (variable) => findVariable(variable).color || 'black';
     const tickFormat = (val) => (findScenario(val).name);
 
     const width = this.chart.offsetWidth - (margin.left + margin.right);
@@ -78,19 +81,7 @@ class InterQuartileRange extends BaseChart {
       .enter()
       .append('circle')
       .attr('r', 5)
-      .attr('fill', (d) => colorFor(d.variable))
-      .attr('cx', (d) => scale.x(d.swl))
-      .attr('cy', (d) => scale.y(d.median));
-
-    // hover circles
-    svg.selectAll('.dot')
-      .data(data)
-      .enter()
-      .append('circle')
-      .attr('class', 'hover-box')
-      .attr('title', (d) => `${formatSI(d.median, 2)} ${unit}`)
-      .attr('r', 20)
-      .attr('fill', (d) => colorFor(d.variable))
+      .attr('fill', (d) => colorForVariable(d.variable))
       .attr('cx', (d) => scale.x(d.swl))
       .attr('cy', (d) => scale.y(d.median));
 
@@ -98,12 +89,34 @@ class InterQuartileRange extends BaseChart {
       .data(data)
       .enter()
       .append('line')
-      .attr('stroke', (d) => colorFor(d.variable))
+      .attr('stroke', (d) => colorForVariable(d.variable))
       .attr('stroke-width', 2)
       .attr('x1', (d) => scale.x(d.swl))
       .attr('y1', (d) => scale.y(d.median - d.iqr))
       .attr('x2', (d) => scale.x(d.swl))
       .attr('y2', (d) => scale.y(d.median + d.iqr));
+
+    const groupedByScenario = groupBy(data, (v) => v.swl);
+    const hoverData = Object.keys(groupedByScenario).map((swl) => ({
+      swl,
+      variables: groupedByScenario[swl]
+    }));
+    const renderVariableHtml = (v) => (`
+      <p>
+        <b style="color: ${colorForVariable(v.variable)};" >${findVariable(v.variable).label}: </b>
+        ${formatSI(v.median, 2)}${unit} (IQR: ${formatSI(v.iqr, 2)}${unit})
+      </p>
+    `);
+    const sortByMedianDesc = (array) => [...array].sort((a, b) => b.median - a.median);
+    const hoverBoxWidth = Math.min(150, (width / 3) - 20);
+    renderTooltip(this.chart, hoverData, {
+      appendTo: svg,
+      width: hoverBoxWidth,
+      height,
+      getHoverColor: (d) => colorForScenario(d.swl),
+      getX: (d) => scale.x(d.swl),
+      getTooltipHtml: (d) => sortByMedianDesc(d.variables).map(renderVariableHtml).join('')
+    });
 
     renderLegend({
       appendTo: svg,

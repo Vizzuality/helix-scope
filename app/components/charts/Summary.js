@@ -5,11 +5,10 @@ import { select } from 'd3-selection';
 import { line } from 'd3-shape';
 import groupBy from 'lodash/groupBy';
 import forEach from 'lodash/forEach';
-import tippy from 'tippy.js';
 
 import BaseChart from './BaseChart';
 import { formatSI } from 'utils/format';
-import { renderLegend, renderTooltip } from 'utils/chart-rendering';
+import { renderLegend } from 'utils/chart-rendering';
 
 class Summary extends BaseChart {
   drawChart() {

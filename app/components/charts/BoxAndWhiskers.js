@@ -23,7 +23,7 @@ class BoxAndWhiskers extends BaseChart {
     } = this.props;
 
     const findScenario = (slug) => (scenarios.find((s) => slug.toString() === s.slug) || {});
-    const tickFormat = (slug) => findScenario(slug).label;
+    const tickFormat = (slug) => findScenario(slug).name;
     const colorFor = (slug) => findScenario(slug).color;
 
     const width = this.chart.offsetWidth - (margin.left + margin.right);
