@@ -17,6 +17,19 @@
   }
 }
 
+.tippy-tooltip {
+  max-width: 500px;
+  padding: $margin-small;
+  font-family: $font-body;
+  font-size: $font-size-x-small;
+  text-align: left;
+  color: $font-grey;
+
+  @media (--small-viewport) {
+    max-width: 80vw;
+  }
+}
+
 .tooltip-template {
   display: none;
 }

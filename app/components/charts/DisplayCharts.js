@@ -96,7 +96,10 @@ class DisplayCharts extends Component {
             />
           )}
           {selectedChart.getInfo && (
-            <InfoButton text={selectedChart.getInfo(selectedChartData, get(selectedMeasure, 'name'))} />
+            <InfoButton
+              tooltipPlacement="left"
+              text={selectedChart.getInfo(selectedChartData, get(selectedMeasure, 'name'))}
+            />
           )}
         </div>
         <div className="content">
