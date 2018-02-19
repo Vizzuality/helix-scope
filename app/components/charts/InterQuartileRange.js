@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { select } from 'd3-selection';
-import tippy from 'tippy.js';
 
 import BaseChart from './BaseChart';
 import { formatSI } from 'utils/format';
+import { renderLegend, renderTooltip } from 'utils/chart-rendering';
 
 class InterQuartileRange extends BaseChart {
   drawChart() {
@@ -105,32 +105,12 @@ class InterQuartileRange extends BaseChart {
       .attr('x2', (d) => scale.x(d.swl))
       .attr('y2', (d) => scale.y(d.median + d.iqr));
 
-    const legend = svg.append('g')
-      .attr('class', 'legend')
-      .attr('width', width)
-      .attr('height', 20)
-      .attr('transform', 'translate(0, 0)');
-
-    legend.selectAll('circle')
-      .data(variables)
-      .enter()
-      .append('circle')
-      .attr('r', 5)
-      .attr('cx', (d, i) => i * 60)
-      .attr('cy', height + 50)
-      .attr('fill', (d) => d.color);
-
-    legend.selectAll('text')
-      .data(variables)
-      .enter()
-      .append('text')
-      .attr('x', (d, i) => (i * 60) + 8)
-      .attr('y', height + 55)
-      .text((d) => d.label);
-
-    tippy(this.chart.querySelectorAll('.hover-box'), {
-      arrow: true,
-      theme: 'light'
+    renderLegend({
+      appendTo: svg,
+      width,
+      height: 20,
+      position: { x: 0, y: height + 50 },
+      series: variables
     });
   }
 }

@@ -42,3 +42,28 @@ export function renderTooltip(chartElement, data, hoverBox) {
     theme: 'light'
   });
 }
+
+export function renderLegend({ appendTo, width, height = 20, position = { x: 0, y: 0 }, series }) {
+  const legend = appendTo.append('g')
+    .attr('class', 'legend')
+    .attr('width', width)
+    .attr('height', height)
+    .attr('transform', 'translate(0, 0)');
+
+  legend.selectAll('circle')
+    .data(series)
+    .enter()
+    .append('circle')
+    .attr('r', 5)
+    .attr('cx', (d, i) => position.x + i * 60)
+    .attr('cy', position.y)
+    .attr('fill', (d) => d.color);
+
+  legend.selectAll('text')
+    .data(series)
+    .enter()
+    .append('text')
+    .attr('x', (d, i) => position.x + (i * 60) + 8)
+    .attr('y', position.y + 5)
+    .text((s) => s.label);
+}

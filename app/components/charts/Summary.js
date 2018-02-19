@@ -9,6 +9,7 @@ import tippy from 'tippy.js';
 
 import BaseChart from './BaseChart';
 import { formatSI } from 'utils/format';
+import { renderLegend, renderTooltip } from 'utils/chart-rendering';
 
 class Summary extends BaseChart {
   drawChart() {
@@ -117,32 +118,12 @@ class Summary extends BaseChart {
         .attr('cy', (d) => scale.y(d.value));
     });
 
-    const legend = svg.append('g')
-      .attr('class', 'legend')
-      .attr('width', width)
-      .attr('height', 20)
-      .attr('transform', 'translate(0, 0)');
-
-    legend.selectAll('circle')
-      .data(Object.keys(lines))
-      .enter()
-      .append('circle')
-      .attr('r', 5)
-      .attr('cx', (d, i) => i * 60)
-      .attr('cy', height + 50)
-      .attr('fill', (d) => lineColor[d]);
-
-    legend.selectAll('text')
-      .data(Object.keys(lines))
-      .enter()
-      .append('text')
-      .attr('x', (d, i) => (i * 60) + 8)
-      .attr('y', height + 55)
-      .text((d) => d);
-
-    tippy(this.chart.querySelectorAll('.hover-box'), {
-      arrow: true,
-      theme: 'light'
+    renderLegend({
+      appendTo: svg,
+      width,
+      height: 20,
+      position: { x: 0, y: height + 50 },
+      series: Object.keys(lines).map((l) => ({ label: l, color: lineColor[l] }))
     });
   }
 }

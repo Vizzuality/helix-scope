@@ -10,6 +10,7 @@ import uniqBy from 'lodash/uniqBy';
 import BaseChart from './BaseChart';
 import { formatSI } from 'utils/format';
 import { modelColors } from 'constants/colors';
+import { renderLegend } from 'utils/chart-rendering';
 
 class MapPopupPlot extends BaseChart {
   drawChart() {
@@ -139,28 +140,13 @@ class MapPopupPlot extends BaseChart {
       .attr('cx', (d) => scale.x(d.value))
       .attr('cy', y);
 
-    const legend = svg.append('g')
-          .attr('class', 'legend')
-          .attr('width', width)
-          .attr('height', 20)
-          .attr('transform', 'translate(0, 0)');
-
-    legend.selectAll('circle')
-      .data(models)
-      .enter()
-      .append('circle')
-      .attr('r', 5)
-      .attr('cx', (d, i) => i * 60)
-      .attr('cy', height + 50)
-      .attr('fill', (d) => colorFor(d));
-
-    legend.selectAll('text')
-      .data(models)
-      .enter()
-      .append('text')
-      .attr('x', (d, i) => (i * 60) + 8)
-      .attr('y', height + 55)
-      .text((d) => d);
+    renderLegend({
+      appendTo: svg,
+      width,
+      height: 20,
+      position: { x: 0, y: height + 50 },
+      series: models.map((m) => ({ label: m, color: colorFor(m) }))
+    });
   }
 
   render() {
