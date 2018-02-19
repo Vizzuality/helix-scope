@@ -63,7 +63,8 @@ class InterQuartileRange extends BaseChart {
     };
 
     const chart = select(this.chart);
-    chart.selectAll('svg').remove();
+
+    this.performCleanUp(chart);
 
     const svg = chart.append('svg')
       .attr('width', width + (margin.left + margin.right))

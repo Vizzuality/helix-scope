@@ -28,6 +28,13 @@ class BaseChart extends Component {
     debounce(this.drawChart.bind(this), 200)();
   }
 
+  performCleanUp(chart) {
+    chart.selectAll('.hover-box').nodes().forEach((node) => {
+      if (node._tippy) node._tippy.destroy(); // eslint-disable-line no-underscore-dangle
+    });
+    chart.selectAll('svg').remove();
+  }
+
   render() {
     const isLoading = this.props.loading;
     const noData = !isLoading && get(this.props, 'data.length', 0) === 0;
