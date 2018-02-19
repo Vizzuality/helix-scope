@@ -30,6 +30,7 @@ export function renderTooltip({ appendTo, chart, data, width, height, getTooltip
     .html(getTooltipHtml);
 
   tippy(chart.node().querySelectorAll('.hover-box'), {
+    id: 'chart-tooltip', // will ensure showing one tooltip at a time
     arrow: true,
     theme: 'chart light'
   });
