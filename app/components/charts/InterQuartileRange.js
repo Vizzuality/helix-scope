@@ -109,12 +109,14 @@ class InterQuartileRange extends BaseChart {
     `);
     const orderByMedianDesc = (array) => [...array].sort((a, b) => b.median - a.median);
     const hoverBoxWidth = Math.min(150, (width / 3) - 20);
-    renderTooltip(this.chart, hoverData, {
+    renderTooltip({
       appendTo: svg,
+      chart,
+      data: hoverData,
       width: hoverBoxWidth,
       height,
       getHoverColor: (d) => colorForScenario(d.swl),
-      getX: (d) => scale.x(d.swl),
+      getPositionX: (d) => scale.x(d.swl),
       getTooltipHtml: (d) => orderByMedianDesc(d.variables).map(renderVariableHtml).join('')
     });
 

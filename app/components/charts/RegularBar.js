@@ -88,12 +88,14 @@ class RegularBar extends BaseChart {
 
     const hoverBoxWidth = Math.min(150, (width / 3) - 20);
 
-    renderTooltip(this.chart, data, {
-      appendTo: bar,
+    renderTooltip({
+      appendTo: svg,
+      chart,
+      data,
       width: hoverBoxWidth,
       height,
       getHoverColor: (d) => colorFor(d.swl),
-      getX: (d) => scale.x(d.swl),
+      getPositionX: (d) => scale.x(d.swl),
       getTooltipHtml: (d) => (`<p> ${formatSI(d.value, 2)} ${unit}</p>`)
     });
   }

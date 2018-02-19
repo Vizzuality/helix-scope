@@ -1,19 +1,7 @@
-import { select } from 'd3-selection';
 import tippy from 'tippy.js';
 import uuid from 'uuid/v4';
 
-export function renderTooltip(chartElement, data, hoverBox) {
-  const {
-    appendTo,
-    getTooltipHtml,
-    getHoverColor,
-    getX,
-    width,
-    height
-  } = hoverBox;
-
-  const chart = select(chartElement);
-
+export function renderTooltip({ appendTo, chart, data, width, height, getTooltipHtml, getPositionX, getHoverColor }) {
   chart.selectAll('.hover-template').remove();
 
   const chartHoverTemplateId = uuid();
@@ -25,7 +13,7 @@ export function renderTooltip(chartElement, data, hoverBox) {
     .enter()
     .append('rect')
     .attr('fill', getHoverColor)
-    .attr('x', (d) => getX(d) - (width / 2))
+    .attr('x', (d) => getPositionX(d) - (width / 2))
     .attr('y', 0)
     .attr('width', width)
     .attr('height', height)
@@ -41,7 +29,7 @@ export function renderTooltip(chartElement, data, hoverBox) {
     .attr('id', getHoverTemplateId)
     .html(getTooltipHtml);
 
-  tippy(chartElement.querySelectorAll('.hover-box'), {
+  tippy(chart.node().querySelectorAll('.hover-box'), {
     arrow: true,
     theme: 'chart light'
   });

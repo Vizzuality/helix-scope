@@ -116,17 +116,19 @@ class Summary extends BaseChart {
     const renderLineHtml = (v) => (`
       <p>
         <b><span class="small-circle" style="background: ${lineColor[v.line]};"></span>&nbsp;${v.line}: </b>
-        ${formatSI(v.value, 2)}${unit}
+        ${formatSI(v.value, 2)}${unit === '%' ? '' : ' '}${unit}
       </p>
     `);
     const orderByLineDesc = (array) => [...array].sort((a, b) => lineOrder.indexOf(a.line) < lineOrder.indexOf(b.line));
     const hoverBoxWidth = Math.min(150, (width / 3) - 20);
-    renderTooltip(this.chart, hoverData, {
+    renderTooltip({
       appendTo: svg,
+      chart,
+      data: hoverData,
       width: hoverBoxWidth,
       height,
       getHoverColor: (d) => colorForScenario(d.swl),
-      getX: (d) => scale.x(d.swl),
+      getPositionX: (d) => scale.x(d.swl),
       getTooltipHtml: (d) => orderByLineDesc(d.values).map(renderLineHtml).join('')
     });
 
