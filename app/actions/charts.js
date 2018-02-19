@@ -63,9 +63,10 @@ export function fetchInterQuartileRange(chart, iso, variable) {
 }
 
 export function fetchRegularBar(chart, iso, variable) {
+  const divideByMilion = chart === 'annual_expected_flood_damage';
   const sql = `
     SELECT
-      mean as value,
+      mean${divideByMilion ? ' / 10e6' : ''} as value,
       swl_info as swl,
       variable,
       institution,
