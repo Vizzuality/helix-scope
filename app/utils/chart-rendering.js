@@ -43,7 +43,7 @@ export function renderTooltip(chartElement, data, hoverBox) {
 
   tippy(chartElement.querySelectorAll('.hover-box'), {
     arrow: true,
-    theme: 'light'
+    theme: 'chart light'
   });
 }
 

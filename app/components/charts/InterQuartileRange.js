@@ -103,11 +103,11 @@ class InterQuartileRange extends BaseChart {
     }));
     const renderVariableHtml = (v) => (`
       <p>
-        <b style="color: ${colorForVariable(v.variable)};" >${findVariable(v.variable).label}: </b>
+        <b><span class="small-circle" style="background: ${colorForVariable(v.variable)};"></span>&nbsp;${findVariable(v.variable).label}: </b>
         ${formatSI(v.median, 2)}${unit} (IQR: ${formatSI(v.iqr, 2)}${unit})
       </p>
     `);
-    const sortByMedianDesc = (array) => [...array].sort((a, b) => b.median - a.median);
+    const orderByMedianDesc = (array) => [...array].sort((a, b) => b.median - a.median);
     const hoverBoxWidth = Math.min(150, (width / 3) - 20);
     renderTooltip(this.chart, hoverData, {
       appendTo: svg,
@@ -115,7 +115,7 @@ class InterQuartileRange extends BaseChart {
       height,
       getHoverColor: (d) => colorForScenario(d.swl),
       getX: (d) => scale.x(d.swl),
-      getTooltipHtml: (d) => sortByMedianDesc(d.variables).map(renderVariableHtml).join('')
+      getTooltipHtml: (d) => orderByMedianDesc(d.variables).map(renderVariableHtml).join('')
     });
 
     renderLegend({
@@ -131,9 +131,9 @@ class InterQuartileRange extends BaseChart {
 InterQuartileRange.propTypes = {
   ...BaseChart.propTypes,
   chart: PropTypes.string.isRequired,
-  scenarios: PropTypes.array,
-  unit: PropTypes.string,
-  variables: PropTypes.array,
+  scenarios: PropTypes.array.isRequired,
+  unit: PropTypes.string.isRequired,
+  variables: PropTypes.array.isRequired,
   yTicks: PropTypes.number
 };
 

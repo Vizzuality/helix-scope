@@ -138,11 +138,11 @@ class BoxAndWhiskers extends BaseChart {
       getHoverColor: (d) => colorFor(d.swl),
       getX: (d) => scale.x(d.swl),
       getTooltipHtml: (d) => (`
-          <p><b>minimum: </b>${formatSI(d.minimum, 2)} ${unit}</p>
-          <p><b>q1: </b>${formatSI(d.q1, 2)} ${unit}</p>
-          <p><b>median: </b>${formatSI(d.median, 2)} ${unit}</p>
-          <p><b>q3: </b>${formatSI(d.q3, 2)} ${unit}</p>
-          <p><b>maximum: </b>${formatSI(d.maximum, 2)} ${unit}</p>
+        <p><b>minimum: </b>${formatSI(d.minimum, 2)} ${unit}</p>
+        <p><b>q1: </b>${formatSI(d.q1, 2)} ${unit}</p>
+        <p><b>median: </b>${formatSI(d.median, 2)} ${unit}</p>
+        <p><b>q3: </b>${formatSI(d.q3, 2)} ${unit}</p>
+        <p><b>maximum: </b>${formatSI(d.maximum, 2)} ${unit}</p>
       `)
     });
   }
@@ -150,11 +150,11 @@ class BoxAndWhiskers extends BaseChart {
 
 BoxAndWhiskers.propTypes = {
   ...BaseChart.propTypes,
-  chart: PropTypes.string,
+  chart: PropTypes.string.isRequired,
   iso: PropTypes.string.isRequired,
   measure: PropTypes.string.isRequired,
-  scenarios: PropTypes.array,
-  unit: PropTypes.string,
+  scenarios: PropTypes.array.isRequired,
+  unit: PropTypes.string.isRequired,
   variable: PropTypes.string.isRequired,
   yTicks: PropTypes.number
 };

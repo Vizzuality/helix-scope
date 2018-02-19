@@ -103,8 +103,8 @@ RegularBar.propTypes = {
   ...BaseChart.propTypes,
   chart: PropTypes.string.isRequired,
   iso: PropTypes.string.isRequired,
-  scenarios: PropTypes.array,
-  unit: PropTypes.string,
+  scenarios: PropTypes.array.isRequired,
+  unit: PropTypes.string.isRequired,
   variable: PropTypes.string.isRequired,
   yTicks: PropTypes.number
 };

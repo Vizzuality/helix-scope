@@ -8,7 +8,7 @@ import forEach from 'lodash/forEach';
 
 import BaseChart from './BaseChart';
 import { formatSI } from 'utils/format';
-import { renderLegend } from 'utils/chart-rendering';
+import { renderLegend, renderTooltip } from 'utils/chart-rendering';
 
 class Summary extends BaseChart {
   drawChart() {
@@ -22,11 +22,14 @@ class Summary extends BaseChart {
       domain,
       margin,
       scenarios,
+      unit,
       yTicks
     } = this.props;
 
     const findScenario = (slug) => (scenarios.find((s) => slug.toString() === s.slug) || {});
+    const colorForScenario = (slug) => findScenario(slug).color;
     const tickFormat = (slug) => findScenario(slug).name;
+    const lineOrder = ['min', 'mean', 'max'];
     const lineColor = {
       min: colors[0],
       mean: colors[1],
@@ -103,18 +106,28 @@ class Summary extends BaseChart {
         .attr('fill', color)
         .attr('cx', (d) => scale.x(d.swl))
         .attr('cy', (d) => scale.y(d.value));
+    });
 
-      // hover circles
-      svg.selectAll('.dot')
-        .data(data)
-        .enter()
-        .append('circle')
-        .attr('class', 'hover-box')
-        .attr('title', (d) => formatSI(d.value, 2))
-        .attr('r', 20)
-        .attr('fill', color)
-        .attr('cx', (d) => scale.x(d.swl))
-        .attr('cy', (d) => scale.y(d.value));
+    const groupedByScenario = groupBy(data, (v) => v.swl);
+    const hoverData = Object.keys(groupedByScenario).map((swl) => ({
+      swl,
+      values: groupedByScenario[swl]
+    }));
+    const renderLineHtml = (v) => (`
+      <p>
+        <b><span class="small-circle" style="background: ${lineColor[v.line]};"></span>&nbsp;${v.line}: </b>
+        ${formatSI(v.value, 2)}${unit}
+      </p>
+    `);
+    const orderByLineDesc = (array) => [...array].sort((a, b) => lineOrder.indexOf(a.line) < lineOrder.indexOf(b.line));
+    const hoverBoxWidth = Math.min(150, (width / 3) - 20);
+    renderTooltip(this.chart, hoverData, {
+      appendTo: svg,
+      width: hoverBoxWidth,
+      height,
+      getHoverColor: (d) => colorForScenario(d.swl),
+      getX: (d) => scale.x(d.swl),
+      getTooltipHtml: (d) => orderByLineDesc(d.values).map(renderLineHtml).join('')
     });
 
     renderLegend({
@@ -132,7 +145,8 @@ Summary.propTypes = {
   chart: PropTypes.string.isRequired,
   colors: PropTypes.array.isRequired,
   iso: PropTypes.string.isRequired,
-  scenarios: PropTypes.array,
+  scenarios: PropTypes.array.isRequired,
+  unit: PropTypes.string.isRequired,
   yTicks: PropTypes.number
 };
 
