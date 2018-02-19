@@ -37,12 +37,16 @@ class Summary extends BaseChart {
     };
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
+    const paddingScale = scaleLinear()
+          .domain([400, 900])
+          .range([0.25, 1])
+          .clamp(true);
 
     const scale = {
       x: scalePoint()
         .domain(domain.x)
         .range([0, width])
-        .padding(1),
+        .padding(paddingScale(width)),
       y: scaleLinear()
         .domain(domain.y)
         .nice()

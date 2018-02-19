@@ -24,9 +24,9 @@ export function renderTooltip({ appendTo, chart, data, width, height, getTooltip
     .data(data)
     .enter()
     .append('div')
+    .attr('id', getHoverTemplateId)
     .attr('class', '.hover-tooltip')
     .style('display', 'none')
-    .attr('id', getHoverTemplateId)
     .html(getTooltipHtml);
 
   tippy(chart.node().querySelectorAll('.hover-box'), {
