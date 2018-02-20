@@ -8,6 +8,7 @@ import forEach from 'lodash/forEach';
 
 import BaseChart from './BaseChart';
 import { formatSI } from 'utils/format';
+import { renderLegend, renderTooltip } from 'utils/chart-rendering';
 
 class Summary extends BaseChart {
   drawChart() {
@@ -21,11 +22,14 @@ class Summary extends BaseChart {
       domain,
       margin,
       scenarios,
+      unit,
       yTicks
     } = this.props;
 
     const findScenario = (slug) => (scenarios.find((s) => slug.toString() === s.slug) || {});
+    const colorForScenario = (slug) => findScenario(slug).color;
     const tickFormat = (slug) => findScenario(slug).name;
+    const lineOrder = ['min', 'mean', 'max'];
     const lineColor = {
       min: colors[0],
       mean: colors[1],
@@ -33,12 +37,16 @@ class Summary extends BaseChart {
     };
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
+    const paddingScale = scaleLinear()
+          .domain([400, 900])
+          .range([0.25, 1])
+          .clamp(true);
 
     const scale = {
       x: scalePoint()
         .domain(domain.x)
         .range([0, width])
-        .padding(1),
+        .padding(paddingScale(width)),
       y: scaleLinear()
         .domain(domain.y)
         .nice()
@@ -60,7 +68,8 @@ class Summary extends BaseChart {
     };
 
     const chart = select(this.chart);
-    chart.selectAll('svg').remove();
+
+    this.performCleanUp(chart);
 
     const svg = chart.append('svg')
       .attr('width', width + (margin.left + margin.right))
@@ -104,28 +113,37 @@ class Summary extends BaseChart {
         .attr('cy', (d) => scale.y(d.value));
     });
 
-    const legend = svg.append('g')
-      .attr('class', 'legend')
-      .attr('width', width)
-      .attr('height', 20)
-      .attr('transform', 'translate(0, 0)');
+    const groupedByScenario = groupBy(data, (v) => v.swl);
+    const hoverData = Object.keys(groupedByScenario).map((swl) => ({
+      swl,
+      values: groupedByScenario[swl]
+    }));
+    const renderLineHtml = (v) => (`
+      <p>
+        <b><span class="small-circle" style="background: ${lineColor[v.line]};"></span>&nbsp;${v.line}: </b>
+        ${formatSI(v.value, 2)}${unit === '%' ? '' : ' '}${unit}
+      </p>
+    `);
+    const orderByLineDesc = (array) => [...array].sort((a, b) => lineOrder.indexOf(a.line) < lineOrder.indexOf(b.line));
+    const hoverBoxWidth = Math.min(150, (width / 3) - 20);
+    renderTooltip({
+      appendTo: svg,
+      chart,
+      data: hoverData,
+      width: hoverBoxWidth,
+      height,
+      getHoverColor: (d) => colorForScenario(d.swl),
+      getPositionX: (d) => scale.x(d.swl),
+      getTooltipHtml: (d) => orderByLineDesc(d.values).map(renderLineHtml).join('')
+    });
 
-    legend.selectAll('circle')
-      .data(Object.keys(lines))
-      .enter()
-      .append('circle')
-      .attr('r', 5)
-      .attr('cx', (d, i) => i * 60)
-      .attr('cy', height + 50)
-      .attr('fill', (d) => lineColor[d]);
-
-    legend.selectAll('text')
-      .data(Object.keys(lines))
-      .enter()
-      .append('text')
-      .attr('x', (d, i) => (i * 60) + 8)
-      .attr('y', height + 55)
-      .text((d) => d);
+    renderLegend({
+      appendTo: svg,
+      width,
+      height: 20,
+      position: { x: 0, y: height + 50 },
+      series: Object.keys(lines).map((l) => ({ label: l, color: lineColor[l] }))
+    });
   }
 }
 
@@ -134,14 +152,15 @@ Summary.propTypes = {
   chart: PropTypes.string.isRequired,
   colors: PropTypes.array.isRequired,
   iso: PropTypes.string.isRequired,
-  scenarios: PropTypes.array,
+  scenarios: PropTypes.array.isRequired,
+  unit: PropTypes.string.isRequired,
   yTicks: PropTypes.number
 };
 
 Summary.defaultProps = {
   ...BaseChart.defaultProps,
   margin: {
-    left: 30,
+    left: 40,
     right: 30,
     top: 30,
     bottom: 60

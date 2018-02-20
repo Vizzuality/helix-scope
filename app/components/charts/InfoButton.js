@@ -3,19 +3,19 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 
 import Button from 'components/common/Button';
-import Popover from 'components/common/Popover';
+import Tooltip from 'components/common/Tooltip';
 
 function InfoButton(props) {
   return (
     <div className={cx('c-info', props.className)}>
-      <Popover
-        position={props.popoverPosition}
+      <Tooltip
+        placement={props.tooltipPlacement}
         content={<p>{props.text}</p>}
       >
-        {(popover) => (
-          <Button icon="info" style={popover.open ? 'primary' : 'light'} size="small" />
+        {(tooltip) => (
+          <Button icon="info" style={tooltip.open ? 'primary' : 'light'} size="small" />
         )}
-      </Popover>
+      </Tooltip>
     </div>
   );
 }
@@ -23,7 +23,7 @@ function InfoButton(props) {
 InfoButton.propTypes = {
   className: PropTypes.string,
   text: PropTypes.string,
-  popoverPosition: PropTypes.string
+  tooltipPlacement: PropTypes.string
 };
 
 export default InfoButton;
