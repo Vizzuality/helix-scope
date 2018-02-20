@@ -8,7 +8,7 @@ import withFetching from 'components/charts/withFetching';
 const mapStateToProps = ({ config }) => ({
   scenarios: config.scenarios.map((scenario, idx) => ({
     slug: scenario.slug,
-    label: scenario.short_name,
+    name: scenario.name,
     color: scenarioColors[idx]
   }))
 });

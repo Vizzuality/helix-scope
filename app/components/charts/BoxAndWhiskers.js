@@ -4,6 +4,7 @@ import { scaleLinear, scalePoint } from 'd3-scale';
 import { select } from 'd3-selection';
 
 import { formatSI } from 'utils/format';
+import { renderTooltip } from 'utils/chart-rendering';
 import BaseChart from './BaseChart';
 
 class BoxAndWhiskers extends BaseChart {
@@ -17,21 +18,26 @@ class BoxAndWhiskers extends BaseChart {
       domain,
       margin,
       scenarios,
+      unit,
       yTicks
     } = this.props;
 
     const findScenario = (slug) => (scenarios.find((s) => slug.toString() === s.slug) || {});
-    const tickFormat = (slug) => findScenario(slug).label;
+    const tickFormat = (slug) => findScenario(slug).name;
     const colorFor = (slug) => findScenario(slug).color;
 
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
+    const paddingScale = scaleLinear()
+          .domain([400, 900])
+          .range([0.25, 1])
+          .clamp(true);
 
     const scale = {
       x: scalePoint()
         .domain(domain.x)
         .range([0, width])
-        .padding(1),
+        .padding(paddingScale(width)),
       y: scaleLinear()
         .domain(domain.y)
         .nice()
@@ -53,7 +59,8 @@ class BoxAndWhiskers extends BaseChart {
     };
 
     const chart = select(this.chart);
-    chart.selectAll('svg').remove();
+
+    this.performCleanUp(chart);
 
     const svg = chart.append('svg')
         .attr('width', width + (margin.left + margin.right))
@@ -125,17 +132,38 @@ class BoxAndWhiskers extends BaseChart {
       .attr('y', (d) => scale.y(d.median) - (mboxWidth / 2))
       .attr('width', mboxWidth)
       .attr('height', mboxWidth);
+
+    // hover box
+    const hoverBoxWidth = Math.min(100, (width / 3) - 20);
+
+    renderTooltip({
+      appendTo: svg,
+      chart,
+      data,
+      width: hoverBoxWidth,
+      height,
+      getHoverColor: (d) => colorFor(d.swl),
+      getPositionX: (d) => scale.x(d.swl),
+      getTooltipHtml: (d) => (`
+        <p><b>maximum: </b>${formatSI(d.maximum, 2)} ${unit}</p>
+        <p><b>q3: </b>${formatSI(d.q3, 2)} ${unit}</p>
+        <p><b>median: </b>${formatSI(d.median, 2)} ${unit}</p>
+        <p><b>q1: </b>${formatSI(d.q1, 2)} ${unit}</p>
+        <p><b>minimum: </b>${formatSI(d.minimum, 2)} ${unit}</p>
+      `)
+    });
   }
 }
 
 BoxAndWhiskers.propTypes = {
   ...BaseChart.propTypes,
+  chart: PropTypes.string.isRequired,
   iso: PropTypes.string.isRequired,
-  scenarios: PropTypes.array,
-  yTicks: PropTypes.number,
-  chart: PropTypes.string,
+  measure: PropTypes.string.isRequired,
+  scenarios: PropTypes.array.isRequired,
+  unit: PropTypes.string.isRequired,
   variable: PropTypes.string.isRequired,
-  measure: PropTypes.string.isRequired
+  yTicks: PropTypes.number
 };
 
 BoxAndWhiskers.defaultProps = {

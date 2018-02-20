@@ -1,10 +1,12 @@
 import PropTypes from 'prop-types';
 import { axisBottom, axisLeft } from 'd3-axis';
+import groupBy from 'lodash/groupBy';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { select } from 'd3-selection';
 
 import BaseChart from './BaseChart';
 import { formatSI } from 'utils/format';
+import { renderLegend, renderTooltip } from 'utils/chart-rendering';
 
 class InterQuartileRange extends BaseChart {
   drawChart() {
@@ -17,22 +19,29 @@ class InterQuartileRange extends BaseChart {
       domain,
       margin,
       scenarios,
+      unit,
       variables,
       yTicks
     } = this.props;
 
-    const colorFor = (variable) => (variables.find((v) => v.variable === variable) || { color: 'black' }).color;
-    const findScenario = (slug) => (scenarios.find((s) => slug.toString() === s.slug) || {});
+    const findScenario = (slug) => scenarios.find((s) => slug.toString() === s.slug) || {};
+    const findVariable = (slug) => variables.find((v) => v.variable === slug) || {};
+    const colorForScenario = (slug) => findScenario(slug).color;
+    const colorForVariable = (variable) => findVariable(variable).color || 'black';
     const tickFormat = (val) => (findScenario(val).name);
 
     const width = this.chart.offsetWidth - (margin.left + margin.right);
     const height = this.chart.offsetHeight - (margin.top + margin.bottom);
+    const paddingScale = scaleLinear()
+          .domain([400, 900])
+          .range([0.5, 1])
+          .clamp(true);
 
     const scale = {
       x: scalePoint()
         .domain(domain.x)
         .range([0, width])
-        .padding(1),
+        .padding(paddingScale(width)),
       y: scaleLinear()
         .domain(domain.y)
         .nice()
@@ -54,7 +63,8 @@ class InterQuartileRange extends BaseChart {
     };
 
     const chart = select(this.chart);
-    chart.selectAll('svg').remove();
+
+    this.performCleanUp(chart);
 
     const svg = chart.append('svg')
       .attr('width', width + (margin.left + margin.right))
@@ -76,7 +86,7 @@ class InterQuartileRange extends BaseChart {
       .enter()
       .append('circle')
       .attr('r', 5)
-      .attr('fill', (d) => colorFor(d.variable))
+      .attr('fill', (d) => colorForVariable(d.variable))
       .attr('cx', (d) => scale.x(d.swl))
       .attr('cy', (d) => scale.y(d.median));
 
@@ -84,44 +94,54 @@ class InterQuartileRange extends BaseChart {
       .data(data)
       .enter()
       .append('line')
-      .attr('stroke', (d) => colorFor(d.variable))
+      .attr('stroke', (d) => colorForVariable(d.variable))
       .attr('stroke-width', 2)
       .attr('x1', (d) => scale.x(d.swl))
       .attr('y1', (d) => scale.y(d.median - d.iqr))
       .attr('x2', (d) => scale.x(d.swl))
       .attr('y2', (d) => scale.y(d.median + d.iqr));
 
-    const legend = svg.append('g')
-      .attr('class', 'legend')
-      .attr('width', width)
-      .attr('height', 20)
-      .attr('transform', 'translate(0, 0)');
+    const groupedByScenario = groupBy(data, (v) => v.swl);
+    const hoverData = Object.keys(groupedByScenario).map((swl) => ({
+      swl,
+      variables: groupedByScenario[swl]
+    }));
+    const renderVariableHtml = (v) => (`
+      <p>
+        <b><span class="small-circle" style="background: ${colorForVariable(v.variable)};"></span>&nbsp;${findVariable(v.variable).label}: </b>
+        ${formatSI(v.median, 2)}${unit} (IQR: ${formatSI(v.iqr, 2)}${unit})
+      </p>
+    `);
+    const orderByMedianDesc = (array) => [...array].sort((a, b) => b.median - a.median);
+    const hoverBoxWidth = Math.min(150, (width / 3) - 20);
+    renderTooltip({
+      appendTo: svg,
+      chart,
+      data: hoverData,
+      width: hoverBoxWidth,
+      height,
+      getHoverColor: (d) => colorForScenario(d.swl),
+      getPositionX: (d) => scale.x(d.swl),
+      getTooltipHtml: (d) => orderByMedianDesc(d.variables).map(renderVariableHtml).join('')
+    });
 
-    legend.selectAll('circle')
-      .data(variables)
-      .enter()
-      .append('circle')
-      .attr('r', 5)
-      .attr('cx', (d, i) => i * 60)
-      .attr('cy', height + 50)
-      .attr('fill', (d) => d.color);
-
-    legend.selectAll('text')
-      .data(variables)
-      .enter()
-      .append('text')
-      .attr('x', (d, i) => (i * 60) + 8)
-      .attr('y', height + 55)
-      .text((d) => d.label);
+    renderLegend({
+      appendTo: svg,
+      width,
+      height: 20,
+      position: { x: 0, y: height + 50 },
+      series: variables
+    });
   }
 }
 
 InterQuartileRange.propTypes = {
   ...BaseChart.propTypes,
-  variables: PropTypes.array,
-  scenarios: PropTypes.array,
-  yTicks: PropTypes.number,
-  chart: PropTypes.string.isRequired
+  chart: PropTypes.string.isRequired,
+  scenarios: PropTypes.array.isRequired,
+  unit: PropTypes.string.isRequired,
+  variables: PropTypes.array.isRequired,
+  yTicks: PropTypes.number
 };
 
 InterQuartileRange.defaultProps = {
