@@ -33,7 +33,6 @@ const webpackConfig = {
       },
       {
         test: /\.(css|pcss)$/,
-        exclude: /node_modules/,
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: [

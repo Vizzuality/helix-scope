@@ -79,10 +79,13 @@
 
       .Select-multi-value-wrapper {
         display: block;
-      }
+        position: relative;
 
-      .Select-input {
-        display: none !important;
+        .Select-input {
+          position: absolute;
+          top: 0;
+          opacity: 0;
+        }
       }
     }
 

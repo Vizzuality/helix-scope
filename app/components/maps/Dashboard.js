@@ -23,13 +23,7 @@ const Dashboard = (props) => {
           onClick={() => props.handleMapConfig(props.mapData.id)}
         />
         <InfoButton
-          className="hidden-small-viewport-down"
-          popoverPosition="right"
-          text={infoText}
-        />
-        <InfoButton
-          className="hidden-small-viewport-up"
-          popoverPosition="left"
+          tooltipPlacement="top"
           text={infoText}
         />
         {deleteBtn}
