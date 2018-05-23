@@ -5,7 +5,7 @@ export const LOAD_COUNTRY_LIST = 'LOAD_COUNTRY_LIST';
 export const RECEIVE_COUNTRY_LIST = 'RECEIVE_COUNTRY_LIST';
 
 export function fetchCountryList() {
-  const sql = 'SELECT name_engli AS name, iso FROM country_geoms ORDER BY name ASC';
+  const sql = 'SELECT name_engli AS name, iso FROM country_geoms WHERE iso NOT IN (\'FLK\', \'ATA\', \'ALA\') ORDER BY name ASC';
   return dispatch => {
     dispatch({
       type: LOAD_COUNTRY_LIST
