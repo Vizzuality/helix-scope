@@ -27,7 +27,7 @@ function HomeSlider() {
       <div key="1" className="slide-1">
         <HomeSlide1 />
       </div>
-      <div key="2" className="slide-2">
+      {/* <div key="2" className="slide-2">
         <HomeSlide2 />
       </div>
       <div key="3" className="slide-3">
@@ -41,7 +41,7 @@ function HomeSlider() {
       </div>
       <div key="6" className="slide-6">
         <HomeSlide6 />
-      </div>
+      </div> */}
     </Slider>
   );
 }

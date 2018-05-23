@@ -4,8 +4,8 @@ import TextSlide from './TextSlide';
 function HomeSlide1() {
   return (
     <TextSlide
-      title="About the project"
-      content="Helixscope is designed to show some of the results from the Helix project. It is designed to show how impacts change under different levels of warming at 2°C, 4°C and 6°C of global warming (specific warming levels of SWLs). It allows the user to look at impacts and climate change at a country level, and to compare different impacts."
+      title="About Helixscope"
+      content="HELIX (High-End cLimate Impacts and eXtremes) is a scientific research project that has calculated possible changes in local climates at different levels of global warming, and the impacts of these changes. Helixscope allows you to explore some of the projected impacts at 1.5°C, 2°C and 4°C global warming to see what they might mean for you."
       buttons={[
         {
           text: 'Find out more',
