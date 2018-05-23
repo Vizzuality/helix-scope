@@ -11,13 +11,13 @@ function ExploreScenarios() {
       </div>
       <div className="row align-center">
         <div className="column shrink scenario">
-          <NavLink to="/global-scenarios/0/0/3?maps=15,climate,precipitation,max,3">1.5°C</NavLink>
+          <NavLink to="/global-maps/0/0/3?maps=15,climate,precipitation,max,3">1.5°C</NavLink>
         </div>
         <div className="column shrink scenario">
-          <NavLink to="/global-scenarios/0/0/3?maps=2,climate,precipitation,max,3">2°C</NavLink>
+          <NavLink to="/global-maps/0/0/3?maps=2,climate,precipitation,max,3">2°C</NavLink>
         </div>
         <div className="column shrink scenario">
-          <NavLink to="/global-scenarios/0/0/3?maps=45,climate,precipitation,max,3">4.5°C</NavLink>
+          <NavLink to="/global-maps/0/0/3?maps=45,climate,precipitation,max,3">4.5°C</NavLink>
         </div>
       </div>
     </div>

@@ -107,7 +107,7 @@ const Routes = ({ history }) => (
   >
     <Route path="/" component={ContainerPage}>
       <IndexRoute component={HomePage} />
-      <Route path="global-scenarios">
+      <Route path="global-maps">
         <IndexRoute component={MapsPage} />
         <Route path=":lat/:lng/:zoom" component={MapsPage} />
       </Route>

@@ -79,7 +79,7 @@ export function updateURL() {
     const params = `${maps.latLng.lat}/${maps.latLng.lng}/${maps.zoom}`;
     const query = mapListToQueryString(maps.mapsList);
 
-    dispatch(push(`/global-scenarios/${params}${query}`));
+    dispatch(push(`/global-maps/${params}${query}`));
   };
 }
 

@@ -10,7 +10,7 @@ function HomeSlide3() {
       buttons={[
         {
           text: 'Find out more',
-          link: '/global-scenarios/32.47/-50.10/3?maps=15,climate,avg_temperature_change,mean,3/2,climate,avg_temperature_change,mean,3'
+          link: '/global-maps/32.47/-50.10/3?maps=15,climate,avg_temperature_change,mean,3/2,climate,avg_temperature_change,mean,3'
         }
       ]}
     />

@@ -116,7 +116,7 @@ function getClimatologicalCharts(category) {
     label: `${i.name} (${i.unit})`,
     variable: i.slug,
     unit: i.unit,
-    mapViewLink: `/global-scenarios/0/0/3?maps=1.5,${category.slug},${i.slug}`,
+    mapViewLink: `/global-maps/0/0/3?maps=1.5,${category.slug},${i.slug}`,
     getInfo: climatologicalDynamicInfo.bind(null, i),
     getDomain: boxAndWhiskersDomain
   }));
@@ -129,7 +129,7 @@ function getSummaryCharts(category) {
     charts.push({
       slug: 'temperature_summary',
       label: 'Average Temperature - Summary (°C)',
-      mapViewLink: '/global-scenarios/0/0/3?maps=1.5,cl,ts',
+      mapViewLink: '/global-maps/0/0/3?maps=1.5,cl,ts',
       unit: '°C',
       colors: getColorScheme(category.slug, null, 3),
       getInfo: temperatureSummaryInfo,
@@ -146,7 +146,7 @@ function getSummaryCharts(category) {
       label: `${i.name} - Summary (${i.unit})`,
       variable: i.slug,
       unit: i.unit,
-      mapViewLink: `/global-scenarios/0/0/3?maps=1.5,${category.slug},${i.slug}`,
+      mapViewLink: `/global-maps/0/0/3?maps=1.5,${category.slug},${i.slug}`,
       colors: getColorScheme(category.slug, i.slug, 3),
       getInfo: climatologicalSummaryInfo.bind(null, i),
       getDomain: summaryDomain

@@ -11,7 +11,7 @@ function HomeSlide4() {
       buttons={[
         {
           text: 'Find out more',
-          link: '/global-scenarios/34.05/-88.73/5?maps=45,climate,avg_temperature_change,max,3/45,climate,avg_temperature_change,mean,3/45,climate,avg_temperature_change,min,3'
+          link: '/global-maps/34.05/-88.73/5?maps=45,climate,avg_temperature_change,max,3/45,climate,avg_temperature_change,mean,3/45,climate,avg_temperature_change,min,3'
         }
       ]}
     />
