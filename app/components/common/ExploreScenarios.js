@@ -6,7 +6,7 @@ function ExploreScenarios() {
     <div className="c-explore-scenarios">
       <div className="row">
         <div className="column">
-          <h3>Explore the climate scenarios</h3>
+          <h3>Explore the Global Maps</h3>
         </div>
       </div>
       <div className="row align-center">

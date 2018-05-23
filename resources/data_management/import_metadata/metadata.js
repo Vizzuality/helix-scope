@@ -1,10 +1,10 @@
 /* eslint-disable quote-props,camelcase,max-len */
 
 const scenarios = {
-  '1.5': '1.5°C warming',
-  '2': '2°C warming',
-  '4': '4°C warming',
-  '6': '6°C warming'
+  '1.5': '1.5°C global warming',
+  '2': '2°C global warming',
+  '4': '4°C global warming',
+  '6': '6°C global warming'
 };
 
 const measurements = {
