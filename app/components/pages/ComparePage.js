@@ -15,9 +15,6 @@ function ComparePage() {
         </div>
         <CompareSelects inline />
       </div>
-      <div className="l-page-modules">
-        <ExploreScenarios />
-      </div>
       <Footer className="l-footer" />
     </div>
   );

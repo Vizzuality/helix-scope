@@ -20,10 +20,9 @@ function CountriesPage({ countriesList }) {
           </div>
         </div>
       </div>
-
-      <div className="l-page-modules">
+      {/* <div className="l-page-modules">
         <ExploreScenarios />
-      </div>
+      </div> */}
       <Footer className="l-footer" />
     </div>
   );
