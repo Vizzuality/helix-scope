@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import SearchBox from 'containers/common/SearchBox';
 import ExploreScenarios from 'components/common/ExploreScenarios';
-import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
 import NewsAndInsights from 'components/news/NewsAndInsights';
 
@@ -23,7 +22,6 @@ function CountriesPage({ countriesList }) {
       </div>
 
       <div className="l-page-modules">
-        <GetUpdates />
         <ExploreScenarios />
       </div>
       <Footer className="l-footer" />

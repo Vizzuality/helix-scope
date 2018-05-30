@@ -8,7 +8,6 @@ import { categoriesOrder } from 'constants/country';
 import DisplayCharts from 'containers/charts/DisplayCharts';
 import CallToAction from 'components/common/CallToAction';
 import ExploreScenarios from 'components/common/ExploreScenarios';
-import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
 import LoadingSpinner from 'components/common/LoadingSpinner';
 
@@ -89,7 +88,6 @@ class CountriesDetailPage extends Component {
           content="Helixscope is designed to show some of the results from the Helix project. It is designed to show how impacts change under different levels of warming at 2°C, 4°C and 6°C of global warming (specific warming levels of SWLs). It allows the user to look at impacts and climate change at a country level, and to compare different impacts."
         />
         <div className="l-page-modules">
-          <GetUpdates />
           <ExploreScenarios />
         </div>
         <Footer className="l-footer" />

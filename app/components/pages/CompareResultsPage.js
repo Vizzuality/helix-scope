@@ -8,7 +8,6 @@ import ChartComparer from 'components/charts/ChartComparer';
 import Switch from 'components/common/Switch';
 import CallToAction from 'components/common/CallToAction';
 import ExploreScenarios from 'components/common/ExploreScenarios';
-import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
 import LoadingSpinner from 'components/common/LoadingSpinner';
 
@@ -148,7 +147,6 @@ class CompareResultsPage extends Component {
           title="Partners"
         />
         <div className="l-page-modules">
-          <GetUpdates />
           <ExploreScenarios />
         </div>
         <Footer className="l-footer" />

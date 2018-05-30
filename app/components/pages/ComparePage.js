@@ -1,7 +1,6 @@
 import React from 'react';
 import CompareSelects from 'containers/common/CompareSelects';
 import ExploreScenarios from 'components/common/ExploreScenarios';
-import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
 
 function ComparePage() {
@@ -16,10 +15,7 @@ function ComparePage() {
         </div>
         <CompareSelects inline />
       </div>
-      <div className="l-page-content">
-      </div>
       <div className="l-page-modules">
-        <GetUpdates />
         <ExploreScenarios />
       </div>
       <Footer className="l-footer" />
