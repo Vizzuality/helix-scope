@@ -10,7 +10,7 @@ function ComparePage() {
         <div className="row">
           <div className="column">
             <div className="c-txt-title -inv">Compare</div>
-            <div className="c-txt-intro -inv">Climate change will affect different countries in different ways. Choose the countries you are interested in and find out the impact of the 1.5°C, 2°C and 4°C scenarios.</div>
+            <div className="c-txt-intro -inv">Climate change will affect different places in different ways. Choose the countries or territories you are interested in and explore the impacts at 1.5°C, 2°C and 4°C.</div>
           </div>
         </div>
         <CompareSelects inline />
