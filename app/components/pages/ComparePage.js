@@ -6,7 +6,7 @@ import Footer from 'components/common/Footer';
 function ComparePage() {
   return (
     <div>
-      <div className="l-banner -compare">
+      <div className="l-banner-large -compare">
         <div className="row">
           <div className="column">
             <div className="c-txt-title -inv">Compare</div>

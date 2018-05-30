@@ -9,7 +9,7 @@ import NewsAndInsights from 'components/news/NewsAndInsights';
 function CountriesPage({ countriesList }) {
   return (
     <div>
-      <div className="l-banner -countries">
+      <div className="l-banner-large -countries">
         <div className="row">
           <div className="column">
             <div className="c-txt-title -inv">Countries and Territories </div>
@@ -20,9 +20,6 @@ function CountriesPage({ countriesList }) {
           </div>
         </div>
       </div>
-      {/* <div className="l-page-modules">
-        <ExploreScenarios />
-      </div> */}
       <Footer className="l-footer" />
     </div>
   );

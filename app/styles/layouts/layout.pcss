@@ -14,6 +14,42 @@
   padding-top: calc($header-height + $margin-large + 1rem);
   padding-bottom: $margin-extra-large;
   min-height: 350px;
+
+  &.-country {
+    background-image: url('/images/covers/countries_detail.jpg');
+  }
+
+  &.-countries {
+    background-image: url('/images/covers/countries.jpg');
+  }
+
+  &.-compare {
+    background-image: url('/images/covers/compare.jpg');
+  }
+
+  &.-blank {
+    .c-txt-title,
+    .c-txt-intro,
+    .c-breadcrumbs {
+      color: $font-main;
+    }
+  }
+
+  .c-btn.-left {
+    @media screen and (max-width: 40em) {
+      margin: $margin-medium auto 0;
+      justify-content: center;
+    }
+  }
+}
+
+.l-banner-large {
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding-top: calc($header-height + $margin-large + 1rem);
+  padding-bottom: $margin-extra-large;
+  min-height: 350px;
   height: calc(100vh - 80px);
 
   &.-country {
