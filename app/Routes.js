@@ -121,7 +121,6 @@ const Routes = ({ history }) => (
       </Route>
       <Route path="partners" component={PartnersPage} />
       <Route path="about" component={AboutPage} />
-      <Route path="news" component={NewsPage} />
       <Route path="contact" component={ContactPage} />
     </Route>
   </Router>
