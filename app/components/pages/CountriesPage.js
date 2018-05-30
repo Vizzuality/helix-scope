@@ -22,15 +22,6 @@ function CountriesPage({ countriesList }) {
         </div>
       </div>
 
-      <div className="l-page-content">
-        <div className="row">
-          <div className="column">
-            <h2>News and insights</h2>
-          </div>
-        </div>
-        <NewsAndInsights />
-      </div>
-
       <div className="l-page-modules">
         <GetUpdates />
         <ExploreScenarios />
