@@ -27,21 +27,6 @@ function HomeSlider() {
       <div key="1" className="slide-1">
         <HomeSlide1 />
       </div>
-      {/* <div key="2" className="slide-2">
-        <HomeSlide2 />
-      </div>
-      <div key="3" className="slide-3">
-        <HomeSlide3 />
-      </div>
-      <div key="4" className="slide-4">
-        <HomeSlide4 />
-      </div>
-      <div key="5" className="slide-5">
-        <HomeSlide5 />
-      </div>
-      <div key="6" className="slide-6">
-        <HomeSlide6 />
-      </div> */}
     </Slider>
   );
 }
