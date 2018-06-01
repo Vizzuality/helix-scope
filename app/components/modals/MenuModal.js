@@ -21,7 +21,7 @@ class MenuModal extends Component {
         >
           <ul className="mobile-menu">
             <li>
-              <NavLink to="/global-scenarios" className="-green" onClick={() => this.props.setMenuModal(false)}>Global Scenarios</NavLink>
+              <NavLink to="/global-maps" className="-green" onClick={() => this.props.setMenuModal(false)}>Global Maps</NavLink>
             </li>
             <li>
               <NavLink to="/countries" className="-orange" onClick={() => this.props.setMenuModal(false)}>Countries</NavLink>

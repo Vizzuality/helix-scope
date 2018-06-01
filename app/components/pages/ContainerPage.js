@@ -14,7 +14,7 @@ class ContainerPage extends React.Component {
   }
 
   isPageMiniHeader() {
-    return this.props.location.pathname.indexOf('global-scenarios') > 0;
+    return this.props.location.pathname.indexOf('global-maps') > 0;
   }
 
   render() {
