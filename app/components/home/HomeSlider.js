@@ -1,11 +1,7 @@
 import React from 'react';
 import Slider from 'react-slick';
 import HomeSlide1 from './slides/HomeSlide1';
-import HomeSlide2 from './slides/HomeSlide2';
-import HomeSlide3 from './slides/HomeSlide3';
-import HomeSlide4 from './slides/HomeSlide4';
-import HomeSlide5 from './slides/HomeSlide5';
-import HomeSlide6 from './slides/HomeSlide6';
+
 
 function HomeSlider() {
   const settings = {

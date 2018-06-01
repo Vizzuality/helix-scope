@@ -1,6 +1,5 @@
 import React from 'react';
 import CompareSelects from 'containers/common/CompareSelects';
-import ExploreScenarios from 'components/common/ExploreScenarios';
 import Footer from 'components/common/Footer';
 
 function ComparePage() {

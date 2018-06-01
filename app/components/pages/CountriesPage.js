@@ -1,10 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import SearchBox from 'containers/common/SearchBox';
-import ExploreScenarios from 'components/common/ExploreScenarios';
 import Footer from 'components/common/Footer';
-import NewsAndInsights from 'components/news/NewsAndInsights';
+
 
 function CountriesPage({ countriesList }) {
   return (

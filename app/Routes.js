@@ -14,7 +14,6 @@ import ComparePage from './containers/pages/ComparePage';
 import CompareResultsPage from './containers/pages/CompareResultsPage';
 import PartnersPage from './components/pages/PartnersPage';
 import AboutPage from './containers/pages/AboutPage';
-import NewsPage from './components/pages/NewsPage';
 import ContactPage from './components/pages/ContactPage';
 
 
