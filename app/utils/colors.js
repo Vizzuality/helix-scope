@@ -20,7 +20,12 @@ const categoryColorScheme = {
 };
 
 const indicatorColorSchemeOverride = {
-  'pr': generateScheme('#D6ECFC', '#3E39A1')
+  'pr': generateScheme('#D6ECFC', '#3E39A1'),
+  // below need to be corrected - we need a better diverging color palette centered on 0
+  'time_perc_change_SRI6': generateScheme('#f45342', '#309eff'),
+  'time_perc_change_SPI6': generateScheme('#f45342', '#309eff'),
+  'time_perc_change_SRI48': generateScheme('#f45342', '#309eff'),
+  'time_perc_change_SPI48': generateScheme('#f45342', '#309eff')
 };
 
 export function getColorScheme(category, indicator, nColors) {

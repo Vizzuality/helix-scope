@@ -59,7 +59,7 @@ class CompareSelects extends Component {
             searchable
             labelKey="name"
             valueKey="iso"
-            placeholder="Choose country"
+            placeholder="Choose country or territory"
           />
         </div>
         <div className={`column ${this.props.inline ? 'small-12 medium-4' : 'small-12 medium-6'}`}>
@@ -72,7 +72,7 @@ class CompareSelects extends Component {
             searchable
             labelKey="name"
             valueKey="iso"
-            placeholder="Choose country"
+            placeholder="Choose country or territory"
           />
         </div>
         <div className={`column ${this.props.inline ? 'small-12 medium-4' : 'small-12 medium-12'}`}>
