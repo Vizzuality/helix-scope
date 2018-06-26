@@ -80,16 +80,18 @@
   }
 }
 
-/* Slides */
-.l-slides {
+/* Home Page */
+.l-home {
   display: flex;
   flex-direction: column;
   padding-top: calc($header-height + $margin-medium + 1rem);
-  padding-bottom: 60px;
-  height: 100%;
+  padding-bottom: 10px;
+  min-height: 100vh;
+  background-image: url('/images/homepage.jpg');
 
-  > .row:first-of-type {
-    height: 100%;
+  .c-txt-home-container {
+    flex: 1;
+    margin-bottom: $margin-large;
   }
 
   @media (--medium-viewport) {
