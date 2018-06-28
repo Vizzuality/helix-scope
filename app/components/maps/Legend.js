@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { formatSI } from 'utils/format';
-import { getColorScheme } from 'utils/colors';
+import { getColorSchemeByBuckets } from 'utils/colors';
 import {
   MAP_NUMBER_BUCKETS,
   MAP_LEGEND_MAX_TICKS
@@ -30,7 +30,7 @@ class Legend extends React.Component {
 
   render() {
     const { mapData } = this.props;
-    const colors = getColorScheme(mapData.category.slug, mapData.indicator.slug, MAP_NUMBER_BUCKETS);
+    const colors = getColorSchemeByBuckets(mapData.category.slug, mapData.indicator.slug, mapData.bucket);
 
     if (!mapData || !mapData.bucket || !mapData.bucket.length) {
       return <div></div>;
@@ -59,7 +59,7 @@ class Legend extends React.Component {
         <ul className="labels">
           {this.renderLegendValue(firstBucket, 0)}
           {restOfBuckets.map((bucket, index) =>
-            bucket.value && (
+            bucket.value !== undefined && (
               this.renderLegendValue(bucket.value, index + 1, ((index + 1) % renderValueEvery === 0))
             )
           )}

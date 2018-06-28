@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { push } from 'react-router-redux';
 import uuid from 'uuid/v4';
+import sortBy from 'lodash/sortBy';
 import {
   ENDPOINT_SQL,
   ENDPOINT_TILES,
@@ -8,6 +9,7 @@ import {
   MAX_MAPS
 } from 'constants/map';
 import { mapListToQueryString } from 'utils/maps';
+import { indicatorColorSchemeDivergedOverride } from 'utils/colors';
 
 export const MAP_UPDATE_DATA = 'MAP_UPDATE_DATA';
 export const MAP_UPDATE_PAN = 'MAP_UPDATE_PAN';
@@ -189,20 +191,38 @@ export function getMapBuckets(mapData) {
       bucketLoading: true
     }));
 
-    axios.get(ENDPOINT_SQL, {
-      params: {
-        q: query
-      }
-    }).then(({ data }) => {
-      dispatch(setMapData(mapData, {
-        bucket: data.rows,
-        bucketLoading: false
-      }));
-    }).catch((error) => {
-      dispatch(setMapData(mapData, {
-        bucketLoading: false
-      }));
-      console.error(error);
-    });
+    axios
+      .get(ENDPOINT_SQL, {
+        params: {
+          q: query
+        }
+      })
+      .then(({ data }) => {
+        const buckets = data.rows;
+
+        // if diverged scale, then fix buckets to have one ending exactly on 0
+        if (indicatorColorSchemeDivergedOverride[mapData.indicator.slug]) {
+          const nearZeroBucket = sortBy(buckets, b => Math.abs(0 - b.value))[0];
+          nearZeroBucket.value = 0;
+        }
+
+        return buckets;
+      })
+      .then(buckets => {
+        dispatch(
+          setMapData(mapData, {
+            bucket: buckets,
+            bucketLoading: false
+          })
+        );
+      })
+      .catch(error => {
+        dispatch(
+          setMapData(mapData, {
+            bucketLoading: false
+          })
+        );
+        console.error(error);
+      });
   };
 }

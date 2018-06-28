@@ -13,12 +13,11 @@ import {
   BASEMAP_GEOM_TILE,
   BASEMAP_LABELS_TILE,
   ENDPOINT_SQL,
-  MAP_NUMBER_BUCKETS,
   MAP_MIN_ZOOM,
   MAP_LAYER_SPEC,
   MAP_VECTOR_CSS
 } from 'constants/map';
-import { getColorScheme } from 'utils/colors';
+import { getColorSchemeByBuckets } from 'utils/colors';
 
 class Map extends React.Component {
   constructor(props) {
@@ -304,7 +303,7 @@ class Map extends React.Component {
   }
 
   generateCartoCSS({ category, indicator }) {
-    const colorscheme = [...getColorScheme(category.slug, indicator.slug, MAP_NUMBER_BUCKETS)].reverse();
+    const colorscheme = [...getColorSchemeByBuckets(category.slug, indicator.slug, this.bucket)].reverse();
     const bucketList = [...this.bucket].reverse();
 
     const cssProps = {
