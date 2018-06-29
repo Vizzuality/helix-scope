@@ -16,23 +16,24 @@ const mapStateToProps = state => {
   return {
     maps: mapsList.map((map) => {
       const mapsToCompare = findMapsToCompare(map);
-      const getBucket = ({ bucket }) => {
-        const combineBuckets = (buckets) => {
-          const mergeBuckets = buckets.reduce((acc, b) => acc.concat(b), []);
-          const oneBucket = mergeBuckets.map((b) => b.value);
-          const minValue = Math.min(...mergeBuckets.map((b) => b.minValue));
+      const combineBuckets = (buckets) => {
+        const oneBucket = buckets.reduce((acc, b) => acc.concat(b), []);
 
-          return ckmeans(oneBucket, MAP_NUMBER_BUCKETS).map((c) => ({ value: c.slice(-1)[0], minValue }));
-        };
-
-        return bucket && bucket.length && mapsToCompare.length
-          ? combineBuckets(mapsToCompare.map((m) => m.bucket).filter((m) => m).concat([bucket]))
-          : bucket;
+        return ckmeans(oneBucket, MAP_NUMBER_BUCKETS).map((c) => c.slice(-1)[0]);
       };
+      const getBuckets = ({ buckets }) => (
+        buckets && buckets.length && mapsToCompare.length
+          ? combineBuckets(mapsToCompare.map((m) => m.buckets).filter((m) => m).concat([buckets]))
+          : buckets
+      );
+      const minValue = mapsToCompare.length
+        ? Math.min(...[map.minValue, ...mapsToCompare.map(m => m.minValue)])
+        : map.minValue;
 
       return {
         ...map,
-        bucket: getBucket(map)
+        minValue,
+        buckets: getBuckets(map)
       };
     })
   };

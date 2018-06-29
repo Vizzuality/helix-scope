@@ -177,18 +177,17 @@ export function getMapBuckets(mapData) {
         AND m.swl_info = ${mapData.scenario.slug}
         AND mean IS NOT NULL
       )
-      SELECT UNNEST(
+      SELECT
         CDB_JenksBins(
           ARRAY_AGG(
             DISTINCT(value::numeric)
           ), ${MAP_NUMBER_BUCKETS}
-        )
-      ) AS value,
-      min(data.value) as "minValue"
+        ) AS buckets,
+        min(data.value) as "minValue"
       FROM data`;
 
     dispatch(setMapData(mapData, {
-      bucketLoading: true
+      bucketsLoading: true
     }));
 
     axios
@@ -198,28 +197,35 @@ export function getMapBuckets(mapData) {
         }
       })
       .then(({ data }) => {
-        const buckets = data.rows;
+        const {
+          buckets,
+          minValue
+        } = data.rows[0];
 
         // if diverged scale, then fix buckets to have one ending exactly on 0
         if (indicatorColorSchemeDivergedOverride[mapData.indicator.slug]) {
-          const nearZeroBucket = sortBy(buckets, b => Math.abs(0 - b.value))[0];
-          nearZeroBucket.value = 0;
+          const nearZeroBucket = sortBy(buckets, bValue => Math.abs(0 - bValue))[0];
+          buckets[buckets.indexOf(nearZeroBucket)] = 0;
         }
 
-        return buckets;
+        return {
+          buckets,
+          minValue
+        };
       })
-      .then(buckets => {
+      .then(({ buckets, minValue }) => {
         dispatch(
           setMapData(mapData, {
-            bucket: buckets,
-            bucketLoading: false
+            minValue,
+            buckets,
+            bucketsLoading: false
           })
         );
       })
       .catch(error => {
         dispatch(
           setMapData(mapData, {
-            bucketLoading: false
+            bucketsLoading: false
           })
         );
         console.error(error);

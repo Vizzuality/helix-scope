@@ -69,9 +69,8 @@ export function getColorSchemeByBuckets(category, indicator, buckets) {
   const divergedScheme = indicatorColorSchemeDivergedOverride[indicator];
 
   if (divergedScheme) {
-    const bucketValues = buckets.map(b => b.value);
-    const scheme1ColorsNumber = bucketValues.filter(v => v <= 0).length;
-    const scheme2ColorsNumber = bucketValues.filter(v => v > 0).length;
+    const scheme1ColorsNumber = buckets.filter(v => v <= 0).length;
+    const scheme2ColorsNumber = buckets.filter(v => v > 0).length;
 
     return divergedScheme(scheme1ColorsNumber, scheme2ColorsNumber);
   }

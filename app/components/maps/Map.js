@@ -45,11 +45,11 @@ class Map extends React.Component {
     this.setListeners();
 
     // Get buckets for the legend and layer
-    if (!this.props.mapData.bucket) {
+    if (!this.props.mapData.buckets) {
       this.props.getMapBuckets(this.props.mapData);
     }
     // Get layer
-    if (this.props.mapData.bucket) {
+    if (this.props.mapData.buckets) {
       if (this.props.mapData.layer) {
         this.updateLayer(this.props.mapData.layer);
       } else {
@@ -64,8 +64,8 @@ class Map extends React.Component {
       props.mapConfig.latLng.lat !== this.props.mapConfig.latLng.lat ||
       props.mapConfig.latLng.lng !== this.props.mapConfig.latLng.lng ||
       props.mapConfig.zoom !== this.props.mapConfig.zoom);
-    const bucketChanged = JSON.stringify(props.mapData.bucket) !== JSON.stringify(this.props.mapData.bucket);
-    const newBucketEmpty = !Array.isArray(props.mapData.bucket) || !props.mapData.bucket.length;
+    const bucketsChanged = JSON.stringify(props.mapData.buckets) !== JSON.stringify(this.props.mapData.buckets);
+    const newBucketEmpty = !Array.isArray(props.mapData.buckets) || !props.mapData.buckets.length;
 
     if (paramsChanged) {
       this.map.panTo([props.mapConfig.latLng.lat, props.mapConfig.latLng.lng], {
@@ -76,17 +76,17 @@ class Map extends React.Component {
       this.invalidateSize();
     }
 
-    if (!props.mapData.bucket && bucketChanged) {
-      this.bucket = props.mapData.bucket;
+    if (!props.mapData.buckets && bucketsChanged) {
+      this.buckets = props.mapData.buckets;
       props.getMapBuckets(props.mapData);
     }
 
-    if (this.bucket && props.mapData.layer &&
+    if (this.buckets && props.mapData.layer &&
         (this.currentLayer !== props.mapData.layer.slug)) {
       this.updateLayer(props.mapData.layer);
     }
 
-    if (bucketChanged && !newBucketEmpty) {
+    if (bucketsChanged && !newBucketEmpty) {
       this.getLayer(props.mapData);
     }
 
@@ -100,7 +100,7 @@ class Map extends React.Component {
       props.mapData.scenario !== this.props.mapData.scenario ||
       props.mapData.category !== this.props.mapData.category ||
       props.mapData.indicator !== this.props.mapData.indicator ||
-      props.mapData.bucketLoading !== this.props.mapData.bucketLoading ||
+      props.mapData.bucketsLoading !== this.props.mapData.bucketsLoading ||
       state.tileLoading !== this.state.tileLoading;
 
     return shouldUpdate;
@@ -219,7 +219,7 @@ class Map extends React.Component {
   getLayer(mapData) {
     this.setTileLoadingStatus(true);
 
-    this.bucket = mapData.bucket;
+    this.buckets = mapData.buckets;
     this.generateCartoCSS(mapData);
     const layer = this.getLayerData({
       sql: this.getQuery(mapData),
@@ -303,15 +303,15 @@ class Map extends React.Component {
   }
 
   generateCartoCSS({ category, indicator }) {
-    const colorscheme = [...getColorSchemeByBuckets(category.slug, indicator.slug, this.bucket)].reverse();
-    const bucketList = [...this.bucket].reverse();
+    const colorscheme = [...getColorSchemeByBuckets(category.slug, indicator.slug, this.buckets)].reverse();
+    const reverseBuckets = [...this.buckets].reverse();
 
     const cssProps = {
       '#null': { ...MAP_VECTOR_CSS }
     };
 
-    bucketList.forEach((bucket, index) => {
-      const key = `#null[value <= ${bucket.value}]`;
+    reverseBuckets.forEach((bucketValue, index) => {
+      const key = `#null[value <= ${bucketValue}]`;
       cssProps[key] = { 'polygon-fill': colorscheme[index] };
     });
 
@@ -330,8 +330,8 @@ class Map extends React.Component {
   }
 
   render() {
-    const { id, bucketLoading } = this.props.mapData;
-    const isLoading = this.state.tileLoading || bucketLoading;
+    const { id, bucketsLoading } = this.props.mapData;
+    const isLoading = this.state.tileLoading || bucketsLoading;
     return (
       <div className="c-map">
         <div id={`map${id}`}></div>
@@ -348,8 +348,9 @@ Map.propTypes = {
     scenario: PropTypes.object,
     category: PropTypes.object,
     indicator: PropTypes.object,
-    bucket: PropTypes.array,
-    bucketLoading: PropTypes.bool
+    minValue: PropTypes.number,
+    buckets: PropTypes.array,
+    bucketsLoading: PropTypes.bool
   }).isRequired,
   mapConfig: PropTypes.shape({
     latLng: PropTypes.object,
