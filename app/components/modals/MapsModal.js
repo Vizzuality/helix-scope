@@ -126,7 +126,7 @@ class MapsModal extends Component {
             <div className="column small-12 medium-6">
               <Select
                 className="c-react-select"
-                options={this.state.selectedCategory.indicators.filter((s) => s.section === 'map')}
+                options={this.state.selectedCategory.indicators.filter((s) => s.section === 'map').sort()}
                 clearable={this.state.clearable}
                 disabled={this.state.disabled}
                 value={this.state.selectedIndicator.slug}
