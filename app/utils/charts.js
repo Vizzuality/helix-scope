@@ -160,7 +160,7 @@ function buildChartsByCategory(category) {
         {
           slug: 'crop_yield_change_baseline',
           variable: 'yield',
-          label: 'Projected changes in crop yields relative to 1981–2010 base-level (%)',
+          label: 'Projected changes in crop yields (%)',
           unit: '%',
           getInfo: cropYieldDynamicInfo,
           getDomain: interQuartileDomain
@@ -169,7 +169,7 @@ function buildChartsByCategory(category) {
           slug: 'crop_yield_change_irrigation',
           variable: 'Irrigation',
           unit: '%',
-          label: 'Change in crop yields (relative to 1981-2010 base levels) avoided under different warming scenarios due to Irrigation (%)',
+          label: 'Change in crop yields avoided under different warming scenarios due to Irrigation (%)',
           getInfo: cropYieldDynamicInfo,
           getDomain: interQuartileDomain
         }
