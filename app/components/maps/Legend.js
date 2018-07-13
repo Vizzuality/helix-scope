@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { formatSI } from 'utils/format';
-import { getColorScheme } from 'utils/colors';
+import { getColorSchemeByBuckets } from 'utils/colors';
 import {
   MAP_NUMBER_BUCKETS,
   MAP_LEGEND_MAX_TICKS
@@ -10,8 +10,8 @@ import {
 
 class Legend extends React.Component {
   shouldComponentUpdate(props) {
-    const paramsChanged = props.mapData.bucket &&
-      props.mapData.bucket.length > 0;
+    const paramsChanged = props.mapData.buckets &&
+      props.mapData.buckets.length > 0;
 
     return paramsChanged || true;
   }
@@ -30,11 +30,16 @@ class Legend extends React.Component {
 
   render() {
     const { mapData } = this.props;
-    const colors = getColorScheme(mapData.category.slug, mapData.indicator.slug, MAP_NUMBER_BUCKETS);
+    const colors = getColorSchemeByBuckets(mapData.category.slug, mapData.indicator.slug, mapData.buckets);
 
-    if (!mapData || !mapData.bucket || !mapData.bucket.length) {
+    if (!mapData || !mapData.buckets || !mapData.buckets.length) {
       return <div></div>;
     }
+
+    const {
+      buckets,
+      minValue
+    } = mapData;
 
     const colorWidth = 100 / MAP_NUMBER_BUCKETS;
     const background = `linear-gradient(to right, ${colors.map((c, index) => `${c} ${colorWidth * index}%, ${c} ${colorWidth * (index + 1)}%`).join(', ')})`;
@@ -47,9 +52,9 @@ class Legend extends React.Component {
       width: `${100 * (MAP_NUMBER_BUCKETS + 1) / MAP_NUMBER_BUCKETS}%`,
       marginLeft: `-${100 / (MAP_NUMBER_BUCKETS * 2)}%`
     };
-    const firstBucket = mapData.bucket[0].minValue;
-    const lastBucket = mapData.bucket.slice(-1)[0];
-    const restOfBuckets = mapData.bucket.slice(0, mapData.bucket.length - 1);
+    const firstBucket = minValue;
+    const lastBucket = buckets.slice(-1)[0];
+    const restOfBuckets = buckets.slice(0, mapData.buckets.length - 1);
     const ticks = Math.min(MAP_NUMBER_BUCKETS + 1, MAP_LEGEND_MAX_TICKS) - 2; // without first and the last one
     const renderValueEvery = Math.ceil((MAP_NUMBER_BUCKETS - 1) / ticks);
 
@@ -58,12 +63,10 @@ class Legend extends React.Component {
         <div className="range" style={rangeStyle}></div>
         <ul className="labels">
           {this.renderLegendValue(firstBucket, 0)}
-          {restOfBuckets.map((bucket, index) =>
-            bucket.value && (
-              this.renderLegendValue(bucket.value, index + 1, ((index + 1) % renderValueEvery === 0))
-            )
+          {restOfBuckets.map((bucketValue, index) =>
+            this.renderLegendValue(bucketValue, index + 1, ((index + 1) % renderValueEvery === 0))
           )}
-          {this.renderLegendValue(lastBucket.value, mapData.bucket.length)}
+          {this.renderLegendValue(lastBucket, buckets.length)}
         </ul>
       </div>
     );
@@ -74,7 +77,8 @@ Legend.propTypes = {
   mapData: PropTypes.shape({
     indicator: PropTypes.object,
     category: PropTypes.object,
-    bucket: PropTypes.array
+    minValue: PropTypes.number,
+    buckets: PropTypes.array
   }).isRequired
 };
 

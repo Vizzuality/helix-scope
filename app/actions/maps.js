@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { push } from 'react-router-redux';
 import uuid from 'uuid/v4';
+import sortBy from 'lodash/sortBy';
 import {
   ENDPOINT_SQL,
   ENDPOINT_TILES,
@@ -8,6 +9,7 @@ import {
   MAX_MAPS
 } from 'constants/map';
 import { mapListToQueryString } from 'utils/maps';
+import { indicatorColorSchemeDivergedOverride } from 'utils/colors';
 
 export const MAP_UPDATE_DATA = 'MAP_UPDATE_DATA';
 export const MAP_UPDATE_PAN = 'MAP_UPDATE_PAN';
@@ -175,34 +177,58 @@ export function getMapBuckets(mapData) {
         AND m.swl_info = ${mapData.scenario.slug}
         AND mean IS NOT NULL
       )
-      SELECT UNNEST(
+      SELECT
         CDB_JenksBins(
           ARRAY_AGG(
             DISTINCT(value::numeric)
           ), ${MAP_NUMBER_BUCKETS}
-        )
-      ) AS value,
-      min(data.value) as "minValue"
+        ) AS buckets,
+        min(data.value) as "minValue"
       FROM data`;
 
     dispatch(setMapData(mapData, {
-      bucketLoading: true
+      bucketsLoading: true
     }));
 
-    axios.get(ENDPOINT_SQL, {
-      params: {
-        q: query
-      }
-    }).then(({ data }) => {
-      dispatch(setMapData(mapData, {
-        bucket: data.rows,
-        bucketLoading: false
-      }));
-    }).catch((error) => {
-      dispatch(setMapData(mapData, {
-        bucketLoading: false
-      }));
-      console.error(error);
-    });
+    axios
+      .get(ENDPOINT_SQL, {
+        params: {
+          q: query
+        }
+      })
+      .then(({ data }) => {
+        const {
+          buckets,
+          minValue
+        } = data.rows[0];
+
+        // if diverged scale, then fix buckets to have one ending exactly on 0
+        if (indicatorColorSchemeDivergedOverride[mapData.indicator.slug]) {
+          const nearZeroBucket = sortBy(buckets, bValue => Math.abs(0 - bValue))[0];
+          buckets[buckets.indexOf(nearZeroBucket)] = 0;
+        }
+
+        return {
+          buckets,
+          minValue
+        };
+      })
+      .then(({ buckets, minValue }) => {
+        dispatch(
+          setMapData(mapData, {
+            minValue,
+            buckets,
+            bucketsLoading: false
+          })
+        );
+      })
+      .catch(error => {
+        dispatch(
+          setMapData(mapData, {
+            bucketsLoading: false
+          })
+        );
+        console.error(error);
+      });
   };
 }
