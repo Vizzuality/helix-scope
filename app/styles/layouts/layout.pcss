@@ -43,16 +43,55 @@
   }
 }
 
-/* Slides */
-.l-slides {
+.l-banner-large {
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding-top: calc($header-height + $margin-large + 1rem);
+  padding-bottom: $margin-extra-large;
+  min-height: 350px;
+  height: calc(100vh - 80px);
+
+  &.-country {
+    background-image: url('/images/covers/countries_detail.jpg');
+  }
+
+  &.-countries {
+    background-image: url('/images/covers/countries.jpg');
+  }
+
+  &.-compare {
+    background-image: url('/images/covers/compare.jpg');
+  }
+
+  &.-blank {
+    .c-txt-title,
+    .c-txt-intro,
+    .c-breadcrumbs {
+      color: $font-main;
+    }
+  }
+
+  .c-btn.-left {
+    @media screen and (max-width: 40em) {
+      margin: $margin-medium auto 0;
+      justify-content: center;
+    }
+  }
+}
+
+/* Home Page */
+.l-home {
   display: flex;
   flex-direction: column;
   padding-top: calc($header-height + $margin-medium + 1rem);
-  padding-bottom: 60px;
-  height: 100%;
+  padding-bottom: 10px;
+  min-height: 100vh;
+  background-image: url('/images/homepage.jpg');
 
-  > .row:first-of-type {
-    height: 100%;
+  .c-txt-home-container {
+    flex: 1;
+    margin-bottom: $margin-large;
   }
 
   @media (--medium-viewport) {

@@ -42,20 +42,18 @@ function climatologicalDynamicInfo(variable, data, measurement) {
   `;
 }
 
-function floodCostDynamicInfo(data) {
-  const { models, institutions } = getModelsInstitutions(data);
+function floodCostDynamicInfo() {
 
   return `
-    These data were produced by the ${models} model, of the ${institutions}. Values are relative to avearges over the 1976–2005 period.
+    These data were produced by the EC-EARTH model, of the European Commission - Joint Research Centre. Values are relative to avearges over the 1976–2005 period.
     Expected damages are annual estimated cost of flooding, estimated in millions of € (relative to 2010 value).
   `;
 }
 
-function floodAffDynamicInfo(data) {
-  const { models, institutions } = getModelsInstitutions(data);
+function floodAffDynamicInfo() {
 
   return `
-    These data were produced by the ${models}, of the ${institutions}. Values are relative to avearges over the 1976–2005 period.
+    These data were produced by the EC-EARTH model, of the European Commission - Joint Research Centre. Values are relative to avearges over the 1976–2005 period.
     The data show the estimated number of people affected annually by river flooding, relative to 1976–2010 values.
   `;
 }
@@ -116,7 +114,7 @@ function getClimatologicalCharts(category) {
     label: `${i.name} (${i.unit})`,
     variable: i.slug,
     unit: i.unit,
-    mapViewLink: `/global-scenarios/0/0/3?maps=1.5,${category.slug},${i.slug}`,
+    mapViewLink: `/global-maps/0/0/3?maps=1.5,${category.slug},${i.slug}`,
     getInfo: climatologicalDynamicInfo.bind(null, i),
     getDomain: boxAndWhiskersDomain
   }));
@@ -129,7 +127,7 @@ function getSummaryCharts(category) {
     charts.push({
       slug: 'temperature_summary',
       label: 'Average Temperature - Summary (°C)',
-      mapViewLink: '/global-scenarios/0/0/3?maps=1.5,cl,ts',
+      mapViewLink: '/global-maps/0/0/3?maps=1.5,cl,ts',
       unit: '°C',
       colors: getColorScheme(category.slug, null, 3),
       getInfo: temperatureSummaryInfo,
@@ -146,7 +144,7 @@ function getSummaryCharts(category) {
       label: `${i.name} - Summary (${i.unit})`,
       variable: i.slug,
       unit: i.unit,
-      mapViewLink: `/global-scenarios/0/0/3?maps=1.5,${category.slug},${i.slug}`,
+      mapViewLink: `/global-maps/0/0/3?maps=1.5,${category.slug},${i.slug}`,
       colors: getColorScheme(category.slug, i.slug, 3),
       getInfo: climatologicalSummaryInfo.bind(null, i),
       getDomain: summaryDomain
@@ -162,7 +160,7 @@ function buildChartsByCategory(category) {
         {
           slug: 'crop_yield_change_baseline',
           variable: 'yield',
-          label: 'Projected changes in crop yields relative to 1981–2010 base-level (%)',
+          label: 'Projected changes in crop yields (%)',
           unit: '%',
           getInfo: cropYieldDynamicInfo,
           getDomain: interQuartileDomain
@@ -171,7 +169,7 @@ function buildChartsByCategory(category) {
           slug: 'crop_yield_change_irrigation',
           variable: 'Irrigation',
           unit: '%',
-          label: 'Change in crop yields (relative to 1981-2010 base levels) avoided under different warming scenarios due to Irrigation (%)',
+          label: 'Change in crop yields avoided under different warming scenarios due to Irrigation (%)',
           getInfo: cropYieldDynamicInfo,
           getDomain: interQuartileDomain
         }
@@ -187,7 +185,7 @@ function buildChartsByCategory(category) {
       return [
         {
           slug: 'annual_expected_flood_damage',
-          label: 'Annual expected flood damages relative to 1976–2005 levels (millions of €)',
+          label: 'Annual expected flood damage (millions of €)',
           variable: 'river_floods_ExpDam',
           unit: 'millions of €',
           getInfo: floodCostDynamicInfo,
@@ -195,7 +193,7 @@ function buildChartsByCategory(category) {
         },
         {
           slug: 'population_affected_anually',
-          label: 'Population affected annually year from river flooding relative to 1976–2005 levels',
+          label: 'Population affected annually year from river flooding',
           variable: 'river_floods_PopAff',
           unit: '',
           getInfo: floodAffDynamicInfo,

@@ -8,7 +8,6 @@ export default function () {
         <div className="row">
           <div className="column">
             <div className="c-txt-title">Partners</div>
-            <div className="c-txt-intro">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent lacinia nisl in nisi tristique, et vestibulum metus semper.</div>
           </div>
         </div>
         <div className="l-disclaimer -dark">
@@ -19,7 +18,7 @@ export default function () {
               </svg>
             </div>
             <div className="column">
-              <div className="c-txt-intro -inv -medium">This project has received funding from the European Union’s Seventh Framework Programme for research, technological development and demonstration under grant agreement no 603864.</div>
+              <div className="c-txt-intro -inv -medium">This project received funding from the European Union’s Seventh Framework Programme for research, technological development and demonstration under grant agreement no 603864.</div>
             </div>
           </div>
         </div>

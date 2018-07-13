@@ -78,7 +78,7 @@ class MapsModal extends Component {
           <div className="row">
             <div className="column">
               <div className="title">
-                Add Scenario
+                Choose global warming level
               </div>
             </div>
           </div>
@@ -105,7 +105,7 @@ class MapsModal extends Component {
           <div className="row">
             <div className="column">
               <div className="text">
-                Select the variables and type of impacts you would like to explore
+                Select the category of impacts and the variables you would like to explore
               </div>
             </div>
           </div>

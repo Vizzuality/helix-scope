@@ -1,26 +1,18 @@
 import React from 'react';
 import CompareSelects from 'containers/common/CompareSelects';
-import ExploreScenarios from 'components/common/ExploreScenarios';
-import GetUpdates from 'components/common/GetUpdates';
 import Footer from 'components/common/Footer';
 
 function ComparePage() {
   return (
     <div>
-      <div className="l-banner -compare">
+      <div className="l-banner-large -compare">
         <div className="row">
           <div className="column">
             <div className="c-txt-title -inv">Compare</div>
-            <div className="c-txt-intro -inv">Climate change will affect different countries in different ways. Choose the countries you are interested in and find out the impact of the 2°C, 4°C and 6°C scenarios.</div>
+            <div className="c-txt-intro -inv">Climate change will affect different places in different ways. Choose the countries or territories you are interested in and explore the impacts at 1.5°C, 2°C and 4°C.</div>
           </div>
         </div>
         <CompareSelects inline />
-      </div>
-      <div className="l-page-content">
-      </div>
-      <div className="l-page-modules">
-        <GetUpdates />
-        <ExploreScenarios />
       </div>
       <Footer className="l-footer" />
     </div>

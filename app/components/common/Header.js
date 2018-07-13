@@ -12,10 +12,10 @@ const Header = (props) => (
       </div>
       <ul className="column small-3 medium-8 main-menu">
         <li>
-          <NavLink to="/global-scenarios" className="-green">Global Scenarios</NavLink>
+          <NavLink to="/global-maps" className="-green">Global Maps</NavLink>
         </li>
         <li>
-          <NavLink to="/countries" className="-orange">Countries</NavLink>
+          <NavLink to="/countries" className="-orange">Countries And Territories</NavLink>
         </li>
         <li>
           <NavLink to="/compare" className="-red">Compare</NavLink>
