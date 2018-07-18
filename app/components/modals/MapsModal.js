@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import orderBy from 'lodash/orderBy';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 
@@ -126,7 +127,7 @@ class MapsModal extends Component {
             <div className="column small-12 medium-6">
               <Select
                 className="c-react-select"
-                options={this.state.selectedCategory.indicators.filter((s) => s.section === 'map').sort()}
+                options={orderBy(this.state.selectedCategory.indicators.filter((s) => s.section === 'map'), 'name')}
                 clearable={this.state.clearable}
                 disabled={this.state.disabled}
                 value={this.state.selectedIndicator.slug}
