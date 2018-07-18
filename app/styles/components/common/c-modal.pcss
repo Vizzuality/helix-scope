@@ -34,5 +34,16 @@
       padding-top: $margin-medium;
       padding-bottom: $margin-medium;
     }
+
+    /* workaround to prevent dropdown menu options go out of screen, just show 3 of them */
+    @media screen and (max-height: 700px) {
+      .Select-menu-outer {
+        max-height: 150px;
+
+        .Select-menu {
+          max-height: 148px;
+        }
+      }
+    }
   }
 }

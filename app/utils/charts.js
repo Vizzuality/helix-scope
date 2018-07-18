@@ -43,7 +43,6 @@ function climatologicalDynamicInfo(variable, data, measurement) {
 }
 
 function floodCostDynamicInfo() {
-
   return `
     These data were produced by the EC-EARTH model, of the European Commission - Joint Research Centre. Values are relative to avearges over the 1976–2005 period.
     Expected damages are annual estimated cost of flooding, estimated in millions of € (relative to 2010 value).
@@ -51,7 +50,6 @@ function floodCostDynamicInfo() {
 }
 
 function floodAffDynamicInfo() {
-
   return `
     These data were produced by the EC-EARTH model, of the European Commission - Joint Research Centre. Values are relative to avearges over the 1976–2005 period.
     The data show the estimated number of people affected annually by river flooding, relative to 1976–2010 values.
