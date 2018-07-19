@@ -93,7 +93,7 @@ export function setMap(map) {
     if (!isUpdate && maps.length >= MAX_MAPS) return;
 
     const mapsList = maps.map((m) => {
-      if (m.id === map.id) return { ...m, ...map, bucket: null };
+      if (m.id === map.id) return { ...m, ...map, buckets: null };
       return m;
     });
 
